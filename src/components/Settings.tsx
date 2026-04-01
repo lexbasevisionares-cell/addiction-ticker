@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, ChevronRight } from 'lucide-react';
 import { UserSettings } from './Onboarding';
 import { AppState } from './Ticker';
@@ -72,6 +72,13 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
       }
     }
   };
+
+  useEffect(() => {
+    if (editingId === null) {
+      handleSave();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, language, currency, timeFormat, notificationLevel, startTimeString]);
 
   const handleConfirmAction = () => {
     if (modalType === 'quit') {
@@ -239,7 +246,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
         <div className="w-10" />
       </header>
 
-      <div className="flex-1 overflow-y-auto px-8 md:px-12 pb-64 no-scrollbar">
+      <div className="flex-1 overflow-y-auto px-8 md:px-12 pb-12 no-scrollbar">
         <div className="flex flex-col">
 
           {/* ── 1. KEY FINANCIAL VARIABLES (most important — first) ── */}
@@ -376,16 +383,6 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
         />
       )}
 
-      {/* Floating Save Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-8 z-30 max-w-4xl mx-auto">
-        <button
-          onClick={handleSave}
-          className="w-full py-6 rounded-full font-black text-black bg-white hover:bg-zinc-200 transition-all duration-500 uppercase tracking-[0.4em] text-[11px] flex items-center justify-center gap-4 shadow-[0_30px_70px_rgba(255,255,255,0.2)]"
-        >
-          <Save size={18} />
-          {t.save}
-        </button>
-      </div>
     </div>
   );
 }

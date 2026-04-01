@@ -38,35 +38,35 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
 
             <div className="flex flex-col gap-2">
               <button
-                onClick={() => { onClose(); onEditSettings(); }}
+                onClick={() => { onEditSettings(); }}
                 className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
               >
                 <SettingsIcon size={18} className="text-zinc-400" />
                 {t.settingsTitle}
               </button>
               <button
-                onClick={() => { onClose(); onShowInfo('logic'); }}
+                onClick={() => { onShowInfo('logic'); }}
                 className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
               >
                 <HelpCircle size={18} className="text-zinc-400" />
                 {t.howItWorks}
               </button>
               <button
-                onClick={() => { onClose(); onShowInfo('about'); }}
+                onClick={() => { onShowInfo('about'); }}
                 className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
               >
                 <Info size={18} className="text-zinc-400" />
                 {t.aboutApp}
               </button>
               <button
-                onClick={() => { onClose(); onShowInfo('privacy'); }}
+                onClick={() => { onShowInfo('privacy'); }}
                 className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
               >
                 <ShieldCheck size={18} className="text-zinc-400" />
                 {t.privacyTitle}
               </button>
               <button
-                onClick={() => { onClose(); onShowInfo('disclaimer'); }}
+                onClick={() => { onShowInfo('disclaimer'); }}
                 className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
               >
                 <Scale size={18} className="text-zinc-400" />

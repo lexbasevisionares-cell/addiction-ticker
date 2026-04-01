@@ -22,20 +22,36 @@ export function WheelColumn({ items, selectedIndex, onChange, formatItem, width 
   const y = useMotionValue(-selectedIndex * ITEM_HEIGHT);
   const dragStartY = useRef(0);
   const lastY = useRef(y.get());
+  const internalIndex = useRef(selectedIndex);
   
   // High-precision velocity tracking (Apple-feel)
   const samples = useRef<{ t: number; y: number }[]>([]);
 
   useEffect(() => {
     // Fast, crisp external sync
-    animate(y, -selectedIndex * ITEM_HEIGHT, {
-      type: 'spring',
-      stiffness: 320, 
-      damping: 30,
-      mass: 0.5
-    });
-    lastY.current = -selectedIndex * ITEM_HEIGHT;
+    if (internalIndex.current !== selectedIndex) {
+      animate(y, -selectedIndex * ITEM_HEIGHT, {
+        type: 'spring',
+        stiffness: 320, 
+        damping: 30,
+        mass: 0.5
+      });
+      lastY.current = -selectedIndex * ITEM_HEIGHT;
+      internalIndex.current = selectedIndex;
+    }
   }, [selectedIndex, y]);
+
+  // Continuous internal sync for native-like feel
+  useEffect(() => {
+    return y.on('change', (latest) => {
+      const newIndex = Math.round(-latest / ITEM_HEIGHT);
+      const clamped = Math.max(0, Math.min(items.length - 1, newIndex));
+      if (clamped !== internalIndex.current) {
+        internalIndex.current = clamped;
+        onChange(clamped);
+      }
+    });
+  }, [y, items.length, onChange]);
 
   // Use raw event listeners for non-passive prevention (critical for iOS stability)
   useEffect(() => {
@@ -76,9 +92,6 @@ export function WheelColumn({ items, selectedIndex, onChange, formatItem, width 
         mass: 0.6,       // Lighter = snappier response
         velocity: velocity,
         onComplete: () => {
-          if (clamped !== selectedIndex) {
-            onChange(clamped);
-          }
           lastY.current = targetY;
         },
       });
@@ -135,7 +148,7 @@ export function WheelColumn({ items, selectedIndex, onChange, formatItem, width 
         const last = tracker[tracker.length - 1];
         const dt = (last.t - first.t) / 1000;
         if (dt > 0.01) {
-          velocity = -((last.y - first.y) / dt);
+          velocity = (last.y - first.y) / dt;
         }
       }
 
@@ -143,7 +156,7 @@ export function WheelColumn({ items, selectedIndex, onChange, formatItem, width 
       const rawIndex = -currentY / ITEM_HEIGHT;
       
       const MOMENTUM_MULTIPLIER = 0.30;  // More carry on flick
-      const momentumIndex = rawIndex + (velocity * MOMENTUM_MULTIPLIER) / ITEM_HEIGHT;
+      const momentumIndex = rawIndex - (velocity * MOMENTUM_MULTIPLIER) / ITEM_HEIGHT;
       
       snapToIndex(Math.round(momentumIndex), velocity);
     },

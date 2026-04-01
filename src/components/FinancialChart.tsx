@@ -115,7 +115,7 @@ export default function FinancialChart({
         <div className="flex items-center justify-between px-2 lg:px-4 mb-2 lg:mb-4">
           {/* Left Side: Saved/Cost */}
           <div className="flex flex-col items-center flex-1">
-            <div className="flex items-center gap-1 opacity-60 group cursor-pointer mb-2" onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'directCost' : 'savedNow') : 'directCost')}>
+            <div className="flex items-center gap-1 opacity-60 group cursor-pointer mb-2" onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : 'directCost')}>
               <span className={`text-[9.5px] lg:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.2em] font-medium text-zinc-500 whitespace-nowrap`}>
                 {isFree ? (viewType === 'potential' ? t.totalSaved : t.savedNow) : t.directCost}
               </span>

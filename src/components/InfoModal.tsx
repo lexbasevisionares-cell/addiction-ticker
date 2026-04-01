@@ -2,7 +2,7 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { TranslationStrings } from '../utils/i18n';
 
-export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer';
+export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer';
 
 interface Props {
   type: InfoType | null;
@@ -16,6 +16,8 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
     switch (type) {
       case 'savedNow':
         return { title: t.savedNow, description: t.infoSavedNowDesc, color: 'text-emerald-400' };
+      case 'totalSaved':
+        return { title: t.totalSaved, description: t.infoTotalSavedDesc, color: 'text-emerald-400' };
       case 'directCost':
         return { title: t.directCost, description: t.infoDirectCostDesc, color: 'text-red-400' };
       case 'valueInYear':

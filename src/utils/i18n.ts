@@ -105,6 +105,7 @@ export const TRANSLATIONS = {
     infoAboutP3: 'Tavoitteemme on kääntää psykologinen peliasetelma ympäri. Korvaamme kemiallisen pikatyydytyksen sillä pitkäaikaisella euforialla, joka iskee, kun tajuat reaaliajassa säästöllä rakentamasi taloudellisen vapauden määrän.',
     // Info Metric Descriptions
     infoSavedNowDesc: 'Reaalisoitu käteissäästö. Tämä on puhdas rahasumma, jonka olisit tähän sekuntiin mennessä luovuttanut yhtiöille ostaessasi heidän tuotteitaan.',
+    infoTotalSavedDesc: 'Ennuste absoluuttisesta käteissäästöstä aikajanan aikana. Tämä on raakojen säästöjen suora kokonaissumma asetetussa ajassa, huomioiden myös arvioimasi vuotuisen hinnannousun tuoman lisäsäästön.',
     infoDirectCostDesc: 'Ennuste absoluuttisesta rahanmenosta aikajanan aikana. Laskelma sisältää automaattisesti arvioimasi vuotuisen hinnannousun.',
     infoValueInYearDesc: 'Korkoa korolle -ennuste. Osoittaa verottomasti, mihin arvoon *vain tähän mennessä* säästetty pääoma kasvaa asetetussa ajassa valitulla tuotto-odotuksella.',
     infoIndirectLossDesc: 'Massiivinen vaihtoehtoiskustannus. Tämä ei ole riippuvuuden suora hinta, vaan se korkotuotto, jonka menetät potentiaalisina sijoituksina jatkamalla nykyistä kulutustottumusta.',
@@ -241,6 +242,7 @@ export const TRANSLATIONS = {
     infoAboutP3: 'We aim to flip the psychological game. We want to replace the chemical instant gratification with the profound, objective realization of the wealth and freedom you are rapidly accumulating.',
     // Info Metric Descriptions
     infoSavedNowDesc: 'Realized cash savings. This is the exact amount of pure cash you would have handed over to corporations by this second.',
+    infoTotalSavedDesc: 'A forecast of the absolute cash savings over the timeline. This is the pure total of raw savings achieved, factoring in the shadow effect of your estimated annual price increase.',
     infoDirectCostDesc: 'A forecast of the absolute financial bleed over the timeline. This automatically includes your estimated annual price increase.',
     infoValueInYearDesc: 'Compounding projection. Shows the theoretical value that *only your currently accumulated savings* will reach in the selected timeframe.',
     infoIndirectLossDesc: 'Massive opportunity cost. This isn\'t just direct spending; it\'s the pure interest return you are actively destroying by maintaining your habit.',

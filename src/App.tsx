@@ -100,7 +100,6 @@ export default function App() {
     if (appState) {
       scheduleMotivationPlan(newSettings, appState);
     }
-    setView('ticker');
   };
 
   const handleResetAll = () => {
@@ -117,21 +116,24 @@ export default function App() {
       return <Onboarding onSave={handleSaveSettings} initialSettings={settings} />;
     }
 
-    if (view === 'settings' && settings && appState) {
+    if (settings && appState) {
       return (
-        <Settings 
-          initialSettings={settings} 
-          appState={appState} 
-          onSave={handleSaveEditedSettings} 
-          onUpdateState={handleUpdateState} 
-          onCancel={() => setView('ticker')} 
-          onResetAll={handleResetAll}
-        />
+        <>
+          <Ticker settings={settings} appState={appState} onUpdateState={handleUpdateState} onEditSettings={handleEditSettings} />
+          {view === 'settings' && (
+            <div className="fixed inset-0 z-50 bg-[#050505] overflow-y-auto no-scrollbar">
+              <Settings 
+                initialSettings={settings} 
+                appState={appState} 
+                onSave={handleSaveEditedSettings} 
+                onUpdateState={handleUpdateState} 
+                onCancel={() => setView('ticker')} 
+                onResetAll={handleResetAll}
+              />
+            </div>
+          )}
+        </>
       );
-    }
-
-    if (view === 'ticker' && settings && appState) {
-      return <Ticker settings={settings} appState={appState} onUpdateState={handleUpdateState} onEditSettings={handleEditSettings} />;
     }
 
     return null;
