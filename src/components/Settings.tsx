@@ -214,17 +214,16 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   }
 
   // ── Helper components ────────────────────────────────────────────────────
-  const SettingRow = ({ label, desc, displayValue, id, colorClassStr, glowClassStr }: { label: string; desc: string; displayValue: string; id: string; colorClassStr?: string; glowClassStr?: string }) => (
+  const SettingRow = ({ label, displayValue, id, colorClassStr, glowClassStr }: { label: string; desc?: string; displayValue: string; id: string; colorClassStr?: string; glowClassStr?: string }) => (
     <button
       onClick={() => setEditingId(id)}
-      className="w-full flex items-center justify-between py-3 lg:py-4 border-b border-white/[0.03] transition-all hover:bg-white/[0.01] px-4 -mx-4 rounded-[16px] group last:border-b-0"
+      className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/[0.03] transition-all hover:bg-white/[0.01] group last:border-b-0"
     >
-      <div className="flex flex-col pr-8 items-start text-left">
-        <span className="text-white/80 font-normal text-base lg:text-lg mb-0.5 group-hover:text-white transition-colors tracking-tight">{label}</span>
-        <span className="text-zinc-600 text-[10px] lg:text-xs leading-relaxed font-normal tracking-tight group-hover:text-zinc-500 transition-colors max-w-[200px] lg:max-w-md">{desc}</span>
+      <div className="flex items-center text-left flex-1 pr-4">
+        <span className="text-white/80 font-normal text-base lg:text-lg group-hover:text-white transition-colors tracking-tight">{label}</span>
       </div>
-      <div className="flex items-center gap-3 shrink-0">
-        <span className="font-mono tabular-nums text-white/70 font-normal text-base lg:text-lg tracking-tighter">
+      <div className="flex items-center gap-3 shrink-0 justify-end">
+        <span className="font-mono tabular-nums text-white/70 font-normal text-base lg:text-lg tracking-tighter text-right">
           {displayValue}
         </span>
         <ChevronRight size={18} className={`text-zinc-800 ${hoverColorClass} transition-colors mr-[-4px]`} />
@@ -342,14 +341,11 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
           <div className="flex flex-col">
             <button
               onClick={() => setModalType(isHooked ? 'quit' : 'relapse')}
-              className={`w-full flex items-center justify-between py-4 lg:py-5 transition-all hover:bg-white/[0.02] px-4 -mx-4 rounded-[16px] group border-b border-white/[0.06]`}
+              className={`w-full flex items-center justify-between py-5 lg:py-6 transition-all hover:bg-white/[0.02] group border-b border-white/[0.06]`}
             >
-              <div className="flex flex-col text-left">
-                <span className={`font-normal text-base lg:text-lg mb-0.5 transition-colors ${isHooked ? 'text-white/70 group-hover:text-emerald-400' : 'text-white/70 group-hover:text-red-400'}`}>
+              <div className="flex items-center text-left flex-1 pr-4">
+                <span className={`font-normal text-base lg:text-lg transition-colors ${isHooked ? 'text-white/70 group-hover:text-emerald-400' : 'text-white/70 group-hover:text-red-400'}`}>
                   {isHooked ? t.quitAddiction : t.resetCounter}
-                </span>
-                <span className="text-zinc-500 text-[10px] lg:text-xs font-normal tracking-tight group-hover:text-zinc-400 transition-colors">
-                  {isHooked ? t.quitAddictionDesc : t.resetCounterDesc}
                 </span>
               </div>
               <ChevronRight size={16} className="text-zinc-600 group-hover:text-zinc-400 transition-colors mr-[-4px]" />
@@ -357,14 +353,11 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
 
             <button
               onClick={() => setModalType('reset')}
-              className="w-full flex items-center justify-between py-4 lg:py-5 transition-all hover:bg-red-500/[0.03] px-4 -mx-4 rounded-[16px] group border-b border-white/[0.06]"
+              className="w-full flex items-center justify-between py-5 lg:py-6 transition-all hover:bg-red-500/[0.03] group border-b border-white/[0.06]"
             >
-              <div className="flex flex-col text-left">
-                <span className="font-normal text-base lg:text-lg text-white/70 group-hover:text-red-400 mb-0.5 transition-colors">
+              <div className="flex items-center text-left flex-1 pr-4">
+                <span className="font-normal text-base lg:text-lg text-white/70 group-hover:text-red-400 transition-colors">
                   {t.resetAllData}
-                </span>
-                <span className="text-zinc-500 text-[10px] lg:text-xs font-normal tracking-tight group-hover:text-red-300 transition-colors">
-                  {t.resetAllDataDesc}
                 </span>
               </div>
               <ChevronRight size={16} className="text-zinc-600 group-hover:text-red-400 transition-colors mr-[-4px]" />
