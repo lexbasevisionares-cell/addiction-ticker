@@ -1,0 +1,5 @@
+{
+  "name": "Addiction Ticker",
+  "description": "A cold, laconic financial tool that visualizes the real-time financial impact of an addiction.",
+  "requestFramePermissions": []
+}

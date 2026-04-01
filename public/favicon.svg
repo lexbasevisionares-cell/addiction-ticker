@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="black"/>
+  <!-- A+T Monogram -->
+  <!-- The 'A' shape -->
+  <path d="M256 120L120 400H185L256 230L327 400H392L256 120Z" fill="white"/>
+  <!-- The 'T' crossbar / horizontal bar -->
+  <rect x="180" y="255" width="152" height="40" fill="white"/>
+  <!-- The 'T' stem (shared with the center of the logo) -->
+  <rect x="238" y="255" width="36" height="145" fill="white"/>
+</svg>

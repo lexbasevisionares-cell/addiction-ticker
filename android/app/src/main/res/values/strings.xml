@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Addiction Ticker</string>
+    <string name="title_activity_main">Addiction Ticker</string>
+    <string name="package_name">com.addictionticker.app</string>
+    <string name="custom_url_scheme">com.addictionticker.app</string>
+</resources>
