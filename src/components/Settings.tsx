@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, ChevronRight } from 'lucide-react';
 import { UserSettings } from './Onboarding';
 import { AppState } from './Ticker';
-import WheelPicker from './WheelPicker';
+import WheelPicker, { SingleTextWheelPicker } from './WheelPicker';
 import ConfirmActionModal from './ConfirmActionModal';
 import { TRANSLATIONS, getCurrencySymbol, Language, Currency, TimeFormat } from '../utils/i18n';
 
@@ -189,15 +189,28 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
           </div>
 
           <div className="flex-1 flex items-center justify-center pb-28">
-            <WheelPicker
-              value={currentValue}
-              min={config.min}
-              max={config.max}
-              decimals={config.decimals}
-              suffix={config.unit}
-              locale={language === 'fi' ? 'fi-FI' : 'en-US'}
-              onChange={setValue}
-            />
+            {editingId === 'notificationLevel' ? (
+              <SingleTextWheelPicker
+                value={notificationLevel}
+                options={[
+                  { value: 0, label: t.motivatorLevel0 || 'Off' },
+                  { value: 1, label: t.motivatorLevel1 || 'Milestones' },
+                  { value: 2, label: t.motivatorLevel2 || 'Balanced' },
+                  { value: 3, label: t.motivatorLevel3 || 'Intensive' }
+                ]}
+                onChange={setValue}
+              />
+            ) : (
+              <WheelPicker
+                value={currentValue}
+                min={config.min}
+                max={config.max}
+                decimals={config.decimals}
+                suffix={config.unit}
+                locale={language === 'fi' ? 'fi-FI' : 'en-US'}
+                onChange={setValue}
+              />
+            )}
           </div>
 
           <div className="fixed bottom-0 left-0 right-0 p-8 z-30 max-w-4xl mx-auto">

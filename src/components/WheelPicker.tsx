@@ -297,6 +297,43 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
   );
 }
 
+export function SingleTextWheelPicker({ value, options, onChange, label }: { value: any, options: {value: any, label: string}[], onChange: (val: any) => void, label?: string }) {
+  const selectedIndex = options.findIndex(o => o.value === value);
+  const handleIndexChange = (idx: number) => {
+    onChange(options[idx].value);
+  };
+
+  return (
+    <div className="flex flex-col items-center select-none w-full max-w-xl mx-auto overflow-x-hidden">
+      {label && (
+        <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.5em] mb-12 text-center opacity-60">
+          {label}
+        </span>
+      )}
+
+      <div className="relative flex items-center justify-center w-full overflow-hidden">
+        {/* Infinite Selection Anchor (Minimalist Horizontal Cues) */}
+        <div className="absolute inset-x-[-20px] top-[50%] translate-y-[-50%] z-0 h-[72px] pointer-events-none">
+          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        </div>
+
+        <div className="flex items-center z-10 px-2 lg:px-8 relative w-full justify-center">
+          <div className="flex-1 max-w-[280px]">
+            <WheelColumn
+              items={options}
+              selectedIndex={Math.max(0, selectedIndex)}
+              onChange={handleIndexChange}
+              formatItem={(o) => o.label}
+              width="100%"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // SHARED ITEM COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
