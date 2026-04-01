@@ -94,7 +94,7 @@ export default function FinancialChart({
                 viewType === 'potential' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'
               }`}
             >
-              {t.viewPotential}
+              {t.viewPotential.replace('{year}', (currentYear + forecastYears).toString())}
               {viewType === 'potential' && (
                 <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-500 rounded-full animate-in fade-in zoom-in duration-300" />
               )}
@@ -115,35 +115,33 @@ export default function FinancialChart({
         <div className="flex items-center justify-between px-2 lg:px-4 mb-2 lg:mb-4">
           {/* Left Side: Saved/Cost */}
           <div className="flex flex-col items-center flex-1">
-            <div className="flex items-center gap-1 opacity-60 group cursor-pointer mb-2" onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : 'directCost')}>
-              <span className={`text-[9.5px] lg:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.2em] font-medium text-zinc-500 whitespace-nowrap`}>
-                {isFree ? (viewType === 'potential' ? t.totalSaved : t.savedNow) : t.directCost}
+            <div 
+              className="flex items-center gap-2 lg:gap-3 group cursor-pointer" 
+              onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : 'directCost')}
+            >
+              <span className={`font-mono tabular-nums ${fontSizeClass} font-bold text-white tracking-tighter transition-all leading-none`}>
+                {leftValueString}
               </span>
-              <Info size={11} className="text-zinc-600 transition-colors group-hover:text-white relative -top-[1.2px]" />
+              <Info size={14} className="text-zinc-600 transition-colors group-hover:text-white" />
             </div>
-            <span className={`font-mono tabular-nums ${fontSizeClass} font-bold text-white tracking-tighter transition-all leading-none`}>
-              {leftValueString}
-            </span>
           </div>
 
           {/* Center: Growth/Loss Arrow */}
-          <div className={`shrink-0 px-1 lg:px-6 mt-4 ${colorClass} opacity-40`}>
+          <div className={`shrink-0 px-1 lg:px-6 mt-0 ${colorClass} opacity-40`}>
             <ArrowRight size={18} className="lg:w-7 lg:h-7" />
           </div>
 
           {/* Right Side: Projected / Potential */}
           <div className="flex flex-col items-center flex-1">
-            <div className="flex items-center gap-1 opacity-60 group cursor-pointer mb-2" onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : 'indirectLoss')}>
-              <span className={`text-[9.5px] lg:text-[13px] uppercase tracking-[0.1em] lg:tracking-[0.2em] font-medium ${isFree ? 'text-zinc-500' : 'text-red-400'} whitespace-nowrap`}>
-                {isFree 
-                  ? (viewType === 'potential' ? t.potentialInYears.replace('{years}', forecastYears.toString()) : t.valueInYear.replace('{year}', (currentYear + forecastYears).toString())) 
-                  : t.indirectLoss}
+            <div 
+              className="flex items-center gap-2 lg:gap-3 group cursor-pointer" 
+              onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : 'indirectLoss')}
+            >
+              <span className={`font-mono tabular-nums ${fontSizeClass} font-bold ${colorClass} tracking-tighter transition-all leading-none`}>
+                {rightValueString}
               </span>
-              <Info size={11} className={`${isFree ? 'text-zinc-600' : 'text-red-400'} transition-colors group-hover:text-white relative -top-[1.2px]`} />
+              <Info size={14} className={`${isFree ? 'text-zinc-600' : 'text-red-400/50'} transition-colors group-hover:text-current`} />
             </div>
-            <span className={`font-mono tabular-nums ${fontSizeClass} font-bold ${colorClass} tracking-tighter transition-all leading-none`}>
-              {rightValueString}
-            </span>
           </div>
         </div>
 
