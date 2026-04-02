@@ -229,7 +229,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         </div>
 
         {/* Centralized Fixed Navigation Buttons */}
-        <div className="absolute bottom-8 md:bottom-12 left-0 right-0 w-full flex justify-center items-center gap-2 md:gap-4 px-6 z-50">
+        <div className="absolute bottom-24 md:bottom-32 left-0 right-0 w-full flex justify-center items-center gap-2 md:gap-4 px-6 z-50">
           <button
             onClick={handleBack}
             className="flex items-center justify-center p-4 md:p-6 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all active:scale-[0.95] border border-white/5 shrink-0 backdrop-blur-sm"
