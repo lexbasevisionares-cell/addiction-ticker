@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 
-const ITEM_HEIGHT = 58; // Tightened for better vertical balance on mobile
+const ITEM_HEIGHT = 44; // Tightened to reduce vertical footprint
 const VISIBLE_ITEMS = 5; 
 const CENTER_INDEX = Math.floor(VISIBLE_ITEMS / 2); // 2
 
@@ -257,8 +257,8 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
           <div className="absolute inset-x-0 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         </div>
 
-        <div className="flex items-center z-10 px-2 lg:px-8 relative gap-2 lg:gap-6 w-full justify-center">
-          <div className="flex-1 max-w-[120px] lg:max-w-[140px]">
+        <div className="flex items-center z-10 px-2 lg:px-4 relative w-full justify-center">
+          <div className="w-[80px] lg:w-[100px] flex justify-end">
             <WheelColumn
               items={integerItems}
               selectedIndex={integerItems.indexOf(intVal)}
@@ -268,13 +268,13 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
             />
           </div>
 
-          <div className="flex items-center justify-center translate-y-[-4px] h-[72px]">
+          <div className="flex items-center justify-center translate-y-[-4px] h-[72px] w-[20px] lg:w-[30px]">
             <span className="text-3xl lg:text-4xl font-serif text-white/30 font-light select-none">
               {new Intl.NumberFormat(locale || 'en-US').format(1.1).replace(/\d/g, '').trim() || (locale === 'fi' ? ',' : '.')}
             </span>
           </div>
 
-          <div className="flex-1 max-w-[100px] lg:max-w-[120px]">
+          <div className="w-[80px] lg:w-[100px] flex justify-start">
             <WheelColumn
               items={decimalItems}
               selectedIndex={decimalItems.indexOf(fracVal)}
@@ -285,7 +285,7 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
           </div>
 
           {suffix && (
-            <div className="pl-2 lg:pl-8 h-[72px] flex items-center shrink-0">
+            <div className="absolute right-4 lg:right-12 h-[72px] flex items-center shrink-0">
               <span className="text-2xl lg:text-3xl font-light italic text-zinc-600 font-serif tracking-[0.1em] lg:tracking-[0.15em] opacity-80">
                 {suffix}
               </span>
@@ -352,9 +352,9 @@ function WheelItem({ index, label, y, onTap }: ItemProps) {
   const CYLINDER_DEGREES_PER_ITEM = 22; // More pronounced barrel curve
   const rotateX = useTransform(rawOffset, (offset: number) => -offset * CYLINDER_DEGREES_PER_ITEM);
   
-  // High-fidelity opacity and scale (brighter adjacent numbers for better "wheel" visibility)
-  const opacity = useTransform(rawOffset, [-2.5, -1.8, -0.8, 0, 0.8, 1.8, 2.5], [0, 0.15, 0.6, 1, 0.6, 0.15, 0]);
-  const scale = useTransform(rawOffset, [-1.5, -0.8, 0, 0.8, 1.5], [0.82, 0.95, 1.15, 0.95, 0.82]);
+  // High-fidelity opacity and scale (sharper fade so only the selected and nearest ones are visible)
+  const opacity = useTransform(rawOffset, [-2.5, -1.8, -0.8, 0, 0.8, 1.8, 2.5], [0, 0.05, 0.6, 1, 0.6, 0.05, 0]);
+  const scale = useTransform(rawOffset, [-1.5, -0.8, 0, 0.8, 1.5], [0.85, 0.95, 1.15, 0.95, 0.85]);
   
   // Z-axis movement for real depth feel
   const translateZ = useTransform(rawOffset, (offset: number) => {

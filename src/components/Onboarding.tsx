@@ -171,6 +171,11 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
     return <OnboardingWelcome onStart={() => setShowWelcome(false)} />;
   }
 
+  const handleBack = () => {
+    if (step > 0) setStep(s => s - 1);
+    else setShowWelcome(true);
+  };
+
   return (
     <div className="h-[100dvh] bg-[#050505] text-white flex flex-col font-sans overflow-hidden touch-action-none relative">
       
@@ -218,40 +223,36 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                 <div className="w-full flex justify-center">
                   {renderScreenContent()}
                 </div>
-
-                {/* Centralized Navigation Button */}
-                <div className="w-full flex justify-center items-center gap-2 md:gap-4 mt-4 md:mt-8 px-4">
-                  {step > 0 && (
-                    <button
-                      onClick={() => setStep(s => s - 1)}
-                      className="flex items-center justify-center p-4 md:p-6 rounded-full bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-all active:scale-[0.95] border border-white/5 shrink-0"
-                      aria-label={t.back || 'Back'}
-                    >
-                      <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 stroke-[3]" />
-                    </button>
-                  )}
-                  <button
-                    onClick={handleNext}
-                    disabled={isNextDisabled}
-                    className={`relative flex items-center justify-center font-black py-4 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] text-[9px] md:text-xs tracking-[0.3em] uppercase group flex-1 ${
-                      step > 0 ? 'max-w-[220px]' : 'max-w-[280px]'
-                    } ${
-                      isNextDisabled 
-                        ? 'bg-white/5 text-white/20 cursor-not-allowed' 
-                        : 'bg-white text-black hover:scale-[1.05] active:scale-[0.95] shadow-[0_0_30px_rgba(255,255,255,0.1)]'
-                    }`}
-                  >
-                    <span className="relative z-10">
-                      {step === screens.length - 1 ? t.done : t.next}
-                    </span>
-                    {!isNextDisabled && (
-                      <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
-                    )}
-                  </button>
-                </div>
               </div>
             </motion.div>
           </AnimatePresence>
+        </div>
+
+        {/* Centralized Fixed Navigation Buttons */}
+        <div className="absolute bottom-8 md:bottom-12 left-0 right-0 w-full flex justify-center items-center gap-2 md:gap-4 px-6 z-50">
+          <button
+            onClick={handleBack}
+            className="flex items-center justify-center p-4 md:p-6 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all active:scale-[0.95] border border-white/5 shrink-0 backdrop-blur-sm"
+            aria-label={t.back || 'Back'}
+          >
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 stroke-[3]" />
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={isNextDisabled}
+            className={`relative flex items-center justify-center font-black py-4 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] text-[9px] md:text-xs tracking-[0.3em] uppercase group flex-1 max-w-[280px] ${
+              isNextDisabled 
+                ? 'bg-white/5 text-white/20 cursor-not-allowed' 
+                : 'bg-white text-black hover:scale-[1.05] active:scale-[0.95] shadow-[0_0_30px_rgba(255,255,255,0.1)] backdrop-blur-sm'
+            }`}
+          >
+            <span className="relative z-10">
+              {step === screens.length - 1 ? t.done : t.next}
+            </span>
+            {!isNextDisabled && (
+              <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+            )}
+          </button>
         </div>
       </div>
     </div>
