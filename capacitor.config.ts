@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.addictionticker.app',
+  appId: 'com.lexbase.addictionticker',
   appName: 'Addiction Ticker',
   webDir: 'dist'
 };
