@@ -209,7 +209,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: -30, filter: 'blur(15px)' }}
               transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }} 
-              className="absolute inset-0 flex flex-col items-center justify-start pt-[15dvh]"
+              className="absolute inset-0 flex flex-col items-center justify-start pt-[25dvh]"
             >
               <div className="w-full flex flex-col items-center justify-center gap-2 md:gap-4 max-w-lg">
                 <h1 className={`font-sans font-black tracking-tight text-white leading-[1.1] text-center text-balance px-4 ${

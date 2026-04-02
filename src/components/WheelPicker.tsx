@@ -269,7 +269,7 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
           </div>
 
           <div className="flex items-center justify-center translate-y-[-4px] h-[72px] w-[20px] lg:w-[30px]">
-            <span className="text-3xl lg:text-4xl font-serif text-white/30 font-light select-none">
+            <span className="text-3xl lg:text-4xl font-serif text-white font-medium select-none drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
               {new Intl.NumberFormat(locale || 'en-US').format(1.1).replace(/\d/g, '').trim() || (locale === 'fi' ? ',' : '.')}
             </span>
           </div>
@@ -286,7 +286,7 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
 
           {suffix && (
             <div className="absolute right-4 lg:right-12 h-[72px] flex items-center shrink-0">
-              <span className="text-2xl lg:text-3xl font-light italic text-zinc-600 font-serif tracking-[0.1em] lg:tracking-[0.15em] opacity-80">
+              <span className="text-2xl lg:text-3xl font-medium italic text-white font-serif tracking-[0.1em] lg:tracking-[0.15em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
                 {suffix}
               </span>
             </div>
