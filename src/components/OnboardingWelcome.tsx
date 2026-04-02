@@ -10,42 +10,46 @@ interface Props {
 // `stagger` determines the delay between each line dropping
 // `duration` determines how long the ENTIRE phase stays on screen
 const PHASES = [
-  { lines: ["What does your nicotine habit", "really cost you?"], stagger: 0.8, duration: 5000, align: "center" },
+  { lines: ["Mitä nikotiiniriippuvuutesi", "todella maksaa?"], stagger: 0.8, duration: 5000, align: "center" },
   { 
-    lines: ["Cigarettes.", "Snus.", "Pouches.", "Vapes.", "It doesn't matter which."], 
+    lines: ["Savukkeet.", "Nuuska.", "Sähkötupakka.", "Pussit.", "Sillä ei ole väliä."], 
     stagger: 0.5, 
     duration: 6500, 
     align: "center" 
   },
   { 
-    lines: ["There's a number most nicotine", "users never want to see."], 
+    lines: [
+      "On olemassa luku, josta useimmat", 
+      "käyttäjät eivät ole tietoisia.",
+      "Tai jota he eivät halua nähdä."
+    ], 
     stagger: 0.8, 
-    duration: 4500, 
+    duration: 6000, 
     align: "center" 
   },
   { 
-    lines: ["€8 a day. The average."], 
-    stagger: 0, 
-    duration: 3500, 
+    lines: ["Kuvitellaan tilanne,", "jossa kulu on 8 € päivässä."], 
+    stagger: 0.8, 
+    duration: 5000, 
     align: "center" 
   },
   { 
     lines: [
-      "1 month: €243.", 
-      "1 year: €2,920.", 
-      "10 years: €29,200.", 
-      "30 years: €87,600.",
-      "50 years: €146,000."
+      "1 kuukausi: 243 €.", 
+      "1 vuosi: 2 920 €.", 
+      "10 vuotta: 29 200 €.", 
+      "30 vuotta: 87 600 €.",
+      { text: "50 vuotta: 146 000 €.", color: "text-red-500", impact: true }
     ], 
     stagger: 0.6, 
-    duration: 8500,
+    duration: 10500,
     align: "left"
   },
   { 
     lines: [
-      "But what if you invested it instead?", 
-      "€243/mo into a global index fund.", 
-      "At 7% annual return."
+      "Entä jos sijoittaisit ne mieluummin?", 
+      "243 €/kk globaaliin indeksirahastoon.", 
+      "7 % vuosittaisella tuotto-odotuksella."
     ], 
     stagger: 1.0, 
     duration: 6500, 
@@ -53,14 +57,14 @@ const PHASES = [
   },
   { 
     lines: [
-      "10 years: €42,000.", 
-      "20 years: €126,000.",
-      "30 years: €296,000.",
-      "40 years: €637,000.",
-      "50 years: €1,280,000."
+      "10 vuotta: 42 000 €.", 
+      "20 vuotta: 126 000 €.",
+      "30 vuotta: 296 000 €.",
+      "40 vuotta: 637 000 €.",
+      { text: "50 vuotta: 1 280 000 €.", color: "text-emerald-500", impact: true }
     ], 
     stagger: 0.6, 
-    duration: 8500, 
+    duration: 10500, 
     align: "center" 
   },
   { decision: true, duration: Infinity }
@@ -75,18 +79,26 @@ const itemVariants = {
     scale: 1,
     filter: "blur(0px)",
     transition: { 
-      duration: 1.6, 
+      duration: 1.2, 
       ease: [0.22, 1, 0.36, 1]
     } 
   }
 };
 
-const numberVariants = {
-  hidden: { opacity: 0, scale: 0.9 },
+const impactVariants = {
+  hidden: { opacity: 0, y: -40, scale: 1.2, filter: "blur(15px)" },
   visible: { 
     opacity: 1, 
+    y: 0, 
     scale: 1,
-    transition: { delay: 1, duration: 1.5, ease: "easeOut" }
+    filter: "blur(0px)",
+    transition: { 
+      type: "spring",
+      stiffness: 400,
+      damping: 12,
+      mass: 0.8,
+      delay: 2.8 // Clear pause after the 30y/40y line finishes
+    } 
   }
 };
 
@@ -174,11 +186,11 @@ export default function OnboardingWelcome({ onStart }: Props) {
           className="w-full flex flex-col items-center gap-4 sm:gap-6"
         >
           <div className="flex w-full justify-center gap-4 sm:gap-16 items-center max-w-2xl px-2">
-            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-red-500 tracking-tighter">BURN IT.</h2>
-            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-emerald-500 tracking-tighter">BUILD IT.</h2>
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-red-500 tracking-tighter">POLTA.</h2>
+            <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-emerald-500 tracking-tighter">SIJOITA.</h2>
           </div>
           <p className="text-xs md:text-xl font-bold tracking-[0.3em] uppercase text-white/50">
-            Every dose is a vote.
+            Jokainen annos on valinta.
           </p>
         </motion.div>
       );
@@ -200,15 +212,22 @@ export default function OnboardingWelcome({ onStart }: Props) {
           }}
           className={`flex flex-col ${currentPhase.align === "left" ? "items-start" : "items-center"} justify-center pointer-events-none gap-6 md:gap-10`}
        >
-         {currentPhase.lines && currentPhase.lines.map((line, idx) => (
-           <motion.h2 
-             key={idx}
-             variants={itemVariants}
-             className={`font-sans font-black tracking-tight leading-[1.3] text-3xl md:text-5xl lg:text-7xl`}
-           >
-             {line}
-           </motion.h2>
-         ))}
+         {currentPhase.lines && currentPhase.lines.map((line, idx) => {
+           const isObject = typeof line === 'object';
+           const text = isObject ? line.text : line;
+           const colorClass = isObject ? line.color : '';
+           const variants = isObject && line.impact ? impactVariants : itemVariants;
+
+           return (
+            <motion.h2 
+              key={idx}
+              variants={variants}
+              className={`font-sans font-black tracking-tight leading-[1.3] text-3xl md:text-5xl lg:text-7xl ${colorClass}`}
+            >
+              {text}
+            </motion.h2>
+           );
+         })}
        </motion.div>
     );
   };
@@ -242,27 +261,34 @@ export default function OnboardingWelcome({ onStart }: Props) {
         initial={{ opacity: 0 }}
         animate={{ opacity: isFinalPhase ? 1 : 0 }}
         transition={{ duration: 2, ease: "easeOut" }}
-        className="absolute inset-x-0 top-[65%] md:top-[65%] -translate-y-1/2 flex flex-row items-center justify-center pointer-events-none z-0 px-4"
+        className="absolute inset-x-0 top-[65%] md:top-[65%] -translate-y-1/2 flex flex-col items-center justify-center pointer-events-none z-0 px-4 gap-6 md:gap-10"
       >
-        <div className="flex-1 flex flex-col items-end pr-4 md:pr-12 lg:pr-24">
-          <span className="text-[9px] md:text-[13px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-red-500 font-black mb-4">Addicted</span>
-          <div className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-serif font-black text-red-500/80 tracking-tighter tabular-nums leading-none">
-            -{redValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}
-          </div>
-        </div>
-        <div className="relative flex items-center justify-center shrink-0 w-8 md:w-16 h-32 md:h-64">
-          <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-white/10" />
-          <div className="bg-[#050505] relative z-10 py-4 flex flex-col items-center">
-            <span className="text-[8px] md:text-[9px] text-white/30 uppercase tracking-[0.3em] font-black">Year</span>
-            <span className="text-white/80 font-serif font-black text-lg md:text-2xl tabular-nums mt-1">
+        {/* YEAR TICKER MOVED ABOVE */}
+        <div className="flex items-baseline justify-center">
+           <span className="text-white/80 font-serif font-black text-2xl md:text-4xl tabular-nums tracking-tighter">
               {Math.floor(tickerYear).toString().padStart(2, '0')}
-            </span>
-          </div>
+           </span>
+           <span className="text-white/50 text-[10px] md:text-[13px] uppercase tracking-[0.4em] font-black ml-3">
+             vuotta
+           </span>
         </div>
-        <div className="flex-1 flex flex-col items-start pl-4 md:pl-12 lg:pl-24">
-          <span className="text-[9px] md:text-[13px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-emerald-500 font-black mb-4">Free</span>
-          <div className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-serif font-black text-emerald-500/80 tracking-tighter tabular-nums leading-none">
-            +{greenValue.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+
+        {/* METRICS ROW */}
+        <div className="w-full flex flex-row items-center justify-center px-4 max-w-4xl mx-auto">
+          <div className="flex-1 flex flex-col items-end pr-4 md:pr-12 lg:pr-24">
+            <span className="text-[9px] md:text-[13px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-red-500 font-black mb-4">Riippuvainen</span>
+            <div className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-serif font-black text-red-500/80 tracking-tighter tabular-nums leading-none">
+              -{redValue.toLocaleString('fi-FI', { maximumFractionDigits: 0 })}
+            </div>
+          </div>
+          
+          <div className="w-[1px] h-16 md:h-32 bg-white/10 mx-2 md:mx-6 shrink-0" />
+          
+          <div className="flex-1 flex flex-col items-start pl-4 md:pl-12 lg:pl-24">
+            <span className="text-[9px] md:text-[13px] uppercase tracking-[0.4em] md:tracking-[0.6em] text-emerald-500 font-black mb-4">Vapaa</span>
+            <div className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-serif font-black text-emerald-500/80 tracking-tighter tabular-nums leading-none">
+              +{greenValue.toLocaleString('fi-FI', { maximumFractionDigits: 0 })}
+            </div>
           </div>
         </div>
       </motion.div>
@@ -285,11 +311,11 @@ export default function OnboardingWelcome({ onStart }: Props) {
           transition={isFinalPhase ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
           className="w-full relative flex items-center justify-center bg-white text-black font-black py-4 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] hover:scale-[1.05] active:scale-[0.95] text-[9px] md:text-xs tracking-[0.3em] uppercase group"
         >
-          <span className="relative z-10">Calculate your freedom</span>
+          <span className="relative z-10">Laske vapautesi</span>
           <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
         </motion.button>
         <p className="text-[8px] md:text-[9px] text-zinc-600 font-bold uppercase tracking-[0.2em] mt-3 md:mt-5 text-center">
-           Calculated with your exact numbers
+           Laskettu omilla numeroillasi
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-import type { TranslationStrings, TimeFormat, Language } from '../utils/i18n';
+import { t } from '../utils/i18n';
 
 interface Props {
   isFree: boolean;
@@ -7,21 +7,20 @@ interface Props {
   minutes: number;
   seconds: number;
   colorClass: string;
-  t: TranslationStrings;
+  t: typeof t;
   startTime: number;
-  timeFormat: TimeFormat;
-  language: Language;
+
 }
 
-export default function TimerDisplay({ isFree, days, hours, minutes, seconds, colorClass, t, startTime, timeFormat, language }: Props) {
-  const locale = language === 'fi' ? 'fi-FI' : 'en-US';
+export default function TimerDisplay({ isFree, days, hours, minutes, seconds, colorClass, t, startTime }: Props) {
+  const locale = 'fi-FI';
   const formattedStart = new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-    hour12: timeFormat === '12h',
+    hour12: false,
   }).format(new Date(startTime));
 
   return (

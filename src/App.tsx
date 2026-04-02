@@ -23,10 +23,14 @@ export default function App() {
         if (parsedSettings.expectedReturn === undefined) {
           parsedSettings.expectedReturn = 7.0;
         }
-        if (!parsedSettings.language) {
-          parsedSettings.language = 'en';
-          parsedSettings.currency = 'USD';
-          parsedSettings.timeFormat = '12h';
+        if (parsedSettings.language !== undefined) {
+          delete parsedSettings.language;
+          // Silently overwrite legacy settings in the background
+          localStorage.setItem('addiction_settings', JSON.stringify(parsedSettings));
+        }
+        if (!parsedSettings.currency) {
+          parsedSettings.currency = 'EUR';
+          parsedSettings.timeFormat = '24h';
         }
         setSettings(parsedSettings);
         

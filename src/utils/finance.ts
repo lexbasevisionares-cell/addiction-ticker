@@ -7,8 +7,9 @@ export function calculateAccumulated(dailyCost: number, i_percent: number, daysE
     return dailyCost * daysElapsed;
   }
   
-  const result = annualCost * (Math.pow(1 + i, years) - 1) / i;
-  console.log(`CalculateAccumulated: daily=${dailyCost}, i=${i}, days=${daysElapsed}, years=${years.toFixed(2)} -> result=${result.toFixed(2)}`);
+  // Continuous daily saving formula (integral of daily compounding) prevents fractional year drop
+  const result = annualCost * (Math.pow(1 + i, years) - 1) / Math.log(1 + i);
+  // console.log(`CalculateAccumulated: daily=${dailyCost}, i=${i}, days=${daysElapsed}, years=${years.toFixed(2)} -> result=${result.toFixed(2)}`);
   return result;
 }
 
@@ -27,12 +28,13 @@ export function calculateTotalForecast(dailyCost: number, i_percent: number, tot
   
   let result = 0;
   if (Math.abs(r - i) < 0.0001) {
-    result = c * totalYears * Math.pow(1 + r, totalYears - 1);
+    // Limit as r -> i for continuous formula
+    result = c * totalYears * Math.pow(1 + r, totalYears);
   } else {
-    // Standard Growing Annuity Formula (Future Value)
-    result = c * (Math.pow(1 + r, totalYears) - Math.pow(1 + i, totalYears)) / (r - i);
+    // Continuous Growing Annuity (Future Value) - correctly models daily deposits instead of end-of-year lump sums
+    result = c * (Math.pow(1 + r, totalYears) - Math.pow(1 + i, totalYears)) / (Math.log(1 + r) - Math.log(1 + i));
   }
   
-  console.log(`CalculateTotalForecast: daily=${dailyCost}, totalYears=${totalYears.toFixed(2)}, i=${i}, r=${r} -> result=${result.toFixed(2)}`);
+  // console.log(`CalculateTotalForecast: daily=${dailyCost}, totalYears=${totalYears.toFixed(2)}, i=${i}, r=${r} -> result=${result.toFixed(2)}`);
   return result;
 }

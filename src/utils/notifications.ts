@@ -2,7 +2,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { UserSettings } from '../components/Onboarding';
 import { AppState } from '../components/Ticker';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from './finance';
-import { TRANSLATIONS, formatCurrency } from './i18n';
+import { t, formatCurrency } from './i18n';
 
 export async function requestNotificationPermission() {
   try {
@@ -36,7 +36,6 @@ export async function scheduleMotivationPlan(settings: UserSettings, appState: A
     return;
   }
 
-  const t = TRANSLATIONS[settings.language];
   const startDate = new Date(appState.startTime);
   const now = Date.now();
   const notificationsToSchedule: any[] = [];
@@ -65,11 +64,11 @@ export async function scheduleMotivationPlan(settings: UserSettings, appState: A
       
       // Calculate financial stats for THAT exact future day
       const expectedSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, daysElapsed);
-      const formattedExpectedSavings = formatCurrency(expectedSavings, settings.currency, settings.language);
+      const formattedExpectedSavings = formatCurrency(expectedSavings, 'EUR');
       
       // Calculate compound interest secured for 20 years from now based on those savings
       const expectedSecured = calculateSecuredFutureValue(expectedSavings, 20, settings.expectedReturn);
-      const formattedSecured = formatCurrency(expectedSecured, settings.currency, settings.language);
+      const formattedSecured = formatCurrency(expectedSecured, 'EUR');
 
       // Determine the type of message based on the day (to keep it fresh)
       let title = '';

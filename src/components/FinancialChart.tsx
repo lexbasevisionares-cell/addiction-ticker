@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, Tooltip } from 'recharts';
 import { Info, ArrowRight, X as CloseIcon } from 'lucide-react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import type { TranslationStrings } from '../utils/i18n';
 import type { InfoType } from './InfoModal';
 
@@ -68,7 +68,7 @@ export default function FinancialChart({
   const leftValueString = formatCurrency(isFree ? (viewType === 'potential' ? totalDirectSavings : accumulated) : displayData.directCost);
   const rightValueString = formatCurrency(rightSideValue);
 
-  const fontSizeClass = 'text-lg lg:text-2xl';
+  const fontSizeClass = 'text-lg lg:text-3xl 2xl:text-4xl';
 
   return (
     <div className="w-full relative flex flex-col">
@@ -76,29 +76,40 @@ export default function FinancialChart({
         
         {/* Row 1: View Switcher Toggle - Now at the top */}
         {isFree && (
-          <div className="flex justify-center gap-16 lg:gap-24 mt-6 mb-6 lg:mt-10 lg:mb-12 transition-opacity duration-500">
-            <button 
-              onClick={() => onViewTypeChange('secured')}
-              className={`text-xs lg:text-sm uppercase tracking-[0.4em] font-black transition-all relative py-2 ${
-                viewType === 'secured' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'
-              }`}
-            >
-              {t.viewSecured}
-              {viewType === 'secured' && (
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-500 rounded-full animate-in fade-in zoom-in duration-300" />
-              )}
-            </button>
-            <button 
-              onClick={() => onViewTypeChange('potential')}
-              className={`text-xs lg:text-sm uppercase tracking-[0.4em] font-black transition-all relative py-2 ${
-                viewType === 'potential' ? 'text-white' : 'text-zinc-600 hover:text-zinc-400'
-              }`}
-            >
-              {t.viewPotential.replace('{year}', (currentYear + forecastYears).toString())}
-              {viewType === 'potential' && (
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-500 rounded-full animate-in fade-in zoom-in duration-300" />
-              )}
-            </button>
+          <div className="flex justify-center mt-6 mb-6 lg:mt-10 lg:mb-12">
+            <div className="inline-flex items-center p-1 bg-zinc-900/40 backdrop-blur-md rounded-full border border-white/5 relative">
+              <button 
+                onClick={() => onViewTypeChange('secured')}
+                className={`relative px-6 py-2.5 text-[10px] lg:text-xs uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
+                  viewType === 'secured' ? 'text-emerald-400' : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {viewType === 'secured' && (
+                  <motion.div
+                    layoutId="viewSwitcherPill"
+                    className="absolute inset-0 bg-zinc-800/80 rounded-full z-0"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10">{t.viewSecured}</span>
+              </button>
+              
+              <button 
+                onClick={() => onViewTypeChange('potential')}
+                className={`relative px-6 py-2.5 text-[10px] lg:text-xs uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
+                  viewType === 'potential' ? 'text-emerald-400' : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {viewType === 'potential' && (
+                  <motion.div
+                    layoutId="viewSwitcherPill"
+                    className="absolute inset-0 bg-zinc-800/80 rounded-full z-0"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10">{t.viewPotential.replace('{year}', (currentYear + forecastYears).toString())}</span>
+              </button>
+            </div>
           </div>
         )}
 
@@ -119,10 +130,19 @@ export default function FinancialChart({
               className="flex items-center gap-2 lg:gap-3 group cursor-pointer" 
               onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : 'directCost')}
             >
-              <span className={`font-mono tabular-nums ${fontSizeClass} font-bold text-white tracking-tighter transition-all leading-none`}>
-                {leftValueString}
-              </span>
-              <Info size={14} className="text-zinc-600 transition-colors group-hover:text-white" />
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span 
+                  key={viewType}
+                  initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className={`font-mono tabular-nums ${fontSizeClass} font-bold text-white tracking-tighter leading-none block`}
+                >
+                  {leftValueString}
+                </motion.span>
+              </AnimatePresence>
+              <Info size={14} className="text-zinc-600 transition-colors group-hover:text-white shrink-0" />
             </div>
           </div>
 
@@ -137,10 +157,19 @@ export default function FinancialChart({
               className="flex items-center gap-2 lg:gap-3 group cursor-pointer" 
               onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : 'indirectLoss')}
             >
-              <span className={`font-mono tabular-nums ${fontSizeClass} font-bold ${colorClass} tracking-tighter transition-all leading-none`}>
-                {rightValueString}
-              </span>
-              <Info size={14} className={`${isFree ? 'text-zinc-600' : 'text-red-400/50'} transition-colors group-hover:text-current`} />
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span 
+                  key={viewType}
+                  initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className={`font-mono tabular-nums ${fontSizeClass} font-bold ${colorClass} tracking-tighter leading-none block`}
+                >
+                  {rightValueString}
+                </motion.span>
+              </AnimatePresence>
+              <Info size={14} className={`${isFree ? 'text-zinc-600' : 'text-red-400/50'} transition-colors group-hover:text-current shrink-0`} />
             </div>
           </div>
         </div>
@@ -154,7 +183,7 @@ export default function FinancialChart({
       </div>
 
       <div
-        className="h-48 lg:h-[400px] w-full chart-container outline-none focus:outline-none select-none relative mb-4 -mt-4 lg:-mt-6 z-0"
+        className="h-48 lg:h-[320px] 2xl:h-[450px] w-full chart-container outline-none focus:outline-none select-none relative mb-4 -mt-4 lg:-mt-6 z-0"
         onTouchStart={handleInteraction}
         onTouchMove={handleInteraction}
         onMouseEnter={handleInteraction}
@@ -236,7 +265,7 @@ export default function FinancialChart({
                   return (
                     <div className="bg-black/90 backdrop-blur-3xl border border-white/10 px-6 py-4 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.8)] pointer-events-none">
                       <div className="text-[10px] lg:text-xs uppercase tracking-[0.4em] text-zinc-500 font-black mb-2">{t.year} {data.year}</div>
-                      <div className={`font-serif tabular-nums text-2xl lg:text-3xl font-black ${isFree ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <div className={`font-serif tabular-nums text-2xl lg:text-4xl 2xl:text-5xl font-black ${isFree ? 'text-emerald-400' : 'text-red-400'}`}>
                         {formatCurrency(data.investedValue)}
                       </div>
                       {!isFree && (

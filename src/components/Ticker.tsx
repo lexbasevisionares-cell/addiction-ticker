@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, memo } from 'react';
 import { Menu, Share2 } from 'lucide-react';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from '../utils/finance';
-import { TRANSLATIONS, formatCurrency } from '../utils/i18n';
+import { t, formatCurrency } from '../utils/i18n';
 import { UserSettings } from './Onboarding';
 import TimerDisplay from './TimerDisplay';
 import FinancialChart from './FinancialChart';
@@ -35,7 +35,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const [infoModal, setInfoModal] = useState<InfoType | null>(null);
   const [isInvestBannerOpen, setIsInvestBannerOpen] = useState(false);
 
-  const t = TRANSLATIONS[settings.language || 'fi'];
+
 
   useEffect(() => {
     const tick = () => {
@@ -49,7 +49,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     };
 
     tick();
-    const id = setInterval(tick, 1000);
+    // Päivitetään luvut nopeammalla syklillä jotta "elävä" tuotto pyörii sulavasti (esim. 50ms = 20 fps)
+    const id = setInterval(tick, 50);
     return () => clearInterval(id);
   }, []);
 
@@ -72,14 +73,21 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const stableElapsedDays = stableElapsedMs / (1000 * 60 * 60 * 24);
 
   const currentYear = new Date().getFullYear();
-  const targetDate = new Date(currentYear + forecastYears, 0, 1).getTime();
-  const yearsToTargetExact = Math.max(0, (targetDate - stableNow) / (1000 * 60 * 60 * 24 * 365.25));
-  const totalYears = stableElapsedDays / 365.25 + yearsToTargetExact;
+  const stableTargetDate = new Date(currentYear + forecastYears, 0, 1).getTime();
 
-  const accumulated = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, stableElapsedDays);
-  const securedFV = calculateSecuredFutureValue(accumulated, yearsToTargetExact, settings.expectedReturn);
-  const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, totalYears, settings.expectedReturn);
-  const totalDirectSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, totalYears * 365.25);
+  // Reaaliaikaiset mittarit ruutua varten, jotta luvut pyörivät "niin tarkasti kuin ikinä mahdollista"
+  const elapsedDays = Math.max(0, elapsedMs) / (1000 * 60 * 60 * 24);
+  const yearsToTargetExactLive = Math.max(0, (stableTargetDate - now) / (1000 * 60 * 60 * 24 * 365.25));
+  const totalYearsLive = elapsedDays / 365.25 + yearsToTargetExactLive;
+
+  const accumulated = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, elapsedDays);
+  
+  // Oikea salkun nykyarvo, joka sisältää jo kertyneet menneiden kuukausien/vuosien korot säästetylle summalle (real-time velocity)
+  const currentPortfolioValueLive = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedDays / 365.25, settings.expectedReturn);
+  const securedFV = calculateSecuredFutureValue(currentPortfolioValueLive, yearsToTargetExactLive, settings.expectedReturn);
+  
+  const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive, settings.expectedReturn);
+  const totalDirectSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive * 365.25);
 
   const lastTransferTime = appState.lastTransferTime || appState.startTime;
   const pendingDays = (now - lastTransferTime) / (1000 * 60 * 60 * 24);
@@ -106,6 +114,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const graphData = useMemo(() => {
     const data = [];
     const elapsedYears = stableElapsedDays / 365.25;
+    const stableAccumulated = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, stableElapsedDays);
+    const stablePortfolioValue = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedYears, settings.expectedReturn);
 
     if (forecastYears > 0) {
       for (let i = 0; i <= forecastYears; i++) {
@@ -113,10 +123,13 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         const yearsFromStart = elapsedYears + i;
 
         if (isFree) {
-          const directCost = accumulated;
+          const directCost = viewType === 'potential' 
+            ? calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart * 365.25)
+            : stableAccumulated;
+
           const investedValue = viewType === 'potential'
             ? calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart, settings.expectedReturn)
-            : calculateSecuredFutureValue(accumulated, i, settings.expectedReturn);
+            : calculateSecuredFutureValue(stablePortfolioValue, i, settings.expectedReturn);
           
           data.push({ year, directCost, investedValue });
         } else {
@@ -128,12 +141,12 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     } else {
       data.push({
         year: currentYear,
-        directCost: accumulated,
-        investedValue: isFree ? accumulated : calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedYears, settings.expectedReturn)
+        directCost: stableAccumulated,
+        investedValue: isFree ? stablePortfolioValue : calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedYears, settings.expectedReturn)
       });
     }
     return data;
-  }, [accumulated, currentYear, forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, stableElapsedDays, isFree, viewType]);
+  }, [currentYear, forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, stableElapsedDays, isFree, viewType]);
 
   const handleConfirmAction = () => {
     if (modalType === 'quit') {
@@ -144,7 +157,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     setModalType(null);
   };
 
-  const formatCurrencyTicker = (val: number) => formatCurrency(val, settings.currency || 'EUR', settings.language || 'fi');
+  const formatCurrencyTicker = (val: number) => formatCurrency(val, 'EUR');
 
   const handleShare = async () => {
     const url = 'https://addictionticker.netlify.app/';
@@ -191,7 +204,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           </button>
         </div>
 
-        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center px-1 md:px-8 lg:max-w-7xl mx-auto w-full">
+        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] xl:grid-cols-[minmax(0,4fr)_minmax(0,6fr)] lg:gap-16 xl:gap-24 lg:items-center px-1 md:px-8 xl:px-12 lg:max-w-[1400px] 2xl:max-w-[1700px] mx-auto w-full">
           <div className="flex flex-col items-center justify-center w-full lg:order-1 mt-1 mb-0 lg:my-0 lg:h-full relative lg:space-y-12">
             <TimerDisplay
               isFree={isFree}
@@ -202,8 +215,6 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               colorClass={colorClass}
               t={t}
               startTime={appState.startTime}
-              timeFormat={settings.timeFormat}
-              language={settings.language}
             />
 
             <div className="hidden lg:flex w-full flex-col items-center gap-6 mt-12">

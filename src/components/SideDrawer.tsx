@@ -27,49 +27,49 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 bottom-0 w-64 bg-zinc-900 border-l border-white/10 z-50 p-6 flex flex-col shadow-2xl"
+            className="fixed top-0 right-0 bottom-0 w-64 lg:w-[400px] xl:w-[480px] bg-zinc-900 border-l border-white/10 z-50 p-6 lg:p-12 flex flex-col shadow-2xl"
           >
-            <div className="flex justify-between items-center mb-8">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">{t.settingsTitle}</span>
-              <button onClick={onClose} className="text-zinc-400 hover:text-white p-2 -mr-2">
-                <X size={20} />
+            <div className="flex justify-between items-center mb-8 lg:mb-16">
+              <span className="text-xs lg:text-sm font-bold text-zinc-500 uppercase tracking-[0.2em]">{t.settingsTitle}</span>
+              <button onClick={onClose} className="text-zinc-400 hover:text-white p-2 -mr-2 transition-transform hover:scale-110">
+                <X size={24} className="lg:w-8 lg:h-8" />
               </button>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 lg:gap-6">
               <button
                 onClick={() => { onEditSettings(); }}
-                className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
+                className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-300 hover:text-white hover:bg-white/5 p-3 lg:p-5 rounded-2xl transition-all text-left"
               >
-                <SettingsIcon size={18} className="text-zinc-400" />
+                <SettingsIcon size={20} className="lg:w-8 lg:h-8 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                 {t.settingsTitle}
               </button>
               <button
                 onClick={() => { onShowInfo('logic'); }}
-                className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
+                className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-300 hover:text-white hover:bg-white/5 p-3 lg:p-5 rounded-2xl transition-all text-left"
               >
-                <HelpCircle size={18} className="text-zinc-400" />
+                <HelpCircle size={20} className="lg:w-8 lg:h-8 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                 {t.howItWorks}
               </button>
               <button
                 onClick={() => { onShowInfo('about'); }}
-                className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
+                className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-300 hover:text-white hover:bg-white/5 p-3 lg:p-5 rounded-2xl transition-all text-left"
               >
-                <Info size={18} className="text-zinc-400" />
+                <Info size={20} className="lg:w-8 lg:h-8 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                 {t.aboutApp}
               </button>
               <button
                 onClick={() => { onShowInfo('privacy'); }}
-                className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
+                className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-300 hover:text-white hover:bg-white/5 p-3 lg:p-5 rounded-2xl transition-all text-left"
               >
-                <ShieldCheck size={18} className="text-zinc-400" />
+                <ShieldCheck size={20} className="lg:w-8 lg:h-8 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                 {t.privacyTitle}
               </button>
               <button
                 onClick={() => { onShowInfo('disclaimer'); }}
-                className="flex items-center gap-3 text-sm text-zinc-300 hover:text-white hover:bg-white/5 p-3 rounded-xl transition-colors text-left"
+                className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-300 hover:text-white hover:bg-white/5 p-3 lg:p-5 rounded-2xl transition-all text-left"
               >
-                <Scale size={18} className="text-zinc-400" />
+                <Scale size={20} className="lg:w-8 lg:h-8 text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                 {t.disclaimerTitle || 'Vastuuvapauslauseke'}
               </button>
             </div>

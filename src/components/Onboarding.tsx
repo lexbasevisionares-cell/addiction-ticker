@@ -4,15 +4,13 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import WheelPicker from './WheelPicker';
 import OnboardingWelcome from './OnboardingWelcome';
 import OnboardingStatusScreen from './OnboardingStatusScreen';
-import { Language, Currency, TimeFormat, TRANSLATIONS, getCurrencySymbol } from '../utils/i18n';
+import { t, getCurrencySymbol } from '../utils/i18n';
 
 export interface UserSettings {
   dailyCost: number;
   annualPriceIncrease: number;
   expectedReturn: number;
-  language: Language;
-  currency: Currency;
-  timeFormat: TimeFormat;
+
   notificationLevel: number;
 }
 
@@ -36,9 +34,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   const [showWelcome, setShowWelcome] = useState(!initialSettings);
   const [step, setStep] = useState(0);
 
-  const [configLang, setConfigLang] = useState<Language | null>(initialSettings?.language || null);
-  const [configCurrency, setConfigCurrency] = useState<Currency>(initialSettings?.currency || 'EUR');
-  const [configTime, setConfigTime] = useState<TimeFormat>(initialSettings?.timeFormat || '24h');
+
 
   const [statusType, setStatusType] = useState<'now' | 'past' | 'hooked' | null>(null);
   const [pastDate, setPastDate] = useState(getLocalDatetimeString());
@@ -60,16 +56,9 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   });
 
   const screens: { type: string; data: any }[] = [];
-  if (!initialSettings) {
-    screens.push({ type: 'language', data: null });
-    if (configLang === 'en') {
-      screens.push({ type: 'currency', data: null });
-      screens.push({ type: 'timeFormat', data: null });
-    }
-  }
 
   const activeQuestions = [
-    { id: 'dailyCost', labelKey: 'qDailyCost', suffix: getCurrencySymbol(configCurrency), min: 0, max: 100, decimals: 2 },
+    { id: 'dailyCost', labelKey: 'qDailyCost', suffix: getCurrencySymbol('EUR'), min: 0, max: 100, decimals: 2 },
     { id: 'annualPriceIncrease', labelKey: 'qAnnualIncrease', suffix: '%', min: 0, max: 20, decimals: 1 },
     { id: 'expectedReturn', labelKey: 'qExpectedReturn', suffix: '%', min: 0, max: 20, decimals: 1 },
   ];
@@ -86,10 +75,8 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   }
 
   const currentScreen = screens[step];
-  const t = TRANSLATIONS[configLang || 'en'];
 
   const handleNext = () => {
-    if (currentScreen.type === 'language' && !configLang) return;
     if (currentScreen.type === 'status' && !statusType) return;
 
     if (step < screens.length - 1) {
@@ -103,42 +90,21 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         dailyCost: answers.dailyCost,
         annualPriceIncrease: answers.annualPriceIncrease,
         expectedReturn: answers.expectedReturn,
-        language: configLang || 'en',
-        currency: configCurrency,
-        timeFormat: configTime,
+
         notificationLevel: (answers as any).notificationLevel !== undefined ? (answers as any).notificationLevel : 3
       }, status);
     }
   };
 
-  const handleLanguageSelect = (lang: Language) => {
-    handleLanguageChange(lang);
-  };
-
-  const handleLanguageChange = (lang: Language) => {
-    setConfigLang(lang);
-    if (lang === 'fi') {
-      setConfigCurrency('EUR');
-      setConfigTime('24h');
-    } else {
-      setConfigCurrency('USD');
-      setConfigTime('12h');
-    }
-  };
-
   const getScreenTitle = (): string => {
-    if (currentScreen.type === 'language') return TRANSLATIONS['en'].selectLanguage;
-    if (currentScreen.type === 'currency') return t.selectCurrency;
-    if (currentScreen.type === 'timeFormat') return t.selectTimeFormat;
+
     if (currentScreen.type === 'status') return t.statusTitle;
     if (currentScreen.type === 'past-date') return t.statusPastTitle;
     if (currentScreen.type === 'question') return (t as any)[currentScreen.data!.labelKey];
     return '';
   };
 
-  const isNextDisabled =
-    (currentScreen.type === 'language' && !configLang) ||
-    (currentScreen.type === 'status' && !statusType);
+  const isNextDisabled = currentScreen.type === 'status' && !statusType;
 
   // BORDERLESS STYLING
   const containerClass = 'flex flex-col gap-4 items-center justify-center w-full relative transition-all duration-500';
@@ -151,49 +117,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
      ${dimmed && !selected ? 'filter blur-[1px]' : ''}`;
 
   const renderScreenContent = () => {
-    if (currentScreen.type === 'language') {
-      return (
-        <div className={containerClass}>
-          {(['en', 'fi'] as Language[]).map(lang => (
-            <button key={lang} onClick={() => handleLanguageSelect(lang)}
-              className={optionClass(configLang === lang, !!configLang)}>
-              <span className="text-4xl lg:text-5xl relative z-10 mb-2">{lang === 'en' ? '🇺🇸' : '🇫🇮'}</span>
-              <span className={`font-sans text-lg lg:text-xl font-medium tracking-tight relative z-10 ${configLang === lang ? 'text-black' : 'text-white/90'}`}>{lang === 'en' ? 'English' : 'Suomi'}</span>
-            </button>
-          ))}
-        </div>
-      );
-    }
 
-    if (currentScreen.type === 'currency') {
-      return (
-        <div className={containerClass}>
-          <div className="flex flex-col gap-4 w-full items-center">
-            {(['USD', 'EUR', 'GBP'] as Currency[]).map(c => (
-              <button key={c} onClick={() => setConfigCurrency(c)}
-                className={optionClass(configCurrency === c, true)}>
-                <span className={`text-3xl font-mono font-medium relative z-10 ${configCurrency === c ? 'text-black' : 'text-white/90'}`}>{getCurrencySymbol(c)}</span>
-                <span className={`font-medium uppercase tracking-[0.2em] text-[10px] relative z-10 ${configCurrency === c ? 'text-black/60' : 'text-zinc-500'}`}>{c}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    if (currentScreen.type === 'timeFormat') {
-      return (
-        <div className={containerClass}>
-          {(['24h', '12h'] as TimeFormat[]).map(fmt => (
-            <button key={fmt} onClick={() => setConfigTime(fmt)}
-              className={optionClass(configTime === fmt, true)}>
-              <span className={`text-3xl font-mono font-medium tracking-tighter relative z-10 ${configTime === fmt ? 'text-black' : 'text-white/90'}`}>{fmt === '24h' ? '14:30' : '2:30 PM'}</span>
-              <span className={`font-medium uppercase tracking-[0.2em] text-[10px] relative z-10 ${configTime === fmt ? 'text-black/60' : 'text-zinc-500'}`}>{fmt === '24h' ? '24-hour' : '12-hour'}</span>
-            </button>
-          ))}
-        </div>
-      );
-    }
 
     if (currentScreen.type === 'status') {
       return (
@@ -233,7 +157,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
             max={currentScreen.data!.max}
             decimals={currentScreen.data!.decimals}
             suffix={currentScreen.data!.suffix}
-            locale={configLang === 'fi' ? 'fi-FI' : 'en-US'}
+            locale="fi-FI"
             onChange={(val) => setAnswers(prev => ({ ...prev, [currentScreen.data!.id]: val }))}
           />
         </div>
@@ -318,7 +242,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                     }`}
                   >
                     <span className="relative z-10">
-                      {step === screens.length - 1 ? t.done : (currentScreen.type === 'language' ? TRANSLATIONS['en'].next : t.next)}
+                      {step === screens.length - 1 ? t.done : t.next}
                     </span>
                     {!isNextDisabled && (
                       <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />

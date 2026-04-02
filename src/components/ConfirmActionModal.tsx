@@ -2,7 +2,7 @@ import { X } from 'lucide-react';
 import { motion } from 'motion/react';
 import SlideToConfirm from './SlideToConfirm';
 import { UserSettings } from './Onboarding';
-import { TRANSLATIONS } from '../utils/i18n';
+import { t } from '../utils/i18n';
 
 interface Props {
   type: 'quit' | 'relapse' | 'reset';
@@ -14,7 +14,7 @@ interface Props {
 export default function ConfirmActionModal({ type, onConfirm, onCancel, settings }: Props) {
   const isQuit = type === 'quit';
   const isReset = type === 'reset';
-  const t = TRANSLATIONS[settings.language || 'fi'];
+
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
