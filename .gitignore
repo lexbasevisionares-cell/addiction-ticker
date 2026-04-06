@@ -6,3 +6,14 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Apple signing secrets (NEVER commit these!)
+*.p12
+*.p8
+*.pem
+*.cer
+*.key
+*.mobileprovision
+*.certSigningRequest
+*.b64.txt
+MIHIN_JAIMME_*.md
