@@ -25,7 +25,7 @@ export default function TimerDisplay({ isFree, days, hours, minutes, seconds, co
 
   return (
     <div className="flex flex-col items-center w-full relative">
-      <div className="text-[12px] lg:text-base font-black text-white uppercase tracking-[0.5em] mb-8 lg:mb-12">
+      <div className="text-[12px] lg:text-base font-black text-white uppercase tracking-[0.5em] mb-4 lg:mb-12">
         {t.tickerHeader}
       </div>
 

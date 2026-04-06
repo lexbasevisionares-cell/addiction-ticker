@@ -239,7 +239,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
     >
       
       {/* Top Segmented Progress Bar */}
-      <div className="absolute top-8 md:top-10 w-full max-w-lg px-6 flex gap-1 z-50 pointer-events-none">
+      <div className="absolute top-14 md:top-10 w-full max-w-lg px-6 flex gap-1 z-50 pointer-events-none">
         {PHASES.map((_, i) => (
           <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
             <motion.div 
@@ -252,7 +252,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
         ))}
       </div>
 
-      <div className="absolute top-16 md:top-20 w-full flex justify-center pointer-events-none z-40">
+      <div className="absolute top-20 md:top-20 w-full flex justify-center pointer-events-none z-40">
         <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.8em]">Addiction Ticker</span>
       </div>
 
@@ -294,14 +294,14 @@ export default function OnboardingWelcome({ onStart }: Props) {
       </motion.div>
 
       {/* Narrative Layer Engine */}
-      <div className="max-w-4xl w-full px-6 flex flex-col items-center text-center z-10 pointer-events-none absolute top-[42%] md:top-[42%] -translate-y-1/2">
+      <div className="max-w-4xl w-full px-6 flex flex-col items-center text-center z-10 pointer-events-none absolute top-[45%] md:top-[42%] -translate-y-1/2">
         <AnimatePresence mode="wait">
           {renderNarrative()}
         </AnimatePresence>
       </div>
 
       {/* Action Section */}
-      <div className="absolute bottom-16 md:bottom-20 w-full max-w-sm px-6 flex flex-col items-center z-50">
+      <div className="absolute bottom-10 md:bottom-20 w-full max-w-sm px-6 flex flex-col items-center z-50">
         <motion.button
           onClick={(e) => { e.stopPropagation(); onStart(); }}
           animate={isFinalPhase ? { 

@@ -63,6 +63,7 @@ jobs:
         working-directory: ./ios/App
         env:
           APP_PROVISIONING_PROFILE_NAME: ${{ secrets.APP_PROVISIONING_PROFILE_NAME }}
+          BUILD_NUMBER: ${{ github.run_number }}
         run: |
           xcodebuild archive \
             -project App.xcodeproj \
@@ -71,7 +72,8 @@ jobs:
             -archivePath $PWD/build/App.xcarchive \
             CODE_SIGN_STYLE="Manual" \
             PROVISIONING_PROFILE_SPECIFIER="$APP_PROVISIONING_PROFILE_NAME" \
-            CODE_SIGN_IDENTITY="Apple Distribution"
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
             
       - name: Export to IPA
         working-directory: ./ios/App

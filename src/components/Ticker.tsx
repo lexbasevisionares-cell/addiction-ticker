@@ -197,15 +197,15 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
   return (
     <div className="min-h-[100dvh] bg-[#050505] font-sans flex flex-col text-white overflow-x-hidden overflow-y-auto relative">
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col justify-center min-h-[100dvh] lg:min-h-[auto] py-6 lg:py-16">
-        <div className="absolute right-4 top-4 lg:fixed lg:right-10 lg:top-10 z-50">
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col justify-center min-h-[100dvh] lg:min-h-[auto] pt-10 pb-4 lg:py-16">
+        <div className="absolute right-4 top-8 lg:fixed lg:right-10 lg:top-10 z-50">
           <button onClick={() => setIsMenuOpen(true)} className="text-zinc-600 hover:text-white transition-all p-4 lg:p-6 bg-white/[0.02] hover:bg-white/[0.05] backdrop-blur-xl rounded-full border border-white/5 shadow-2xl" aria-label="Valikko">
             <Menu className="w-5 h-5 lg:w-8 lg:h-8" />
           </button>
         </div>
 
         <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] xl:grid-cols-[minmax(0,4fr)_minmax(0,6fr)] lg:gap-16 xl:gap-24 lg:items-center px-1 md:px-8 xl:px-12 lg:max-w-[1400px] 2xl:max-w-[1700px] mx-auto w-full">
-          <div className="flex flex-col items-center justify-center w-full lg:order-1 mt-1 mb-0 lg:my-0 lg:h-full relative lg:space-y-12">
+          <div className="flex flex-col items-center justify-center w-full lg:order-1 mt-0 mb-0 lg:my-0 lg:h-full relative lg:space-y-12">
             <TimerDisplay
               isFree={isFree}
               days={days}
