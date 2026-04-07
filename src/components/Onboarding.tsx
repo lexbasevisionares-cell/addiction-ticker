@@ -177,7 +177,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   };
 
   return (
-    <div className="h-[100dvh] bg-[#050505] text-white flex flex-col font-sans overflow-hidden relative">
+    <div className="h-full bg-[#050505] text-white flex flex-col font-sans overflow-hidden relative">
       
       {/* Floating Background Texture (Matrix-like) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.015] flex flex-wrap content-start font-mono text-[10px] break-all leading-none">

@@ -212,7 +212,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
 
   return (
     <div 
-      className="fixed inset-0 h-[100dvh] bg-[#050505] text-white flex flex-col font-sans overflow-hidden cursor-pointer selection:bg-transparent"
+      className="h-full bg-[#050505] text-white flex flex-col font-sans overflow-hidden cursor-pointer selection:bg-transparent relative"
       onClick={handleTap}
     >
       
