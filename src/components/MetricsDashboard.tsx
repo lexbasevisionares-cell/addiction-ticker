@@ -24,12 +24,12 @@ interface Props {
 
 // MetricCard — ulkopuolella renderöintifunktiota
 function MetricCard({ 
-  label, value, infoType, isHighlight = false, colorClass, formatCurrency, onShowInfo, children 
+  label, value, infoType, isActive = false, colorClass, formatCurrency, onShowInfo, children 
 }: { 
   label: string; 
   value: number; 
   infoType: InfoType; 
-  isHighlight?: boolean; 
+  isActive?: boolean; 
   colorClass: string; 
   formatCurrency: (v: number) => string; 
   onShowInfo: (type: InfoType) => void;
@@ -38,24 +38,20 @@ function MetricCard({
   return (
     <div 
       onClick={() => onShowInfo(infoType)}
-      className={`w-full cursor-pointer group rounded-2xl px-4 py-3 lg:px-5 lg:py-4 transition-all ${
-        isHighlight 
-          ? 'bg-white/[0.04]' 
-          : 'bg-white/[0.02] hover:bg-white/[0.03]'
-      }`}
+      className="w-full cursor-pointer group rounded-2xl px-4 py-3 lg:px-5 lg:py-4 transition-all bg-white/[0.02] hover:bg-white/[0.04]"
     >
-      <div className="flex items-center gap-1.5 mb-1">
-        <span className={`text-[11px] lg:text-[13px] uppercase tracking-[0.06em] font-bold leading-tight ${
-          isHighlight ? 'text-zinc-300' : 'text-zinc-500 group-hover:text-zinc-400'
+      <div className="flex items-center gap-1.5 mb-2">
+        <span className={`text-xs lg:text-sm uppercase tracking-[0.06em] font-bold leading-tight ${
+          isActive ? 'text-zinc-300' : 'text-zinc-500 group-hover:text-zinc-300'
         } transition-colors`}>
           {label}
         </span>
-        <Info size={12} className="text-zinc-700 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
+        <Info size={14} className="text-zinc-600 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
       </div>
-      <span className={`font-mono tabular-nums font-black tracking-tight block ${
-        isHighlight 
-          ? `text-4xl lg:text-5xl ${colorClass}` 
-          : 'text-3xl lg:text-4xl text-zinc-200 group-hover:text-white'
+      <span className={`font-mono tabular-nums font-black tracking-tight block text-4xl lg:text-5xl ${
+        isActive 
+          ? colorClass 
+          : 'text-zinc-300 group-hover:text-white'
       } transition-colors`}>
         {formatCurrency(value)}
       </span>
@@ -76,11 +72,12 @@ export default function MetricsDashboard({
   return (
     <div className="w-full flex flex-col gap-2 px-3">
 
-      {/* JO SAAVUTETTU — Kortit 1 & 2 */}
+      {/* JO SAAVUTETTU — Kortit 1 & 2 (Aktiiviset) */}
       <MetricCard 
         label={isFree ? t.dashSaved : t.dashLost}
         value={accumulated}
         infoType={isFree ? 'savedNow' : 'lostNow'}
+        isActive={true}
         colorClass={colorClass}
         formatCurrency={formatCurrency}
         onShowInfo={onShowInfo}
@@ -120,6 +117,7 @@ export default function MetricsDashboard({
         label={(isFree ? t.dashInvested : t.dashLostInvested).replace('{years}', yrs)}
         value={securedFV}
         infoType={isFree ? 'valueInYear' : 'lostInvestment'}
+        isActive={true}
         colorClass={colorClass}
         formatCurrency={formatCurrency}
         onShowInfo={onShowInfo}
@@ -130,11 +128,12 @@ export default function MetricsDashboard({
         {children}
       </div>
 
-      {/* TÄTÄ MENOA SAAVUTETTAVA — Kortit 3 & 4 */}
+      {/* TÄTÄ MENOA SAAVUTETTAVA — Kortit 3 & 4 (Kuolleet) */}
       <MetricCard 
         label={(isFree ? t.dashPureSavings : t.dashPureCosts).replace('{years}', yrs)}
         value={totalDirectSavings}
         infoType={isFree ? 'totalSaved' : 'directCost'}
+        isActive={false}
         colorClass={colorClass}
         formatCurrency={formatCurrency}
         onShowInfo={onShowInfo}
@@ -144,7 +143,7 @@ export default function MetricsDashboard({
         label={(isFree ? t.dashTotalWealth : t.dashLostWealth).replace('{years}', yrs)}
         value={totalForecast}
         infoType={isFree ? 'potential' : 'indirectLoss'}
-        isHighlight={true}
+        isActive={false}
         colorClass={colorClass}
         formatCurrency={formatCurrency}
         onShowInfo={onShowInfo}
