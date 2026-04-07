@@ -13,7 +13,7 @@ interface Props {
   totalForecast: number;
   forecastYears: number;
   currentYear: number;
-  formatCurrency: (value: number) => string;
+  formatCurrency: (value: number, fractionDigits?: number) => string;
   t: TranslationStrings;
   onShowInfo: (type: InfoType) => void;
   pendingAmount: string | null;
@@ -31,7 +31,7 @@ function MetricCard({
   infoType: InfoType; 
   isActive?: boolean; 
   colorClass: string; 
-  formatCurrency: (v: number) => string; 
+  formatCurrency: (v: number, fractionDigits?: number) => string; 
   onShowInfo: (type: InfoType) => void;
   children?: React.ReactNode;
 }) {
@@ -53,7 +53,7 @@ function MetricCard({
           ? colorClass 
           : 'text-zinc-300 group-hover:text-white'
       } transition-colors`}>
-        {formatCurrency(value)}
+        {formatCurrency(value, isActive ? 3 : 2)}
       </span>
       {children}
     </div>

@@ -166,8 +166,8 @@ export function getCurrencySymbol(currency: Currency) {
   }
 }
 
-export function formatCurrency(value: number, currency: Currency) {
-  return new Intl.NumberFormat('fi-FI', { style: 'currency', currency: currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+export function formatCurrency(value: number, currency: Currency, fractionDigits: number = 2) {
+  return new Intl.NumberFormat('fi-FI', { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(value);
 }
 
 export const t = TRANSLATIONS.fi;

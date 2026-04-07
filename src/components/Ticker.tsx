@@ -121,7 +121,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     setModalType(null);
   };
 
-  const formatCurrencyTicker = (val: number) => formatCurrency(val, 'EUR');
+  const formatCurrencyTicker = (val: number, fractionDigits: number = 2) => formatCurrency(val, 'EUR', fractionDigits);
 
   const handleShare = async () => {
     const url = 'https://addictionticker.netlify.app/';
