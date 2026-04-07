@@ -53,60 +53,9 @@ function MetricCard({
           ? colorClass 
           : 'text-zinc-300 group-hover:text-white'
       } transition-colors`}>
-        {formatCurrency(value, 2)}
+        {formatCurrency(value, isActive ? 3 : 2)}
       </span>
       {children}
-    </div>
-  );
-}
-
-function ClockMetricCard({ 
-  label, value, infoType, colorClass, onShowInfo, children 
-}: { 
-  label: string; 
-  value: number; 
-  infoType: InfoType; 
-  colorClass: string; 
-  onShowInfo: (type: InfoType) => void;
-  children?: React.ReactNode;
-}) {
-  const valueStr = value.toFixed(4);
-  const [euroParts, decParts] = valueStr.split('.');
-  const euros = euroParts;
-  const cents = decParts ? decParts.substring(0, 2) : '00';
-  const parts = decParts ? decParts.substring(2, 4) : '00';
-
-  return (
-    <div 
-      onClick={() => onShowInfo(infoType)}
-      className="w-full cursor-pointer group rounded-2xl px-2 py-4 lg:py-6 transition-all bg-white/[0.02] hover:bg-white/[0.04] flex flex-col items-center relative"
-    >
-      <div className="flex items-center gap-1.5 mb-3 lg:mb-5 opacity-80 group-hover:opacity-100 transition-opacity">
-        <div className={`w-1.5 h-1.5 rounded-full ${colorClass} animate-pulse`} />
-        <span className={`text-xs lg:text-sm uppercase tracking-[0.06em] font-bold leading-tight ${colorClass}`}>
-          {label}
-        </span>
-        <Info size={14} className={`${colorClass} opacity-60`} />
-      </div>
-
-      <div className="flex items-baseline justify-center gap-3 md:gap-5 lg:gap-6 font-serif tracking-tighter">
-        <div className="flex flex-col items-center">
-          <span className={`text-4xl md:text-5xl lg:text-6xl font-black ${colorClass} leading-none tabular-nums`}>{euros}</span>
-          <span className="text-[9px] md:text-xs lg:text-sm uppercase tracking-[0.2em] font-medium text-zinc-500 mt-2">Euroa</span>
-        </div>
-        <span className="text-xl md:text-2xl lg:text-3xl text-zinc-600 font-light -mt-4">:</span>
-        <div className="flex flex-col items-center">
-          <span className={`text-4xl md:text-5xl lg:text-6xl font-black ${colorClass} leading-none tabular-nums`}>{cents}</span>
-          <span className="text-[9px] md:text-xs lg:text-sm uppercase tracking-[0.2em] font-medium text-zinc-500 mt-2">Senttiä</span>
-        </div>
-        <span className="text-xl md:text-2xl lg:text-3xl text-zinc-600 font-light -mt-4">:</span>
-        <div className="flex flex-col items-center">
-          <span className={`text-4xl md:text-5xl lg:text-6xl font-black ${colorClass} leading-none tabular-nums w-[2ch] mx-auto text-center`}>{parts}</span>
-          <span className="text-[9px] md:text-xs lg:text-sm uppercase tracking-[0.2em] font-medium text-zinc-500 mt-2">Osaa</span>
-        </div>
-      </div>
-      
-      {children && <div className="mt-3 w-full flex justify-center">{children}</div>}
     </div>
   );
 }
@@ -124,11 +73,13 @@ export default function MetricsDashboard({
     <div className="w-full flex flex-col gap-2 px-3">
 
       {/* JO SAAVUTETTU — Kortit 1 & 2 (Aktiiviset) */}
-      <ClockMetricCard 
+      <MetricCard 
         label={isFree ? t.dashSaved : t.dashLost}
         value={accumulated}
         infoType={isFree ? 'savedNow' : 'lostNow'}
+        isActive={true}
         colorClass={colorClass}
+        formatCurrency={formatCurrency}
         onShowInfo={onShowInfo}
       >
         {/* Sijoitussiirtomuistutus upotettu korttiin 1 */}
@@ -160,7 +111,7 @@ export default function MetricsDashboard({
             </motion.div>
           )}
         </AnimatePresence>
-      </ClockMetricCard>
+      </MetricCard>
 
       <MetricCard 
         label={(isFree ? t.dashInvested : t.dashLostInvested).replace('{years}', yrs)}
