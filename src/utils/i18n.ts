@@ -50,6 +50,7 @@ export const TRANSLATIONS = {
     potentialYearsSuffix: 'vuodessa',
     // Settings
     settingsTitle: 'Asetukset',
+    menuTitle: 'Valikko',
     preferences: 'Kieli & Alue',
     languageLabel: 'Kieli',
     currencyLabel: 'Valuutta',

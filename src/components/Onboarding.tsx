@@ -177,22 +177,8 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   };
 
   return (
-    <div className="h-[100dvh] bg-[#050505] text-white flex flex-col font-sans overflow-hidden touch-action-none relative">
+    <div className="h-[100dvh] bg-[#050505] text-white flex flex-col font-sans overflow-hidden relative">
       
-      {/* Top Segmented Progress Bar */}
-      <div className="absolute top-8 md:top-10 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 flex gap-1 z-50 pointer-events-none">
-        {screens.map((_, i) => (
-           <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
-             <div className={`h-full transition-all duration-500 ease-out ${i <= step ? 'bg-white w-full' : 'bg-transparent w-0'}`} />
-           </div>
-        ))}
-      </div>
-
-      {/* Branding Header */}
-      <div className="absolute top-16 md:top-20 w-full flex justify-center pointer-events-none z-40">
-        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.8em]">Addiction Ticker</span>
-      </div>
-
       {/* Floating Background Texture (Matrix-like) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-[0.015] flex flex-wrap content-start font-mono text-[10px] break-all leading-none">
         {bgNumbers.map((num, i) => (
@@ -200,60 +186,69 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         ))}
       </div>
 
-      <div className="w-full max-w-4xl lg:max-w-7xl mx-auto flex-1 flex flex-col relative z-10 px-6">
-        <div className="flex-1 relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={step}
-              initial={{ opacity: 0, y: 30, filter: 'blur(15px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -30, filter: 'blur(15px)' }}
-              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }} 
-              className="absolute inset-0 flex flex-col items-center justify-start pt-[25dvh]"
-            >
-              <div className="w-full flex flex-col items-center justify-center gap-2 md:gap-4 max-w-lg">
-                <h1 className={`font-sans font-black tracking-tight text-white leading-[1.1] text-center text-balance px-4 ${
-                  currentScreen.type === 'question' 
-                    ? 'text-[22px] md:text-3xl lg:text-4xl' 
-                    : 'text-3xl md:text-4xl lg:text-5xl'
-                }`}>
-                  {getScreenTitle()}
-                </h1>
-
-                <div className="w-full flex justify-center">
-                  {renderScreenContent()}
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+      {/* Top Section: Progress Bar + Title */}
+      <div className="shrink-0 pt-8 md:pt-10 pb-2 flex flex-col items-center w-full z-20">
+        <div className="w-full max-w-lg px-6 flex gap-1 pointer-events-none">
+          {screens.map((_, i) => (
+             <div key={i} className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
+               <div className={`h-full transition-all duration-500 ease-out ${i <= step ? 'bg-white w-full' : 'bg-transparent w-0'}`} />
+             </div>
+          ))}
         </div>
+        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.8em] mt-4">Addiction Ticker</span>
+      </div>
 
-        {/* Centralized Fixed Navigation Buttons */}
-        <div className="absolute bottom-24 md:bottom-32 left-0 right-0 w-full flex justify-center items-center gap-2 md:gap-4 px-6 z-50">
-          <button
-            onClick={handleBack}
-            className="flex items-center justify-center p-4 md:p-6 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all active:scale-[0.95] border border-white/5 shrink-0 backdrop-blur-sm"
-            aria-label={t.back || 'Back'}
+      {/* Middle Section: Question + Input — fills available space, centered */}
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0 px-6 z-10">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 30, filter: 'blur(15px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -30, filter: 'blur(15px)' }}
+            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }} 
+            className="w-full flex flex-col items-center justify-center max-w-lg"
           >
-            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 stroke-[3]" />
-          </button>
-          <button
-            onClick={handleNext}
-            disabled={isNextDisabled}
-            className={`relative flex items-center justify-center font-black py-4 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] text-[9px] md:text-xs tracking-[0.3em] uppercase group flex-1 max-w-[280px] ${
-              isNextDisabled 
-                ? 'bg-white/5 text-white/20 cursor-not-allowed' 
-                : 'bg-white text-black hover:scale-[1.05] active:scale-[0.95] shadow-[0_0_30px_rgba(255,255,255,0.1)] backdrop-blur-sm'
-            }`}
-          >
-            <span className="relative z-10">
-              {step === screens.length - 1 ? t.done : t.next}
-            </span>
-            {!isNextDisabled && (
-              <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
-            )}
-          </button>
-        </div>
+            <h1 className={`font-sans font-black tracking-tight text-white leading-[1.1] text-center text-balance px-4 mb-4 ${
+              currentScreen.type === 'question' 
+                ? 'text-[22px] md:text-3xl lg:text-4xl' 
+                : 'text-3xl md:text-4xl lg:text-5xl'
+            }`}>
+              {getScreenTitle()}
+            </h1>
+
+            <div className="w-full flex justify-center">
+              {renderScreenContent()}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom Section: Navigation Buttons */}
+      <div className="shrink-0 w-full flex justify-center items-center gap-2 md:gap-4 px-6 pb-8 md:pb-12 pt-4 z-50">
+        <button
+          onClick={handleBack}
+          className="flex items-center justify-center p-4 md:p-6 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all active:scale-[0.95] border border-white/5 shrink-0 backdrop-blur-sm"
+          aria-label={t.back || 'Back'}
+        >
+          <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 stroke-[3]" />
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={isNextDisabled}
+          className={`relative flex items-center justify-center font-black py-4 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] text-[9px] md:text-xs tracking-[0.3em] uppercase group flex-1 max-w-[280px] ${
+            isNextDisabled 
+              ? 'bg-white/5 text-white/20 cursor-not-allowed' 
+              : 'bg-white text-black hover:scale-[1.05] active:scale-[0.95] shadow-[0_0_30px_rgba(255,255,255,0.1)] backdrop-blur-sm'
+          }`}
+        >
+          <span className="relative z-10">
+            {step === screens.length - 1 ? t.done : t.next}
+          </span>
+          {!isNextDisabled && (
+            <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+          )}
+        </button>
       </div>
     </div>
   );
