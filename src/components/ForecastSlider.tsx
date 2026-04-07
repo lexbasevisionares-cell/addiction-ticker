@@ -18,15 +18,7 @@ export default function ForecastSlider({
   formatCurrency, t, onShowInfo
 }: Props) {
   return (
-    <div className="w-full mt-2 lg:mt-8 px-4">
-      <div className="flex justify-between items-end mb-4 lg:mb-8 px-0 lg:px-4">
-        <span className="text-[9px] text-zinc-500 uppercase tracking-[0.4em] font-bold opacity-60">
-          {t.timeline}
-        </span>
-        <span className="font-mono tabular-nums text-xl lg:text-3xl text-white/90 font-bold tracking-tight">
-          {forecastYears} {t.years}
-        </span>
-      </div>
+    <div className="w-full py-1">
       <input
         type="range"
         min="1"
@@ -34,9 +26,13 @@ export default function ForecastSlider({
         value={forecastYears}
         onChange={(e) => onForecastChange(parseInt(e.target.value))}
         style={{ background: `linear-gradient(to right, ${gradientColor} ${((forecastYears - 1) / 74) * 100}%, #18181b ${((forecastYears - 1) / 74) * 100}%)` }}
-        className="custom-slider w-full h-1 lg:h-1.5 rounded-full appearance-none cursor-pointer mb-4 lg:mb-16 transition-all"
+        className="custom-slider w-full h-1 lg:h-1.5 rounded-full appearance-none cursor-pointer transition-all"
       />
-      
+      <div className="flex justify-center mt-2">
+        <span className="text-[9px] lg:text-[10px] text-zinc-600 font-mono tracking-wider">
+          {forecastYears} {t.years} → {new Date().getFullYear() + forecastYears}
+        </span>
+      </div>
     </div>
   );
 }

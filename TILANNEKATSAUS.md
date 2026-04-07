@@ -49,14 +49,14 @@
 
 ## 📋 Viimeisimmät muutokset (7.4.2026)
 
-### 🔧 Kriittinen layout-bugikorjaus (commit c4aec65)
-- **Ongelma:** Onboarding-näkymän navigaatinapit ("Seuraava") eivät näkyneet Capacitorin WKWebView:ssä iPhonessa. Selaimessa kaikki toimi.
-- **Juurisyy:** `Onboarding.tsx` ja `OnboardingWelcome.tsx` käyttivät `h-[100dvh]`, joka kilpaili `App.tsx`:n `h-[100dvh] overflow-hidden` -kontainerin kanssa. Capacitorin WKWebView käsittelee viewport-yksiköitä eri tavalla kuin Safari.
-- **Korjaus:** Molemmat komponentit muutettu käyttämään `h-full` → perivät korkeuden parentilta. `OnboardingWelcome.tsx`:stä poistettu myös `fixed inset-0`, korvattu `relative`-positioinnilla.
-- **Tiedostot:** `Onboarding.tsx`, `OnboardingWelcome.tsx`
-- **⚠️ OPPI:** Capacitor-sovelluksessa komponenttien tulee käyttää `h-full` eikä `h-[100dvh]` kun ne ovat `App.tsx`:n sisällä. `App.tsx` on ainoa paikka, jossa `h-[100dvh]` pitäisi olla.
+### 🔧 Kriittinen layout-bugikorjaus #2: Päänäkymän ylä/alatilat (commit d56e3ba)
+- **Ongelma:** "JAA TULOS" -nappi leikkautui iPhonessa punaisessa tilassa alhaalta pois, ja ylhäällä oli liikaa tyhjää tilaa.
+- **Juurisyy:** App ja Ticker käyttivät asetusarvona `h-[100dvh]`. Koska `index.css`:ssä sivulle annetaan jo turva-alueet (iOS safe-area-inset), `100dvh`:n asettaminen pakottaa sisällön koko ruudun korkuiseksi turvamarginaalien *sisällä*, pursuen yli alalaidasta. Lisäksi Tickerin top-padding oli koodattu liian suureksi (`pt-10`) safe-arean lisäksi.
+- **Korjaus:** `h-[100dvh]` korvattu arvolla `h-full` tiedostoissa `App.tsx`, `Ticker.tsx` ja `Settings.tsx`. Tickerin padding vaihdettu `pt-10` -> `py-4`.
+- **Tiedostot:** `App.tsx`, `Ticker.tsx`, `Settings.tsx`
+- **⚠️ OPPI:** Apple-laitteissa Capacitor-projektissa vältä `100dvh` CSS:ssä, jos bodyssä on jo `padding: env(safe-area-inset)`. Käytä aina `h-full`.
 
-### 📝 Infotäppätekstien auditointi (commit c4aec65)
+### 🔧 Kriittinen layout-bugikorjaus (commit c4aec65)
 - **8 metriikkaselitystä** (`i18n.ts`) kirjoitettu uudelleen 100% matemaattisesti täsmällisiksi
 - **Kriittinen korjaus:** "Piilokulu" → "Menetetty varallisuus" — vanha teksti väitti ettei sisällä suoria kuluja, mutta näytetty luku (`totalForecast`) sisälsi ne
 - **2 "Miten tämä toimii?" -modaalitekstiä** (koukussa-tila) korjattu

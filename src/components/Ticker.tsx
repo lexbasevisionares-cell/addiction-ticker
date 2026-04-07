@@ -4,7 +4,7 @@ import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForeca
 import { t, formatCurrency } from '../utils/i18n';
 import { UserSettings } from './Onboarding';
 import TimerDisplay from './TimerDisplay';
-import FinancialChart from './FinancialChart';
+import MetricsDashboard from './MetricsDashboard';
 import ForecastSlider from './ForecastSlider';
 import SideDrawer from './SideDrawer';
 import InfoModal, { InfoType } from './InfoModal';
@@ -29,7 +29,6 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const [now, setNow] = useState(Date.now());
   const [stableNow, setStableNow] = useState(Date.now());
   const [forecastYears, setForecastYears] = useState(10);
-  const [viewType, setViewType] = useState<'secured' | 'potential'>('secured');
   const [modalType, setModalType] = useState<'quit' | 'relapse' | 'reset' | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [infoModal, setInfoModal] = useState<InfoType | null>(null);
@@ -111,36 +110,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
   const isReminderVisible = pendingAmount > (appState.lastDismissedAmount || 0) + 0.001; // Tiny buffer
 
-  const graphData = useMemo(() => {
-    const data = [];
-    const elapsedYears = stableElapsedDays / 365.25;
-    const stableAccumulated = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, stableElapsedDays);
-    const stablePortfolioValue = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedYears, settings.expectedReturn);
-
-    if (forecastYears > 0) {
-      for (let i = 0; i <= forecastYears; i++) {
-        const year = currentYear + i;
-        const yearsFromStart = elapsedYears + i;
-
-        const directCost = viewType === 'potential' 
-          ? calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart * 365.25)
-          : stableAccumulated;
-
-        const investedValue = viewType === 'potential'
-          ? calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart, settings.expectedReturn)
-          : calculateSecuredFutureValue(stablePortfolioValue, i, settings.expectedReturn);
-        
-        data.push({ year, directCost, investedValue });
-      }
-    } else {
-      data.push({
-        year: currentYear,
-        directCost: stableAccumulated,
-        investedValue: stablePortfolioValue
-      });
-    }
-    return data;
-  }, [currentYear, forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, stableElapsedDays, viewType]);
+  // graphData poistettu, koska uusi MetricsDashboard ei aseta tai piirrä datapisteitä
 
   const handleConfirmAction = () => {
     if (modalType === 'quit') {
@@ -199,7 +169,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] xl:grid-cols-[minmax(0,4fr)_minmax(0,6fr)] lg:gap-16 xl:gap-24 lg:items-center px-1 md:px-8 xl:px-12 lg:max-w-[1400px] 2xl:max-w-[1700px] mx-auto w-full">
-          <div className="flex flex-col items-center justify-center w-full lg:order-1 mt-0 mb-0 lg:my-0 lg:h-full relative lg:space-y-12">
+          <div className="flex flex-col items-center justify-center w-full lg:order-1 mt-0 mb-6 lg:my-0 lg:h-full relative lg:space-y-12">
             <TimerDisplay
               isFree={isFree}
               days={days}
@@ -229,13 +199,9 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             </div>
           </div>
 
-          <div className="flex flex-col w-full lg:order-2 space-y-1 lg:space-y-12 mt-1 lg:mt-0">
-            <FinancialChart 
-              graphData={graphData} 
-              viewType={viewType}
-              onViewTypeChange={setViewType}
+          <div className="flex flex-col w-full lg:order-2 space-y-1 lg:space-y-12 mt-0 lg:mt-0">
+            <MetricsDashboard
               isFree={isFree} 
-              gradientColor={gradientColor} 
               colorClass={colorClass}
               accumulated={accumulated}
               securedFV={securedFV}
@@ -250,21 +216,21 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               isPendingOverdue={isPendingOverdue}
               onTriggerInvest={() => setIsInvestBannerOpen(true)}
               onDismissReminder={handleDismissReminder}
-            />
-
-            <ForecastSlider
-              forecastYears={forecastYears}
-              onForecastChange={setForecastYears}
-              gradientColor={gradientColor}
-              isFree={isFree}
-              colorClass={colorClass}
-              formatCurrency={formatCurrencyTicker}
-              t={t}
-              onShowInfo={setInfoModal}
-            />
+            >
+              <ForecastSlider
+                forecastYears={forecastYears}
+                onForecastChange={setForecastYears}
+                gradientColor={gradientColor}
+                isFree={isFree}
+                colorClass={colorClass}
+                formatCurrency={formatCurrencyTicker}
+                t={t}
+                onShowInfo={setInfoModal}
+              />
+            </MetricsDashboard>
           </div>
 
-          <div className="lg:hidden mt-3 mb-2 w-full flex flex-col items-center gap-3 order-3">
+          <div className="lg:hidden mt-3 mb-2 w-full flex flex-col items-center gap-3 order-3 relative z-50">
             {!isFree && (
               <button
                 onClick={() => setModalType('quit')}

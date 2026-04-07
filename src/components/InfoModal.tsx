@@ -84,45 +84,54 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
               <div className="space-y-4">
                 <h3 className="text-3xl lg:text-4xl font-sans font-light text-white/90 mb-8 tracking-tight">{t.infoLogicTitle}</h3>
                 <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
+                  <p>{t.infoLogicGeneral}</p>
+                  
                   {isFree ? (
                     <>
-                      <p>
-                        {t.infoLogicFreeP1}<span className="text-white/80 font-medium">{t.infoLogicFreeP1_1}</span>{t.infoLogicFreeP1_2}<span className="text-white/80 font-medium">{t.infoLogicFreeP1_3}</span>{t.infoLogicFreeP1_4}
-                      </p>
-                      <p>
-                        {t.infoLogicFreeP2}
-                      </p>
-                      <div className="pt-4 space-y-4">
+                      <div className="pt-2 space-y-4">
+                        <h4 className="text-xl font-medium text-emerald-400 mt-6 mb-2 border-b border-white/10 pb-2">{t.infoLogicP1Title}</h4>
                         <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.savedNow}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLogicFreeP3}</span>
+                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashSaved}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoSavedNowDesc}</span>
+                        </p>
+                        
+                        <h4 className="text-xl font-medium text-emerald-400 mt-8 mb-2 border-b border-white/10 pb-2">{t.infoLogicP2Title}</h4>
+                        <p className="flex flex-col">
+                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashInvested}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoValueInYearDesc}</span>
                         </p>
                         <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.valueInYear.split(' {')[0]}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLogicFreeP4}</span>
+                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashPureSavings}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoTotalSavedDesc}</span>
                         </p>
                         <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.potentialInYears.split(' {')[0]}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLogicFreeP5}</span>
+                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashTotalWealth}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoPotentialDesc}</span>
                         </p>
                       </div>
                     </>
                   ) : (
                     <>
-                      <p>
-                        {t.infoLogicHookedP1}
-                      </p>
-                      <p>
-                        {t.infoLogicHookedP2}<span className="text-white/80 font-medium">{t.infoLogicHookedP2_1}</span>{t.infoLogicHookedP2_2}
-                      </p>
-                      <div className="pt-4 space-y-4">
+                      <p>{t.infoLogicHookedP1}</p>
+                      <div className="pt-2 space-y-4">
+                        <h4 className="text-xl font-medium text-red-400 mt-6 mb-2 border-b border-white/10 pb-2">{t.infoLogicP1Title}</h4>
                         <p className="flex flex-col">
-                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.directCost}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLogicHookedP3}</span>
+                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashLost}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoLostNowDesc}</span>
+                        </p>
+                        
+                        <h4 className="text-xl font-medium text-red-400 mt-8 mb-2 border-b border-white/10 pb-2">{t.infoLogicP2Title}</h4>
+                        <p className="flex flex-col">
+                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashLostInvested}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoLostInvestmentDesc}</span>
                         </p>
                         <p className="flex flex-col">
-                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.indirectLoss}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLogicHookedP4}<span className="text-white/80 font-medium">{t.infoLogicHookedP4_1}</span>{t.infoLogicHookedP4_2}</span>
+                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashPureCosts}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoDirectCostDesc}</span>
+                        </p>
+                        <p className="flex flex-col">
+                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashLostWealth}</strong>
+                          <span className="opacity-80 text-sm leading-normal">{t.infoIndirectLossDesc}</span>
                         </p>
                       </div>
                     </>

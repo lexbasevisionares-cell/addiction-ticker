@@ -15,24 +15,14 @@ interface Props {
 }
 
 export default function TimerDisplay({ isFree, days, hours, minutes, seconds, colorClass, t, startTime, onShowInfo }: Props) {
-  const locale = 'fi-FI';
-  const formattedStart = new Intl.DateTimeFormat(locale, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: false,
-  }).format(new Date(startTime));
-
   return (
     <div className="flex flex-col items-center w-full relative">
-      <div className="text-[12px] lg:text-base font-black text-white uppercase tracking-[0.5em] mb-4 lg:mb-12">
+      <div className="text-[12px] lg:text-base font-black text-white uppercase tracking-[0.5em] mb-5 lg:mb-14">
         {t.tickerHeader}
       </div>
 
-      {/* Status text - shown in BOTH states */}
-      <div className="flex items-center gap-2 mb-3 lg:mb-6">
+      {/* Status text */}
+      <div className="flex items-center gap-2 mb-4 lg:mb-6">
         <div className={`w-1.5 h-1.5 lg:w-2.5 lg:h-2.5 rounded-full ${isFree ? 'bg-emerald-500' : 'bg-red-500'} animate-pulse`} />
         <div className="text-xs lg:text-lg font-bold text-zinc-300 uppercase tracking-[0.2em]">
           {isFree ? t.freeFor : t.hookedStatus}
@@ -48,7 +38,7 @@ export default function TimerDisplay({ isFree, days, hours, minutes, seconds, co
         )}
       </div>
 
-      {/* Timer - shown in BOTH states */}
+      {/* Timer - original 4-column design */}
       <div className="flex items-baseline justify-center gap-1.5 md:gap-3 lg:gap-4 font-serif tracking-tighter">
         <div className="flex flex-col items-center">
           <span className="text-4xl md:text-6xl lg:text-9xl font-black text-white leading-none tabular-nums">{days}</span>
