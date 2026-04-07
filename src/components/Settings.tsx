@@ -110,7 +110,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
       };
 
       return (
-        <div className="h-[100dvh] bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden touch-action-none pt-20">
+        <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden touch-action-none pt-20">
           <header className="flex items-center justify-between px-8 py-4 sticky top-0 z-20">
             <button onClick={() => setEditingId(null)} className="p-3 -ml-4 text-zinc-600 hover:text-white transition-colors rounded-full hover:bg-white/5">
               <ArrowLeft size={28} />
@@ -184,7 +184,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
 
   // ── Main settings list ───────────────────────────────────────────────────
   return (
-    <div className="h-[100dvh] bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden pt-8">
+    <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden pt-8">
       <header className="flex items-center justify-between px-8 py-6 md:py-8 z-20">
         <button onClick={onCancel} className="p-3 -ml-4 text-zinc-600 hover:text-white transition-colors rounded-full hover:bg-white/5">
           <ArrowLeft size={28} />
