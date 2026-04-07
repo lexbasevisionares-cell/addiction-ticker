@@ -122,31 +122,25 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         const year = currentYear + i;
         const yearsFromStart = elapsedYears + i;
 
-        if (isFree) {
-          const directCost = viewType === 'potential' 
-            ? calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart * 365.25)
-            : stableAccumulated;
+        const directCost = viewType === 'potential' 
+          ? calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart * 365.25)
+          : stableAccumulated;
 
-          const investedValue = viewType === 'potential'
-            ? calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart, settings.expectedReturn)
-            : calculateSecuredFutureValue(stablePortfolioValue, i, settings.expectedReturn);
-          
-          data.push({ year, directCost, investedValue });
-        } else {
-          const directCost = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart * 365.25);
-          const investedValue = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart, settings.expectedReturn);
-          data.push({ year, directCost, investedValue });
-        }
+        const investedValue = viewType === 'potential'
+          ? calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearsFromStart, settings.expectedReturn)
+          : calculateSecuredFutureValue(stablePortfolioValue, i, settings.expectedReturn);
+        
+        data.push({ year, directCost, investedValue });
       }
     } else {
       data.push({
         year: currentYear,
         directCost: stableAccumulated,
-        investedValue: isFree ? stablePortfolioValue : calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedYears, settings.expectedReturn)
+        investedValue: stablePortfolioValue
       });
     }
     return data;
-  }, [currentYear, forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, stableElapsedDays, isFree, viewType]);
+  }, [currentYear, forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, stableElapsedDays, viewType]);
 
   const handleConfirmAction = () => {
     if (modalType === 'quit') {
@@ -215,6 +209,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               colorClass={colorClass}
               t={t}
               startTime={appState.startTime}
+              onShowInfo={setInfoModal}
             />
 
             <div className="hidden lg:flex w-full flex-col items-center gap-6 mt-12">

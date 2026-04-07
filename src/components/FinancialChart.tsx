@@ -61,11 +61,14 @@ export default function FinancialChart({
 
   if (!displayData) return null;
 
-  const rightSideValue = isFree 
-    ? (hoveredData ? displayData.investedValue : (viewType === 'potential' ? totalForecast : securedFV))
-    : displayData.investedValue;
+  const rightSideValue = hoveredData 
+    ? displayData.investedValue 
+    : (viewType === 'potential' ? totalForecast : securedFV);
 
-  const leftValueString = formatCurrency(isFree ? (viewType === 'potential' ? totalDirectSavings : accumulated) : displayData.directCost);
+  const leftValue = hoveredData 
+    ? displayData.directCost 
+    : (viewType === 'potential' ? totalDirectSavings : accumulated);
+  const leftValueString = formatCurrency(leftValue);
   const rightValueString = formatCurrency(rightSideValue);
 
   const fontSizeClass = 'text-lg lg:text-3xl 2xl:text-4xl';
@@ -74,47 +77,45 @@ export default function FinancialChart({
     <div className="w-full relative flex flex-col">
       <div className="flex flex-col w-full mb-0 lg:mb-2 relative z-10">
         
-        {/* Row 1: View Switcher Toggle - Now at the top */}
-        {isFree && (
-          <div className="flex justify-center mt-6 mb-6 lg:mt-10 lg:mb-12">
-            <div className="inline-flex items-center p-1 bg-zinc-900/40 backdrop-blur-md rounded-full border border-white/5 relative">
-              <button 
-                onClick={() => onViewTypeChange('secured')}
-                className={`relative px-6 py-2.5 text-[10px] lg:text-xs uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
-                  viewType === 'secured' ? 'text-emerald-400' : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {viewType === 'secured' && (
-                  <motion.div
-                    layoutId="viewSwitcherPill"
-                    className="absolute inset-0 bg-zinc-800/80 rounded-full z-0"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative z-10">{t.viewSecured}</span>
-              </button>
-              
-              <button 
-                onClick={() => onViewTypeChange('potential')}
-                className={`relative px-6 py-2.5 text-[10px] lg:text-xs uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
-                  viewType === 'potential' ? 'text-emerald-400' : 'text-zinc-500 hover:text-zinc-300'
-                }`}
-              >
-                {viewType === 'potential' && (
-                  <motion.div
-                    layoutId="viewSwitcherPill"
-                    className="absolute inset-0 bg-zinc-800/80 rounded-full z-0"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative z-10">{t.viewPotential.replace('{year}', (currentYear + forecastYears).toString())}</span>
-              </button>
-            </div>
+        {/* Row 1: View Switcher Toggle - Shown in BOTH states */}
+        <div className="flex justify-center mt-6 mb-6 lg:mt-10 lg:mb-12">
+          <div className="inline-flex items-center p-1 bg-zinc-900/40 backdrop-blur-md rounded-full border border-white/5 relative">
+            <button 
+              onClick={() => onViewTypeChange('secured')}
+              className={`relative px-6 py-2.5 text-[10px] lg:text-xs uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
+                viewType === 'secured' ? (isFree ? 'text-emerald-400' : 'text-red-400') : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              {viewType === 'secured' && (
+                <motion.div
+                  layoutId="viewSwitcherPill"
+                  className="absolute inset-0 bg-zinc-800/80 rounded-full z-0"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">{isFree ? t.viewSecured : t.viewLostAlready}</span>
+            </button>
+            
+            <button 
+              onClick={() => onViewTypeChange('potential')}
+              className={`relative px-6 py-2.5 text-[10px] lg:text-xs uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
+                viewType === 'potential' ? (isFree ? 'text-emerald-400' : 'text-red-400') : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              {viewType === 'potential' && (
+                <motion.div
+                  layoutId="viewSwitcherPill"
+                  className="absolute inset-0 bg-zinc-800/80 rounded-full z-0"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10">{t.viewPotential.replace('{year}', (currentYear + forecastYears).toString())}</span>
+            </button>
           </div>
-        )}
+        </div>
 
-        {/* Addiction title — shown above the figures when in hooked mode */}
-        {!isFree && (
+        {/* Addiction title — shown only in hooked forecast mode */}
+        {!isFree && viewType === 'potential' && (
           <div className="text-center mb-3">
             <span className="text-xs lg:text-sm uppercase tracking-[0.4em] font-black text-red-400/80">
               {`${t.hookedFor} ${forecastYears} ${t.hookedYearsSuffix}`}
@@ -128,7 +129,7 @@ export default function FinancialChart({
           <div className="flex flex-col items-center flex-1">
             <div 
               className="flex items-center gap-2 lg:gap-3 group cursor-pointer" 
-              onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : 'directCost')}
+              onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : (viewType === 'potential' ? 'directCost' : 'lostNow'))}
             >
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span 
@@ -155,7 +156,7 @@ export default function FinancialChart({
           <div className="flex flex-col items-center flex-1">
             <div 
               className="flex items-center gap-2 lg:gap-3 group cursor-pointer" 
-              onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : 'indirectLoss')}
+              onClick={() => onShowInfo(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : (viewType === 'potential' ? 'indirectLoss' : 'lostInvestment'))}
             >
               <AnimatePresence mode="popLayout" initial={false}>
                 <motion.span 
@@ -249,7 +250,7 @@ export default function FinancialChart({
                 <stop offset="5%" stopColor={gradientColor} stopOpacity={0.15} />
                 <stop offset="95%" stopColor={gradientColor} stopOpacity={0} />
               </linearGradient>
-              {!isFree && (
+              {!isFree && viewType === 'potential' && (
                 <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#71717a" stopOpacity={0.12} />
                   <stop offset="95%" stopColor="#71717a" stopOpacity={0} />
@@ -268,7 +269,7 @@ export default function FinancialChart({
                       <div className={`font-serif tabular-nums text-2xl lg:text-4xl 2xl:text-5xl font-black ${isFree ? 'text-emerald-400' : 'text-red-400'}`}>
                         {formatCurrency(data.investedValue)}
                       </div>
-                      {!isFree && (
+                      {!isFree && viewType === 'potential' && (
                         <div className="font-mono tabular-nums text-sm lg:text-base font-medium text-zinc-600 mt-2 opacity-60">
                           {formatCurrency(data.directCost)}
                         </div>
@@ -292,7 +293,7 @@ export default function FinancialChart({
               animationDuration={600}
               activeDot={false}
             />
-            {!isFree && (
+            {!isFree && viewType === 'potential' && (
               <Area 
                 type="monotone" 
                 dataKey="directCost" 

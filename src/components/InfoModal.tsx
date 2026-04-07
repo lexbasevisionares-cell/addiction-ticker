@@ -2,7 +2,7 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { TranslationStrings } from '../utils/i18n';
 
-export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer';
+export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer' | 'hookedTimer' | 'lostNow' | 'lostInvestment';
 
 interface Props {
   type: InfoType | null;
@@ -26,6 +26,10 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
         return { title: t.indirectLoss, description: t.infoIndirectLossDesc, color: 'text-red-400' };
       case 'potential':
         return { title: t.potentialInYears.split(' {')[0], description: t.infoPotentialDesc, color: isFree ? 'text-emerald-400' : 'text-red-400' };
+      case 'lostNow':
+        return { title: t.lostNow, description: t.infoLostNowDesc, color: 'text-red-400' };
+      case 'lostInvestment':
+        return { title: t.lostInvestment, description: t.infoLostInvestmentDesc, color: 'text-red-400' };
       default:
         return null;
     }
@@ -65,6 +69,15 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
                 <h3 className={`text-3xl lg:text-4xl font-sans font-light ${metric.color} mb-8 tracking-tight`}>{metric.title}</h3>
                 <div className="space-y-6 text-base lg:text-lg text-zinc-300 leading-relaxed font-sans font-normal">
                   <p>{metric.description}</p>
+                </div>
+              </div>
+            ) : type === 'hookedTimer' ? (
+              <div className="space-y-4">
+                <h3 className="text-3xl lg:text-4xl font-sans font-light text-red-400/90 mb-8 tracking-tight">{t.infoHookedTimerTitle}</h3>
+                <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
+                  <p>{t.infoHookedTimerP1}</p>
+                  <p>{t.infoHookedTimerP2}</p>
+                  <p className="text-zinc-300">{t.infoHookedTimerP3}</p>
                 </div>
               </div>
             ) : type === 'logic' ? (
