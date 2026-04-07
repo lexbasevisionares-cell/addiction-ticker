@@ -190,8 +190,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   };
 
   return (
-    <div className="min-h-[100dvh] bg-[#050505] font-sans flex flex-col text-white overflow-x-hidden overflow-y-auto relative">
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col justify-center min-h-[100dvh] lg:min-h-[auto] pt-10 pb-4 lg:py-16">
+    <div className="h-[100dvh] bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col justify-center h-full pt-10 pb-4 lg:py-16 overflow-hidden">
         <div className="absolute right-4 top-8 lg:fixed lg:right-10 lg:top-10 z-50">
           <button onClick={() => setIsMenuOpen(true)} className="text-zinc-600 hover:text-white transition-all p-4 lg:p-6 bg-white/[0.02] hover:bg-white/[0.05] backdrop-blur-xl rounded-full border border-white/5 shadow-2xl" aria-label="Valikko">
             <Menu className="w-5 h-5 lg:w-8 lg:h-8" />

@@ -144,9 +144,9 @@ export default function App() {
   };
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#050505] overflow-x-hidden">
+    <div className="w-full h-[100dvh] bg-[#050505] overflow-hidden">
       {/* App Content */}
-      <div className="w-full min-h-[100dvh] bg-[#050505]">
+      <div className="w-full h-full bg-[#050505] overflow-hidden">
         {renderContent()}
       </div>
     </div>

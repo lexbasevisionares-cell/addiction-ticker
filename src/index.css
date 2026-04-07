@@ -18,8 +18,8 @@ html, body {
   color: #ffffff;
   overscroll-behavior: none;
   touch-action: manipulation;
-  min-height: 100%;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   font-variant-numeric: tabular-nums;
   /* Support iPhone safe area (notch / Dynamic Island) */
@@ -32,9 +32,10 @@ html, body {
 
 
 #root {
-  min-height: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Chart interaction styles */
