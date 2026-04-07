@@ -22,44 +22,6 @@ interface Props {
   onDismissReminder: () => void;
 }
 
-// MetricCard — ulkopuolella renderöintifunktiota
-function MetricCard({ 
-  label, value, infoType, isActive = false, colorClass, formatCurrency, onShowInfo, children 
-}: { 
-  label: string; 
-  value: number; 
-  infoType: InfoType; 
-  isActive?: boolean; 
-  colorClass: string; 
-  formatCurrency: (v: number, fractionDigits?: number) => string; 
-  onShowInfo: (type: InfoType) => void;
-  children?: React.ReactNode;
-}) {
-  return (
-    <div 
-      onClick={() => onShowInfo(infoType)}
-      className="w-full cursor-pointer group rounded-2xl px-4 py-3 lg:px-5 lg:py-4 transition-all bg-white/[0.02] hover:bg-white/[0.04]"
-    >
-      <div className="flex items-center gap-1.5 mb-2">
-        <span className={`text-xs lg:text-sm uppercase tracking-[0.06em] font-bold leading-tight ${
-          isActive ? 'text-zinc-300' : 'text-zinc-500 group-hover:text-zinc-300'
-        } transition-colors`}>
-          {label}
-        </span>
-        <Info size={14} className="text-zinc-600 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
-      </div>
-      <span className={`font-mono tabular-nums font-black tracking-tight block text-4xl lg:text-5xl ${
-        isActive 
-          ? colorClass 
-          : 'text-zinc-300 group-hover:text-white'
-      } transition-colors`}>
-        {formatCurrency(value, isActive ? 3 : 2)}
-      </span>
-      {children}
-    </div>
-  );
-}
-
 export default function MetricsDashboard({
   isFree, colorClass, accumulated, securedFV, totalDirectSavings, totalForecast,
   forecastYears, currentYear, formatCurrency, t, onShowInfo,
@@ -72,17 +34,26 @@ export default function MetricsDashboard({
   return (
     <div className="w-full flex flex-col gap-2 px-3">
 
-      {/* JO SAAVUTETTU — Kortit 1 & 2 (Aktiiviset) */}
-      <MetricCard 
-        label={isFree ? t.dashSaved : t.dashLost}
-        value={accumulated}
-        infoType={isFree ? 'savedNow' : 'lostNow'}
-        isActive={true}
-        colorClass={colorClass}
-        formatCurrency={formatCurrency}
-        onShowInfo={onShowInfo}
-      >
-        {/* Sijoitussiirtomuistutus upotettu korttiin 1 */}
+      {/* ═══ PARI 1: Säästöt / Kulut ═══ */}
+      <div className="w-full rounded-[24px] px-5 py-4 lg:px-6 lg:py-5 bg-white/[0.015] border border-white/[0.04] hover:bg-white/[0.025] hover:border-white/[0.08] transition-all duration-300">
+
+        {/* Primääri: Tähän mennessä — reaaliaikainen, ei slider-riippuvainen */}
+        <div
+          onClick={() => onShowInfo(isFree ? 'savedNow' : 'lostNow')}
+          className="cursor-pointer group"
+        >
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-xs lg:text-sm uppercase tracking-[0.08em] font-bold leading-tight text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              {isFree ? t.dashSaved : t.dashLost}
+            </span>
+            <Info size={14} className="text-zinc-600 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
+          </div>
+          <span className={`font-mono tabular-nums font-black tracking-tight block text-4xl lg:text-5xl ${colorClass} transition-colors`}>
+            {formatCurrency(accumulated, 3)}
+          </span>
+        </div>
+
+        {/* Sijoitussiirtomuistutus (upotettu pari 1:een) */}
         <AnimatePresence>
           {isFree && pendingAmount && (
             <motion.div
@@ -111,43 +82,64 @@ export default function MetricsDashboard({
             </motion.div>
           )}
         </AnimatePresence>
-      </MetricCard>
 
-      <MetricCard 
-        label={(isFree ? t.dashInvested : t.dashLostInvested).replace('{years}', yrs)}
-        value={securedFV}
-        infoType={isFree ? 'valueInYear' : 'lostInvestment'}
-        isActive={true}
-        colorClass={colorClass}
-        formatCurrency={formatCurrency}
-        onShowInfo={onShowInfo}
-      />
+        {/* Sekundääri: Tulevaisuuden säästö/kulu — slider-riippuvainen */}
+        <div
+          onClick={() => onShowInfo(isFree ? 'totalSaved' : 'directCost')}
+          className="cursor-pointer group mt-4 pt-4 border-t border-white/[0.04]"
+        >
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-[10px] uppercase tracking-[0.08em] font-semibold text-zinc-500 group-hover:text-zinc-300 transition-colors">
+              {(isFree ? t.dashPureSavings : t.dashPureCosts).replace('{years}', yrs)}
+            </span>
+            <Info size={12} className="text-zinc-700 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
+          </div>
+          <span className="font-mono tabular-nums font-semibold tracking-tight block text-lg text-zinc-400 group-hover:text-zinc-200 transition-colors">
+            {formatCurrency(totalDirectSavings, 2)}
+          </span>
+        </div>
+      </div>
 
-      {/* SLIDER */}
+      {/* ═══ PARI 2: Sijoitukset ═══ */}
+      <div className="w-full rounded-[24px] px-5 py-4 lg:px-6 lg:py-5 bg-white/[0.015] border border-white/[0.04] hover:bg-white/[0.025] hover:border-white/[0.08] transition-all duration-300">
+
+        {/* Primääri: Kasvu sijoitettuna — tikkaa reaaliajassa + slider-riippuvainen */}
+        <div
+          onClick={() => onShowInfo(isFree ? 'valueInYear' : 'lostInvestment')}
+          className="cursor-pointer group"
+        >
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="text-xs lg:text-sm uppercase tracking-[0.08em] font-bold leading-tight text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              {(isFree ? t.dashInvested : t.dashLostInvested).replace('{years}', yrs)}
+            </span>
+            <Info size={14} className="text-zinc-600 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
+          </div>
+          <span className={`font-mono tabular-nums font-black tracking-tight block text-4xl lg:text-5xl ${colorClass} transition-colors`}>
+            {formatCurrency(securedFV, 3)}
+          </span>
+        </div>
+
+        {/* Sekundääri: Salkun kokonaisarvo — slider-riippuvainen */}
+        <div
+          onClick={() => onShowInfo(isFree ? 'potential' : 'indirectLoss')}
+          className="cursor-pointer group mt-4 pt-4 border-t border-white/[0.04]"
+        >
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-[10px] uppercase tracking-[0.08em] font-semibold text-zinc-500 group-hover:text-zinc-300 transition-colors">
+              {(isFree ? t.dashTotalWealth : t.dashLostWealth).replace('{years}', yrs)}
+            </span>
+            <Info size={12} className="text-zinc-700 group-hover:text-zinc-400 transition-colors flex-shrink-0" />
+          </div>
+          <span className="font-mono tabular-nums font-semibold tracking-tight block text-lg text-zinc-400 group-hover:text-zinc-200 transition-colors">
+            {formatCurrency(totalForecast, 2)}
+          </span>
+        </div>
+      </div>
+
+      {/* ═══ SLIDER — alhaalla, vaikuttaa 3/4 luvusta ═══ */}
       <div className="my-1 lg:my-3">
         {children}
       </div>
-
-      {/* TÄTÄ MENOA SAAVUTETTAVA — Kortit 3 & 4 (Kuolleet) */}
-      <MetricCard 
-        label={(isFree ? t.dashPureSavings : t.dashPureCosts).replace('{years}', yrs)}
-        value={totalDirectSavings}
-        infoType={isFree ? 'totalSaved' : 'directCost'}
-        isActive={false}
-        colorClass={colorClass}
-        formatCurrency={formatCurrency}
-        onShowInfo={onShowInfo}
-      />
-      
-      <MetricCard 
-        label={(isFree ? t.dashTotalWealth : t.dashLostWealth).replace('{years}', yrs)}
-        value={totalForecast}
-        infoType={isFree ? 'potential' : 'indirectLoss'}
-        isActive={false}
-        colorClass={colorClass}
-        formatCurrency={formatCurrency}
-        onShowInfo={onShowInfo}
-      />
 
     </div>
   );
