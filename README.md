@@ -1,20 +1,28 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 📈 Addiction Ticker
 
-# Run and deploy your AI Studio app
+**Näe tarkalleen, mitä nikotiiniriippuvuutesi todella maksaa — ja mihin se raha voisi kasvaa, jos sijoittaisit sen.**
 
-This contains everything you need to run your app locally.
+Reaaliaikainen taloudellinen seurantatyökalu, joka tekee näkymättömän hintalapun näkyväksi.
 
-View your app in AI Studio: https://ai.studio/apps/6e7c3a20-9797-43f2-af18-bf422b465f19
+## Tekniikka
 
-## Run Locally
+- **Frontend:** React + TypeScript + Vite + TailwindCSS v4
+- **iOS:** Capacitor 8 (SPM, ei CocoaPods)
+- **CI/CD:** GitHub Actions → App Store Connect → TestFlight
+- **Tiedon tallennus:** 100 % offline, localStorage
 
-**Prerequisites:**  Node.js
+## Kehitys
 
+```bash
+npm install
+npm run dev
+```
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## iOS-build
+
+iOS-build tapahtuu automaattisesti GitHub Actionsin kautta jokaisella `git push`:lla.
+Katso [`TESTFLIGHT_OHJE.md`](./TESTFLIGHT_OHJE.md) lisätietoja varten.
+
+## Lisenssi
+
+Yksityinen projekti. Kaikki oikeudet pidätetään.

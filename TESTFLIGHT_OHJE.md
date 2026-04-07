@@ -71,6 +71,7 @@ Addiction Ticker -sovellus on onnistuneesti asennettu käyttäjän iPhoneen Test
 
 ### VAIHE 6: TestFlight-asennus iPhoneen — ✅ TEHTY (6.4.2026)
 - Encryption compliance: "None of the algorithms" ✅
+- **Automatisoitu:** `ITSAppUsesNonExemptEncryption = false` lisätty `Info.plist`-tiedostoon (7.4.2026) — jatkossa compliance hoituu automaattisesti, ei vaadi manuaalista hyväksyntää.
 - Testaajaryhmä "Testaajat" luotu ✅
 - Käyttäjä (touko.aunio@icloud.com) kutsuttu ja hyväksytty ✅
 - Sovellus asennettu iPhoneen TestFlightin kautta ✅
@@ -103,6 +104,7 @@ GitHub käynnistää automaattisesti buildin. Uusi versio ilmestyy TestFlightiin
 | "Invalid build number" -virhe | Build-numero jo käytössä | Ei pitäisi tapahtua — build-numero on nyt `github.run_number` ✅ |
 | "Provisioning profile not found" | Profiilin nimi ei täsmää | Tarkista `APP_PROVISIONING_PROFILE_NAME` = `AddictionTicker_AppStoreProfile` |
 | Provisioning profile ei sisällä sertifikaattia | Profiili luotu eri sertifikaatilla | Muokkaa profiilia Developer Portalissa, valitse oikea sertifikaatti (5.4.2027), lataa uudelleen |
+| "Missing Compliance" App Store Connectissa | `ITSAppUsesNonExemptEncryption` puuttuu Info.plististä | Lisätty 7.4.2026 — ei pitäisi enää tapahtua. Jos tapahtuu: Manage → None of the algorithms → Save |
 
 ---
 
@@ -119,4 +121,4 @@ Sovellus on nyt iPhonessa. Kuvakaappausten ottaminen:
 ---
 
 *Luotu: 5. huhtikuuta 2026*
-*Viimeksi päivitetty: 6. huhtikuuta 2026, klo 21:45*
+*Viimeksi päivitetty: 7. huhtikuuta 2026, klo 09:27*

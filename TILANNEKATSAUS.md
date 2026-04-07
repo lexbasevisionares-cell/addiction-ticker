@@ -22,9 +22,10 @@
 
 **Addiction Ticker on onnistuneesti asennettu käyttäjän iPhoneen TestFlightin kautta!**
 
-- ✅ Build #16 (Commit bf33ef0) onnistui GitHub Actionsissa
-- ✅ Sovellus ladattu App Store Connectiin (Version 1.0, Build 1)
-- ✅ Encryption compliance hoidettu (None of the algorithms)
+- ✅ Ensimmäinen onnistunut build: #16 (6.4.2026)
+- ✅ Viimeisin onnistunut build: #18 (6.4.2026) — UI-korjauksia
+- ✅ Sovellus ladattu App Store Connectiin (Version 1.0)
+- ✅ Encryption compliance automatisoitu (`ITSAppUsesNonExemptEncryption = false` lisätty Info.plistiin)
 - ✅ Testaajaryhmä "Testaajat" luotu, käyttäjä kutsuttu
 - ✅ Sovellus asennettu TestFlightin kautta iPhoneen
 
@@ -42,6 +43,10 @@
 - Asetusvalikko yksinkertaistettu, ylimääräiset kuvaukset karsittu.
 - **Motivaatiotason valinta** (`WheelPicker`) fiksattu sallimaan vain kokonaisluvut 0–3 selkeillä teksti-labeleilla.
 - **Onboarding-flow** (Welcome → WheelPicker-kysymykset → Status → Päivämäärävalinta) on viimeistelty.
+- **iPhone safe area (notch / Dynamic Island):** CSS `env(safe-area-inset-*)` lisätty — sisältö ei mene kameran alle.
+- **Onboarding-layout:** Progress bar ja otsikko siirretty notchin alle, teksti keskitetty paremmin, nappi nostettu.
+- **Dashboard-layout:** Otsikko ja valikkonappi siirretty notchin alle, timer-marginaalit tiivistetty.
+- **ForecastSlider:** Lisätty reunapaddingt, slider-pallo ei enää leikkaudu oikeasta reunasta.
 
 ### Matematiikka & Logiikka
 - **50ms päivityssykli** talouslukuihin → "elävä" dashboard-tunne.
@@ -52,6 +57,7 @@
 - GitHub Actions (`ios-build.yml`) kääntää ja lähettää sovelluksen automaattisesti jokaisella `git push`:lla.
 - Build-numero kasvaa automaattisesti (`github.run_number`).
 - Kaikki 10 GitHub Secretiä on asetettu ja toimivat.
+- Encryption compliance automatisoitu Info.plistissä (`ITSAppUsesNonExemptEncryption = false`) — ei vaadi manuaalista hyväksyntää App Store Connectissa.
 - Sertifikaatti: Apple Distribution (voimassa 5.4.2027 asti)
 - Provisioning Profile: AddictionTicker_AppStoreProfile (voimassa 2.4.2027 asti)
 - API-avain: GitHubActions (Key ID: 4U3VFJSD6H)
@@ -103,11 +109,12 @@ Apple ilmoitti, että 28.4.2026 jälkeen vaaditaan iOS 26 SDK (Xcode 26). Nykyin
 
 ## 👣 Seuraavat askeleet (järjestyksessä)
 
-1. **Ota App Store -kuvakaappaukset iPhonesta.** *(käyttäjä tekee)*
-2. **Luo tietosuojakäytäntösivu** (privacy.html). *(tekoäly voi tehdä)*
-3. **Kirjoita App Store -metatekstit** (kuvaus, avainsanat, review-muistiinpanot). *(tekoäly voi tehdä)*
-4. **Täytä App Store Connectin metatiedot** (ikäluokitus, arvioijan tiedot, kuvat). *(käyttäjä tekee, tekoäly opastaa)*
-5. **Lähetä sovellus Applen arvioitavaksi** (Submit for Review). *(käyttäjä tekee)*
+1. **Hioa sovelluksen UI:ta ja toiminnallisuutta** — testaa iPhonessa, raportoi ongelmat. *(meneillään)*
+2. **Ota App Store -kuvakaappaukset iPhonesta** kun UI on valmis. *(käyttäjä tekee)*
+3. **Luo tietosuojakäytäntösivu** (privacy.html). *(tekoäly voi tehdä)*
+4. **Kirjoita App Store -metatekstit** (kuvaus, avainsanat, review-muistiinpanot). *(tekoäly voi tehdä)*
+5. **Täytä App Store Connectin metatiedot** (ikäluokitus, arvioijan tiedot, kuvat). *(käyttäjä tekee, tekoäly opastaa)*
+6. **Lähetä sovellus Applen arvioitavaksi** (Submit for Review). *(käyttäjä tekee)*
 
 ---
 
@@ -138,4 +145,4 @@ Apple ilmoitti, että 28.4.2026 jälkeen vaaditaan iOS 26 SDK (Xcode 26). Nykyin
 
 ---
 
-*Viimeksi päivitetty: 6. huhtikuuta 2026, klo 21:45*
+*Viimeksi päivitetty: 7. huhtikuuta 2026, klo 09:27*
