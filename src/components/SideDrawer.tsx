@@ -35,9 +35,9 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
             className="fixed top-0 right-0 bottom-0 w-[280px] lg:w-[420px] bg-[#050505] z-50 flex flex-col shadow-[-20px_0_60px_rgba(0,0,0,0.5)] font-sans"
             style={{ paddingTop: 'env(safe-area-inset-top)' }}
           >
-            <div className="flex-1 flex flex-col p-8 lg:p-14">
+            <div className="flex-1 flex flex-col px-6 py-6 lg:p-14 overflow-y-auto">
               {/* Header */}
-              <div className="flex justify-between items-center mb-16 lg:mb-24">
+              <div className="flex justify-between items-center mb-8 lg:mb-24 shrink-0">
                 <span className="text-[10px] lg:text-xs font-medium text-zinc-400 uppercase tracking-[0.8em]">{t.menuTitle}</span>
                 <button 
                   onClick={onClose} 
@@ -60,36 +60,36 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
                   <button
                     key={idx}
                     onClick={() => { item.action(); }}
-                    className="group flex items-center gap-5 lg:gap-8 py-5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
+                    className="group flex items-center gap-5 lg:gap-8 py-3.5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
                   >
-                    <item.icon size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors" />
+                    <item.icon size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors shrink-0" />
                     <span className="tracking-tight">{item.label}</span>
                   </button>
                 ))}
               </div>
 
-              <div className="h-px bg-white/5 my-6 lg:my-8" />
+              <div className="h-px bg-white/5 my-4 lg:my-8 shrink-0" />
 
               {/* Destructive Actions */}
               <div className="flex flex-col gap-2 lg:gap-4">
                   <button
                     onClick={() => onTriggerAction(!isFree ? 'quit' : 'relapse')}
-                    className="group flex items-center gap-5 lg:gap-8 py-5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
+                    className="group flex items-center gap-5 lg:gap-8 py-3.5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
                   >
-                    <RotateCcw size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors" />
+                    <RotateCcw size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors shrink-0" />
                     <span className="tracking-tight">{!isFree ? t.quitAddiction : t.resetCounter}</span>
                   </button>
                   <button
                     onClick={() => onTriggerAction('reset')}
-                    className="group flex items-center gap-5 lg:gap-8 py-5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-red-400 transition-all transform hover:translate-x-1"
+                    className="group flex items-center gap-5 lg:gap-8 py-3.5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-red-400 transition-all transform hover:translate-x-1"
                   >
-                    <Trash2 size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-red-500 transition-colors" />
+                    <Trash2 size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-red-500 transition-colors shrink-0" />
                     <span className="tracking-tight text-red-500/80 group-hover:text-red-400 transition-colors">{t.resetAllData}</span>
                   </button>
               </div>
 
               {/* Footer */}
-              <div className="mt-auto pt-10">
+              <div className="mt-8 pt-4 pb-4 lg:pt-10 shrink-0">
                 <p className="text-[9px] font-medium text-zinc-600 uppercase tracking-[0.4em]">
                   Addiction Ticker v1.2.0
                 </p>
