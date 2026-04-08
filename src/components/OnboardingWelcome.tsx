@@ -223,7 +223,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
             </div>
           ))}
         </div>
-        <span className="text-[11px] font-semibold text-white/50 uppercase tracking-[0.6em] mt-5">Addiction Ticker</span>
+        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mt-5">Addiction Ticker</span>
       </div>
 
       {/* Middle Section: Narrative Content */}
@@ -301,7 +301,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
           <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
         </motion.button>
         <p className="text-[10px] md:text-[11px] text-zinc-400 font-semibold uppercase tracking-[0.2em] mt-5 md:mt-7 text-center">
-           Laskettu omilla numeroillasi
+           Numerosi paljastavat totuuden.
         </p>
       </div>
 

@@ -181,7 +181,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
              </div>
           ))}
         </div>
-        <span className="text-[10px] font-medium text-white/20 uppercase tracking-[0.8em] mt-6">Addiction Ticker</span>
+        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mt-5">Addiction Ticker</span>
       </div>
 
       {/* Middle Section: Question Content */}
@@ -222,30 +222,37 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
       </div>
 
       {/* Bottom Section: Navigation */}
-      <div className="shrink-0 w-full flex justify-center items-center gap-3 px-8 pb-10 md:pb-16 pt-4 z-50">
-        <button
-          onClick={handleBack}
-          className="flex items-center justify-center p-5 md:p-7 rounded-full bg-white/[0.03] hover:bg-white/[0.08] text-white/30 hover:text-white transition-all active:scale-[0.9] shrink-0 backdrop-blur-xl"
-          aria-label={t.back || 'Back'}
-        >
-          <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 stroke-[3]" />
-        </button>
-        <button
-          onClick={handleNext}
-          disabled={isNextDisabled}
-          className={`relative flex items-center justify-center font-semibold py-5 md:py-7 px-10 rounded-full overflow-hidden transition-all text-[10px] md:text-xs tracking-[0.6em] uppercase group flex-1 max-w-[320px] ${
-            isNextDisabled 
-              ? 'bg-white/5 text-white/10' 
-              : 'bg-white text-black hover:scale-[1.03] active:scale-[0.98] shadow-[0_20px_40px_rgba(0,0,0,0.2)]'
-          }`}
-        >
-          <span className="relative z-10">
-            {step === screens.length - 1 ? t.done : t.next}
-          </span>
-          {!isNextDisabled && (
-            <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
-          )}
-        </button>
+      <div className="shrink-0 w-full flex flex-col items-center px-8 pb-10 md:pb-16 pt-4 z-50">
+        <div className="flex justify-center items-center gap-3 w-full max-w-sm">
+          <button
+            onClick={handleBack}
+            className="flex items-center justify-center p-5 md:p-6 rounded-full bg-white/[0.03] hover:bg-white/[0.08] text-white/30 hover:text-white transition-all active:scale-[0.9] shrink-0 backdrop-blur-xl"
+            aria-label={t.back || 'Back'}
+          >
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 stroke-[3]" />
+          </button>
+          <button
+            onClick={handleNext}
+            disabled={isNextDisabled}
+            className={`relative flex items-center justify-center font-semibold py-5 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] text-[10px] md:text-xs tracking-[0.6em] uppercase group flex-1 ${
+              isNextDisabled 
+                ? 'bg-white/5 text-white/10' 
+                : 'bg-white text-black hover:scale-[1.03] active:scale-[0.98] shadow-[0_20px_40px_rgba(0,0,0,0.2)]'
+            }`}
+          >
+            <span className="relative z-10">
+              {step === screens.length - 1 ? t.done : t.next}
+            </span>
+            {!isNextDisabled && (
+              <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
+            )}
+          </button>
+        </div>
+        
+        {/* Invisible placeholder matching the "Numerosi paljastavat..." text to prevent vertical shifting between screens */}
+        <p className="text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.2em] mt-5 md:mt-7 text-center opacity-0 pointer-events-none select-none" aria-hidden="true">
+           Placeholder
+        </p>
       </div>
 
       <InfoModal

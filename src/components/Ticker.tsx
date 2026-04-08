@@ -160,7 +160,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
       {/* FIXED TOP BAR: Title & Menu */}
       <div className="w-full flex items-center justify-center px-6 pt-5 lg:pt-8 pb-2 relative z-50 text-center">
-        <div className="text-[10px] font-medium text-white uppercase tracking-[0.5em] opacity-80">
+        <div className="text-[11px] font-semibold text-white uppercase tracking-[0.6em]">
           {t.tickerHeader}
         </div>
         <div className="absolute right-4 top-5 z-50">

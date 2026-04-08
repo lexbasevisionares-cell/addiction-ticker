@@ -94,7 +94,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
             <button onClick={() => setEditingId(null)} className="p-4 -ml-4 text-zinc-400 hover:text-white transition-all active:scale-95">
               <ArrowLeft size={32} strokeWidth={3} />
             </button>
-            <span className="text-[10px] font-medium text-white/40 uppercase tracking-[0.6em]">Addiction Ticker</span>
+            <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em]">Addiction Ticker</span>
             <div className="w-12" />
           </header>
 
@@ -179,7 +179,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
           <ArrowLeft size={32} strokeWidth={3} />
         </button>
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-medium text-white/40 uppercase tracking-[0.6em]">Addiction Ticker</span>
+          <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em]">Addiction Ticker</span>
           <h1 className="text-xs font-medium text-white mt-4 tracking-[0.4em] uppercase">{t.settingsTitle}</h1>
         </div>
         <div className="w-12" />
