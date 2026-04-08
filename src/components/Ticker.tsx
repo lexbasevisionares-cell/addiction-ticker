@@ -220,20 +220,18 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           {/* Sandwich Forecast Control: Baseline Label -> Slider -> Result Label */}
           <div className="flex flex-col items-center w-full px-5 pt-2 pb-2 lg:pt-4 lg:pb-4">
             
-            {/* 1. Baseline Label (Gray) — only in potential view */}
-            {viewType === 'potential' && (
-              <div 
-                className="flex items-center gap-2 mb-1 group cursor-pointer"
-                onClick={() => setInfoModal(isFree ? 'totalSaved' : 'directCost')}
-              >
-                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-700" />
-                <span className="text-[8px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
-                  {isFree 
-                    ? `Tätä menoa puhdas käteissäästö vuonna ${currentYear + forecastYears}` 
-                    : `Tätä menoa suorat kulut yhteensä vuonna ${currentYear + forecastYears}`}
-                </span>
-              </div>
-            )}
+            {/* 1. Baseline Label (Gray) — visibility toggled to preserve exact layout height */}
+            <div 
+              className={`flex items-center gap-2 mb-1 group cursor-pointer transition-opacity duration-200 ${viewType === 'potential' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+              onClick={() => viewType === 'potential' && setInfoModal(isFree ? 'totalSaved' : 'directCost')}
+            >
+              <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-700" />
+              <span className="text-[8px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
+                {isFree 
+                  ? `Tätä menoa puhdas käteissäästö vuonna ${currentYear + forecastYears}` 
+                  : `Tätä menoa suorat kulut yhteensä vuonna ${currentYear + forecastYears}`}
+              </span>
+            </div>
 
             {/* 2. Slider (The Interaction Tool) */}
             <div className="w-full py-1 mb-1.5">
@@ -268,14 +266,14 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           </div>
         </div>
 
-        {/* Bottom section: Action Buttons — Now with extra breathing room */}
-        <div className="w-full px-5 pb-4 lg:pb-8 flex flex-col gap-4">
+        {/* Bottom section: Stealth Share Link */}
+        <div className="w-full pb-6 lg:pb-8 flex justify-center mt-auto">
           <button
             onClick={handleShare}
-            className="flex items-center justify-center gap-2 w-full px-8 py-3.5 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black text-[10px] font-semibold uppercase tracking-[0.4em] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+            className="group flex items-center justify-center gap-2.5 text-zinc-600 hover:text-zinc-300 transition-colors active:scale-95 text-[9px] font-semibold uppercase tracking-[0.4em] py-2 px-4"
           >
-            <Share2 size={13} />
-            {t.shareBtn}
+            <Share2 size={12} className="stroke-[2.5]" />
+            <span>{t.shareBtn}</span>
           </button>
         </div>
       </div>
