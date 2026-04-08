@@ -1,3 +1,4 @@
+import React from 'react';
 import type { TranslationStrings } from '../utils/i18n';
 import type { InfoType } from './InfoModal';
 
@@ -24,8 +25,9 @@ export default function ForecastSlider({ forecastYears, onForecastChange, gradie
         value={forecastYears}
         onChange={(e) => onForecastChange(parseInt(e.target.value))}
         style={{
-          background: `linear-gradient(to right, ${gradientColor}80 ${pct}%, #252525 ${pct}%)`
-        }}
+          background: `linear-gradient(to right, ${gradientColor}80 ${pct}%, #252525 ${pct}%)`,
+          '--thumb-color': gradientColor
+        } as React.CSSProperties}
         className="custom-slider-thin w-full rounded-full appearance-none cursor-pointer"
       />
     </div>

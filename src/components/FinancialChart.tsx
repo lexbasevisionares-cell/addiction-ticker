@@ -69,7 +69,11 @@ export default function FinancialChart({
     ? displayData.directCost 
     : (viewType === 'potential' ? totalDirectSavings : accumulated);
   const leftValueString = formatCurrency(leftValue);
-  const rightValueString = formatCurrency(rightSideValue);
+  // Round right side value to whole numbers ONLY in potential view, keep decimals in secured view and hover.
+  const isHovered = hoveredData !== null;
+  const rightValueString = (isHovered || viewType === 'secured')
+    ? formatCurrency(rightSideValue) 
+    : new Intl.NumberFormat('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(rightSideValue);
 
   const fontSizeClass = 'text-2xl lg:text-4xl 2xl:text-5xl';
 
@@ -138,8 +142,8 @@ export default function FinancialChart({
           </div>
 
           {/* Center: Growth/Loss Arrow — Now bright and neon */}
-          <div className={`shrink-0 px-1 lg:px-6 mt-0 ${colorClass} drop-shadow-[0_0_8px_currentColor]`}>
-            <ArrowRight size={22} className="lg:w-10 lg:h-10 opacity-60" />
+          <div className={`shrink-0 px-1 lg:px-6 mt-0 ${colorClass} drop-shadow-[0_0_12px_currentColor]`}>
+            <ArrowRight size={24} className="lg:w-10 lg:h-10 opacity-80" strokeWidth={2.5} />
           </div>
 
           {/* Right Side: Projected / Potential */}
@@ -290,9 +294,10 @@ export default function FinancialChart({
               type="monotone" 
               dataKey="investedValue" 
               stroke={gradientColor} 
-              strokeWidth={1} 
+              strokeWidth={2} 
               fillOpacity={1} 
               fill="url(#colorInvested)" 
+              style={{ filter: `drop-shadow(0px -4px 8px ${gradientColor}80)` }}
               isAnimationActive={true}
               animationDuration={600}
               activeDot={false}

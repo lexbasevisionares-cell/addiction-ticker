@@ -37,6 +37,8 @@ export const TRANSLATIONS = {
     secs: 'Sek',
     since: 'Aloitit',
     shareBtn: 'Jaa tulos',
+    shareAccomplishment: 'Jaa saavutuksesi',
+    shareSituation: 'Jaa tilanteesi',
     resetCounter: 'Katkaise vapaa putki',
     quitAddiction: 'Lopeta riippuvuus',
     year: 'Vuosi',

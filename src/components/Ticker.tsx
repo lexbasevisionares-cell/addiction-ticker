@@ -225,8 +225,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               className={`flex items-center gap-2 mb-1 group cursor-pointer transition-opacity duration-200 ${viewType === 'potential' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
               onClick={() => viewType === 'potential' && setInfoModal(isFree ? 'totalSaved' : 'directCost')}
             >
-              <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-700" />
-              <span className="text-[8px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
+              <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-500" />
+              <span className="text-[10px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
                 {isFree 
                   ? `Tätä menoa puhdas käteissäästö vuonna ${currentYear + forecastYears}` 
                   : `Tätä menoa suorat kulut yhteensä vuonna ${currentYear + forecastYears}`}
@@ -252,8 +252,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               className="flex items-center gap-2 group cursor-pointer"
               onClick={() => setInfoModal(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : (viewType === 'potential' ? 'indirectLoss' : 'lostInvestment'))}
             >
-              <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isFree ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}`} />
-              <span className={`text-[8px] uppercase tracking-[0.1em] font-medium ${colorClass} transition-opacity group-hover:opacity-80`}>
+              <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isFree ? 'bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.8)]' : 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.8)]'}`} />
+              <span className={`text-[10px] uppercase tracking-[0.1em] font-medium ${colorClass} transition-opacity group-hover:opacity-100 opacity-90`}>
                 {viewType === 'secured' 
                   ? (isFree 
                       ? `Jo säästetyn pääoman arvo vuonna ${currentYear + forecastYears}`
@@ -270,10 +270,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         <div className="w-full pb-6 lg:pb-8 flex justify-center mt-auto">
           <button
             onClick={handleShare}
-            className="group flex items-center justify-center gap-2.5 text-zinc-600 hover:text-zinc-300 transition-colors active:scale-95 text-[9px] font-semibold uppercase tracking-[0.4em] py-2 px-4"
+            className="group flex items-center justify-center gap-2.5 text-zinc-400 hover:text-white transition-colors active:scale-95 text-[10px] font-semibold uppercase tracking-[0.4em] py-2 px-4 drop-shadow-sm"
           >
-            <Share2 size={12} className="stroke-[2.5]" />
-            <span>{t.shareBtn}</span>
+            <Share2 size={13} className="stroke-[2.5]" />
+            <span>{isFree ? t.shareAccomplishment : t.shareSituation}</span>
           </button>
         </div>
       </div>
