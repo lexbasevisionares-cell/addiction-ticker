@@ -75,10 +75,10 @@ export default function FinancialChart({
     ? formatCurrency(rightSideValue) 
     : new Intl.NumberFormat('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(rightSideValue);
 
-  const fontSizeClass = 'text-2xl lg:text-4xl 2xl:text-5xl';
+  const fontSizeClass = 'text-[clamp(1.5rem,6vw,3.5rem)]';
 
   return (
-    <div className="w-full relative flex flex-col">
+    <div className="w-full relative flex flex-col h-full">
       <div className="flex flex-col w-full mb-0 lg:mb-2 relative z-10">
         
         {/* Row 1: View Switcher Toggle - Shown in BOTH states */}
@@ -142,8 +142,8 @@ export default function FinancialChart({
           </div>
 
           {/* Center: Growth/Loss Arrow — Now bright and neon */}
-          <div className={`shrink-0 px-1 lg:px-6 mt-0 ${colorClass} drop-shadow-[0_0_12px_currentColor]`}>
-            <ArrowRight size={24} className="lg:w-10 lg:h-10 opacity-80" strokeWidth={2.5} />
+          <div className={`shrink-0 px-2 lg:px-6 mt-0 ${colorClass} drop-shadow-[0_0_12px_currentColor]`}>
+            <ArrowRight className="w-[clamp(24px,6vw,40px)] h-[clamp(24px,6vw,40px)] opacity-80" strokeWidth={2.5} />
           </div>
 
           {/* Right Side: Projected / Potential */}
@@ -177,7 +177,7 @@ export default function FinancialChart({
       </div>
 
       <div
-        className="flex-1 min-h-[140px] h-44 lg:h-[320px] 2xl:h-[450px] w-full chart-container outline-none focus:outline-none select-none relative mb-1 -mt-4 lg:-mt-10 z-0"
+        className="flex-1 min-h-[140px] chart-container outline-none focus:outline-none select-none relative mb-[clamp(10px,2dvh,40px)] -mt-[clamp(10px,3dvh,40px)] z-0"
         onTouchStart={handleInteraction}
         onTouchMove={handleInteraction}
         onMouseEnter={handleInteraction}

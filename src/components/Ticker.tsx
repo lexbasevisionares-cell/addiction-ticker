@@ -174,9 +174,9 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
       </div>
 
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
-        {/* Spacer to push content down - Reduced for better clearance */}
-        <div className="flex-[0.1] min-h-[2px]" />
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden justify-between">
+        {/* Spacer to push content down - adapts based on height */}
+        <div className="flex-[0.05] min-h-[4px]" />
 
         {/* Content Section: Timer */}
         <div className="flex flex-col items-center w-full pb-0 px-4 relative">
@@ -234,7 +234,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             </div>
 
             {/* 2. Slider (The Interaction Tool) */}
-            <div className="w-full py-1 mb-1.5">
+            <div className="w-full py-[clamp(4px,1dvh,12px)] mb-[clamp(4px,1dvh,8px)]">
               <ForecastSlider
                 forecastYears={forecastYears}
                 onForecastChange={setForecastYears}
@@ -267,7 +267,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Bottom section: Stealth Share Link */}
-        <div className="w-full pb-6 lg:pb-8 flex justify-center mt-auto">
+        <div className="w-full pb-[clamp(16px,4dvh,32px)] flex justify-center mt-[clamp(8px,2dvh,24px)]">
           <button
             onClick={handleShare}
             className="group flex items-center justify-center gap-2.5 text-zinc-400 hover:text-white transition-colors active:scale-95 text-[10px] font-semibold uppercase tracking-[0.4em] py-2 px-4 drop-shadow-sm"
