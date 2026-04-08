@@ -223,7 +223,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
             </div>
           ))}
         </div>
-        <span className="text-[10px] font-medium text-white/20 uppercase tracking-[0.8em] mt-5">Addiction Ticker</span>
+        <span className="text-[11px] font-semibold text-white/50 uppercase tracking-[0.6em] mt-5">Addiction Ticker</span>
       </div>
 
       {/* Middle Section: Narrative Content */}
@@ -235,14 +235,14 @@ export default function OnboardingWelcome({ onStart }: Props) {
             transition={{ duration: 1.5, ease: "easeOut" }}
             className="w-full flex flex-col items-center justify-evenly flex-1"
           >
-            {/* POLTA. SIJOITA. */}
+            {/* MENETÄ. SIJOITA. */}
             <div className="flex flex-col items-center gap-4">
               <div className="flex w-full justify-center gap-6 sm:gap-20 items-center max-w-2xl">
-                <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-red-500 tracking-tighter">POLTA.</h2>
+                <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-red-500 tracking-tighter">MENETÄ.</h2>
                 <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-emerald-500 tracking-tighter">SIJOITA.</h2>
               </div>
-              <p className="text-[10px] md:text-lg font-medium tracking-[0.6em] uppercase text-white/30">
-                Jokainen annos on valinta.
+              <p className="text-[11px] md:text-lg font-semibold tracking-[0.4em] uppercase text-white/60">
+                Jokainen sekunti on valinta.
               </p>
             </div>
 
@@ -253,7 +253,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
                 <span className="text-white font-sans font-light text-4xl md:text-6xl tabular-nums tracking-tighter">
                   {Math.floor(tickerYear).toString().padStart(2, '0')}
                 </span>
-                <span className="text-white/30 text-[9px] md:text-[12px] uppercase tracking-[0.8em] font-medium ml-4">
+                <span className="text-white/60 text-[11px] md:text-[14px] uppercase tracking-[0.6em] font-semibold ml-4">
                   vuotta
                 </span>
               </div>
@@ -261,7 +261,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
               {/* METRICS ROW */}
               <div className="w-full flex flex-row items-center justify-center px-4 max-w-5xl mx-auto">
                 <div className="flex-1 flex flex-col items-end pr-5 md:pr-16 lg:pr-32">
-                  <span className="text-[9px] md:text-[11px] uppercase tracking-[0.6em] text-red-500/60 font-medium mb-4">Riippuvainen</span>
+                  <span className="text-[10px] md:text-[12px] uppercase tracking-[0.4em] text-red-500/90 font-bold mb-4">Riippuvainen</span>
                   <div className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-sans font-light text-red-500 tracking-tighter tabular-nums leading-none">
                     -{redValue.toLocaleString('fi-FI', { maximumFractionDigits: 0 })}
                   </div>
@@ -270,7 +270,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
                 <div className="w-px h-12 md:h-24 bg-white/5 mx-2 md:mx-10 shrink-0" />
                 
                 <div className="flex-1 flex flex-col items-start pl-5 md:pl-16 lg:pl-32">
-                  <span className="text-[9px] md:text-[11px] uppercase tracking-[0.6em] text-emerald-500/60 font-medium mb-4">Vapaa</span>
+                  <span className="text-[10px] md:text-[12px] uppercase tracking-[0.4em] text-emerald-500/90 font-bold mb-4">Vapaa</span>
                   <div className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-sans font-light text-emerald-500 tracking-tighter tabular-nums leading-none">
                     +{greenValue.toLocaleString('fi-FI', { maximumFractionDigits: 0 })}
                   </div>
@@ -297,10 +297,10 @@ export default function OnboardingWelcome({ onStart }: Props) {
           transition={isFinalPhase ? { duration: 3, repeat: Infinity, ease: "easeInOut" } : {}}
           className="w-full max-w-sm relative flex items-center justify-center bg-white text-black font-semibold py-5 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] hover:scale-[1.03] active:scale-[0.98] text-[10px] md:text-xs tracking-[0.6em] uppercase group"
         >
-          <span className="relative z-10">Laske vapautesi</span>
+          <span className="relative z-10">Aseta numerosi</span>
           <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
         </motion.button>
-        <p className="text-[8px] md:text-[9px] text-zinc-600 font-medium uppercase tracking-[0.3em] mt-5 md:mt-7 text-center">
+        <p className="text-[10px] md:text-[11px] text-zinc-400 font-semibold uppercase tracking-[0.2em] mt-5 md:mt-7 text-center">
            Laskettu omilla numeroillasi
         </p>
       </div>
