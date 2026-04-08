@@ -1,4 +1,4 @@
-import { Settings as SettingsIcon, X, HelpCircle, Info, ShieldCheck, Scale } from 'lucide-react';
+import { Settings as SettingsIcon, X, HelpCircle, Info, ShieldCheck, Scale, RotateCcw, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { TranslationStrings } from '../utils/i18n';
 
@@ -7,73 +7,92 @@ interface Props {
   onClose: () => void;
   onEditSettings: () => void;
   onShowInfo: (type: 'logic' | 'about' | 'privacy' | 'disclaimer') => void;
+  onTriggerAction: (type: 'quit' | 'relapse' | 'reset') => void;
+  isFree?: boolean;
   t: TranslationStrings;
 }
 
-export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, t }: Props) {
+export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, onTriggerAction, isFree, t }: Props) {
   return (
     <AnimatePresence>
       {isOpen && (
         <>
+          {/* Backdrop - Deeper blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-40"
           />
+
+          {/* Drawer - Cardless & Ethereal */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 bottom-0 w-64 lg:w-[400px] xl:w-[480px] bg-zinc-900 border-l border-white/10 z-50 flex flex-col shadow-2xl"
+            transition={{ type: 'spring', damping: 30, stiffness: 250, mass: 0.8 }}
+            className="fixed top-0 right-0 bottom-0 w-[280px] lg:w-[420px] bg-[#050505] z-50 flex flex-col shadow-[-20px_0_60px_rgba(0,0,0,0.5)] font-sans"
             style={{ paddingTop: 'env(safe-area-inset-top)' }}
           >
-            <div className="flex-1 flex flex-col p-6 lg:p-12">
-              <div className="flex justify-between items-center mb-10 lg:mb-16">
-                <span className="text-xs lg:text-sm font-bold text-zinc-400 uppercase tracking-[0.25em]">{t.menuTitle}</span>
-                <button onClick={onClose} className="text-zinc-400 hover:text-white p-2 -mr-2 transition-transform hover:scale-110">
+            <div className="flex-1 flex flex-col p-8 lg:p-14">
+              {/* Header */}
+              <div className="flex justify-between items-center mb-16 lg:mb-24">
+                <span className="text-[10px] lg:text-xs font-medium text-zinc-400 uppercase tracking-[0.8em]">{t.menuTitle}</span>
+                <button 
+                  onClick={onClose} 
+                  className="text-zinc-400 hover:text-white p-2 -mr-2 transition-all active:scale-95"
+                  aria-label="Close"
+                >
                   <X size={24} className="lg:w-8 lg:h-8" />
                 </button>
               </div>
 
-              <div className="flex flex-col gap-1 lg:gap-4">
-                <button
-                  onClick={() => { onEditSettings(); }}
-                  className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-200 hover:text-white hover:bg-white/5 p-3.5 lg:p-5 rounded-2xl transition-all text-left"
-                >
-                  <SettingsIcon size={20} className="lg:w-8 lg:h-8 text-zinc-400 group-hover:text-emerald-400 transition-colors" />
-                  {t.settingsTitle}
-                </button>
-                <button
-                  onClick={() => { onShowInfo('logic'); }}
-                  className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-200 hover:text-white hover:bg-white/5 p-3.5 lg:p-5 rounded-2xl transition-all text-left"
-                >
-                  <HelpCircle size={20} className="lg:w-8 lg:h-8 text-zinc-400 group-hover:text-emerald-400 transition-colors" />
-                  {t.howItWorks}
-                </button>
-                <button
-                  onClick={() => { onShowInfo('about'); }}
-                  className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-200 hover:text-white hover:bg-white/5 p-3.5 lg:p-5 rounded-2xl transition-all text-left"
-                >
-                  <Info size={20} className="lg:w-8 lg:h-8 text-zinc-400 group-hover:text-emerald-400 transition-colors" />
-                  {t.aboutApp}
-                </button>
-                <button
-                  onClick={() => { onShowInfo('privacy'); }}
-                  className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-200 hover:text-white hover:bg-white/5 p-3.5 lg:p-5 rounded-2xl transition-all text-left"
-                >
-                  <ShieldCheck size={20} className="lg:w-8 lg:h-8 text-zinc-400 group-hover:text-emerald-400 transition-colors" />
-                  {t.privacyTitle}
-                </button>
-                <button
-                  onClick={() => { onShowInfo('disclaimer'); }}
-                  className="group flex items-center gap-4 lg:gap-6 text-sm lg:text-xl xl:text-2xl font-medium text-zinc-200 hover:text-white hover:bg-white/5 p-3.5 lg:p-5 rounded-2xl transition-all text-left"
-                >
-                  <Scale size={20} className="lg:w-8 lg:h-8 text-zinc-400 group-hover:text-emerald-400 transition-colors" />
-                  {t.disclaimerTitle || 'Vastuuvapauslauseke'}
-                </button>
+              {/* Menu Items - Typography Focus */}
+              <div className="flex flex-col gap-2 lg:gap-4">
+                {[
+                  { icon: SettingsIcon, label: t.settingsTitle, action: onEditSettings },
+                  { icon: HelpCircle, label: t.howItWorks, action: () => onShowInfo('logic') },
+                  { icon: Info, label: t.aboutApp, action: () => onShowInfo('about') },
+                  { icon: ShieldCheck, label: t.privacyTitle, action: () => onShowInfo('privacy') },
+                  { icon: Scale, label: t.disclaimerTitle || 'Vastuuvapauslauseke', action: () => onShowInfo('disclaimer') }
+                ].map((item, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => { item.action(); }}
+                    className="group flex items-center gap-5 lg:gap-8 py-5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
+                  >
+                    <item.icon size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors" />
+                    <span className="tracking-tight">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="h-px bg-white/5 my-6 lg:my-8" />
+
+              {/* Destructive Actions */}
+              <div className="flex flex-col gap-2 lg:gap-4">
+                  <button
+                    onClick={() => onTriggerAction(!isFree ? 'quit' : 'relapse')}
+                    className="group flex items-center gap-5 lg:gap-8 py-5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
+                  >
+                    <RotateCcw size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors" />
+                    <span className="tracking-tight">{!isFree ? t.quitAddiction : t.resetCounter}</span>
+                  </button>
+                  <button
+                    onClick={() => onTriggerAction('reset')}
+                    className="group flex items-center gap-5 lg:gap-8 py-5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-red-400 transition-all transform hover:translate-x-1"
+                  >
+                    <Trash2 size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-red-500 transition-colors" />
+                    <span className="tracking-tight text-red-500/80 group-hover:text-red-400 transition-colors">{t.resetAllData}</span>
+                  </button>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-auto pt-10">
+                <p className="text-[9px] font-medium text-zinc-600 uppercase tracking-[0.4em]">
+                  Addiction Ticker v1.2.0
+                </p>
               </div>
             </div>
           </motion.div>

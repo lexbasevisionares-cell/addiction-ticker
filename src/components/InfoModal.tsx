@@ -2,7 +2,7 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { TranslationStrings } from '../utils/i18n';
 
-export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer' | 'hookedTimer' | 'lostNow' | 'lostInvestment';
+export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer' | 'hookedTimer' | 'lostNow' | 'lostInvestment' | 'qDailyCost' | 'qAnnualPriceIncrease' | 'qExpectedReturn' | 'qInvestReminderThreshold' | 'qNotificationLevel';
 
 interface Props {
   type: InfoType | null;
@@ -15,21 +15,31 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
   const getMetricContent = () => {
     switch (type) {
       case 'savedNow':
-        return { title: t.savedNow, description: t.infoSavedNowDesc, color: 'text-emerald-400' };
+        return { title: t.savedNow, description: t.infoSavedNowDesc, color: 'text-emerald-500' };
       case 'totalSaved':
-        return { title: t.totalSaved, description: t.infoTotalSavedDesc, color: 'text-emerald-400' };
+        return { title: t.totalSaved, description: t.infoTotalSavedDesc, color: 'text-emerald-500' };
       case 'directCost':
-        return { title: t.directCost, description: t.infoDirectCostDesc, color: 'text-red-400' };
+        return { title: t.directCost, description: t.infoDirectCostDesc, color: 'text-red-500' };
       case 'valueInYear':
-        return { title: t.valueInYear.replace(' {year}', ''), description: t.infoValueInYearDesc, color: 'text-emerald-400' };
+        return { title: t.valueInYear.replace(' {year}', ''), description: t.infoValueInYearDesc, color: 'text-emerald-500' };
       case 'indirectLoss':
-        return { title: t.indirectLoss, description: t.infoIndirectLossDesc, color: 'text-red-400' };
+        return { title: t.indirectLoss, description: t.infoIndirectLossDesc, color: 'text-red-500' };
       case 'potential':
-        return { title: t.potentialInYears.split(' {')[0], description: t.infoPotentialDesc, color: isFree ? 'text-emerald-400' : 'text-red-400' };
+        return { title: t.potentialInYears.split(' {')[0], description: t.infoPotentialDesc, color: isFree ? 'text-emerald-500' : 'text-red-500' };
       case 'lostNow':
-        return { title: t.lostNow, description: t.infoLostNowDesc, color: 'text-red-400' };
+        return { title: t.lostNow, description: t.infoLostNowDesc, color: 'text-red-500' };
       case 'lostInvestment':
-        return { title: t.lostInvestment, description: t.infoLostInvestmentDesc, color: 'text-red-400' };
+        return { title: t.lostInvestment, description: t.infoLostInvestmentDesc, color: 'text-red-500' };
+      case 'qDailyCost':
+        return { title: (t as any).modalDailyCostTitle, description: (t as any).modalDailyCostDesc, color: 'text-zinc-300' };
+      case 'qAnnualPriceIncrease':
+        return { title: (t as any).modalAnnualIncreaseTitle, description: (t as any).modalAnnualIncreaseDesc, color: 'text-zinc-300' };
+      case 'qExpectedReturn':
+        return { title: (t as any).modalExpectedReturnTitle, description: (t as any).modalExpectedReturnDesc, color: 'text-zinc-300' };
+      case 'qInvestReminderThreshold':
+        return { title: (t as any).modalInvestReminderTitle, description: (t as any).modalInvestReminderDesc, color: 'text-zinc-300' };
+      case 'qNotificationLevel':
+        return { title: (t as any).modalMotivatorTitle, description: (t as any).modalMotivatorDesc, color: 'text-zinc-300' };
       default:
         return null;
     }
@@ -40,135 +50,108 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
   return (
     <AnimatePresence>
       {type && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 lg:p-12 font-sans">
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-2xl"
+            className="absolute inset-0 bg-black/90 backdrop-blur-xl"
           />
+
+          {/* Modal - Ethereal typography focus */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30, filter: 'blur(20px)' }}
-            animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 0.9, y: 30, filter: 'blur(20px)' }}
-            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-            className="relative w-full max-w-lg bg-white/5 border border-white/10 rounded-[3rem] p-10 lg:p-14 shadow-[0_50px_100px_rgba(0,0,0,0.5)] overflow-y-auto max-h-[90dvh] backdrop-blur-3xl no-scrollbar"
+            initial={{ opacity: 0, y: 40, scale: 0.98, filter: 'blur(20px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: 40, scale: 0.98, filter: 'blur(20px)' }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="relative w-full max-w-2xl bg-white/[0.03] rounded-[3rem] p-8 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-y-auto max-h-[85dvh] backdrop-blur-3xl no-scrollbar border border-white/[0.05]"
           >
             <button
               onClick={onClose}
-              className="absolute top-8 right-8 text-zinc-600 hover:text-white transition-colors p-2"
+              className="absolute top-10 right-10 text-zinc-400 hover:text-white transition-all active:scale-90 p-2"
+              aria-label="Close"
             >
-              <X size={28} />
+              <X size={32} strokeWidth={3} />
             </button>
 
-            <div className={`w-16 h-1 rounded-full mb-12 ${metric ? (metric.color === 'text-emerald-400' ? 'bg-emerald-400/20' : 'bg-red-400/20') : 'bg-white/10'}`} />
+            {/* Decorative line - Subtle and neutral */}
+            <div className="w-12 h-px bg-white/20 rounded-full mb-12" />
 
             {metric ? (
-              <div className="space-y-4">
-                <h3 className={`text-3xl lg:text-4xl font-sans font-light ${metric.color} mb-8 tracking-tight`}>{metric.title}</h3>
-                <div className="space-y-6 text-base lg:text-lg text-zinc-300 leading-relaxed font-sans font-normal">
+              <div className="space-y-5">
+                <h3 className="text-3xl lg:text-4xl font-light text-white mb-6 tracking-tighter leading-tight break-words">{metric.title}</h3>
+                <div className="text-base lg:text-xl text-zinc-300 leading-relaxed font-normal">
                   <p>{metric.description}</p>
                 </div>
               </div>
             ) : type === 'hookedTimer' ? (
-              <div className="space-y-4">
-                <h3 className="text-3xl lg:text-4xl font-sans font-light text-red-400/90 mb-8 tracking-tight">{t.infoHookedTimerTitle}</h3>
-                <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
-                  <p>{t.infoHookedTimerP1}</p>
-                  <p>{t.infoHookedTimerP2}</p>
-                  <p className="text-zinc-300">{t.infoHookedTimerP3}</p>
+              <div className="space-y-5">
+                <h3 className="text-3xl lg:text-4xl font-light text-white mb-6 tracking-tighter leading-tight break-words">
+                  {isFree ? t.infoFreeTimerTitle : t.infoHookedTimerTitle}
+                </h3>
+                <div className="space-y-6 text-base lg:text-xl text-zinc-300 leading-relaxed font-normal">
+                  <p>{isFree ? t.infoFreeTimerP1 : t.infoHookedTimerP1}</p>
+                  <p>{isFree ? t.infoFreeTimerP2 : t.infoHookedTimerP2}</p>
+                  <p className="text-white font-medium">{isFree ? t.infoFreeTimerP3 : t.infoHookedTimerP3}</p>
                 </div>
               </div>
             ) : type === 'logic' ? (
-              <div className="space-y-4">
-                <h3 className="text-3xl lg:text-4xl font-sans font-light text-white/90 mb-8 tracking-tight">{t.infoLogicTitle}</h3>
-                <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
-                  <p>{t.infoLogicGeneral}</p>
+              <div className="space-y-8">
+                <h3 className="text-3xl lg:text-4xl font-light text-white mb-6 tracking-tighter leading-tight break-words">{t.infoLogicTitle}</h3>
+                <div className="space-y-8">
+                  <p className="text-base lg:text-xl text-zinc-500 leading-relaxed font-normal">{t.infoLogicGeneral}</p>
                   
-                  {isFree ? (
-                    <>
-                      <div className="pt-2 space-y-4">
-                        <h4 className="text-xl font-medium text-emerald-400 mt-6 mb-2 border-b border-white/10 pb-2">{t.infoLogicP1Title}</h4>
-                        <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashSaved}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoSavedNowDesc}</span>
-                        </p>
-                        
-                        <h4 className="text-xl font-medium text-emerald-400 mt-8 mb-2 border-b border-white/10 pb-2">{t.infoLogicP2Title}</h4>
-                        <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashInvested}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoValueInYearDesc}</span>
-                        </p>
-                        <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashPureSavings}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoTotalSavedDesc}</span>
-                        </p>
-                        <p className="flex flex-col">
-                          <strong className="text-emerald-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashTotalWealth}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoPotentialDesc}</span>
-                        </p>
+                  <div className="space-y-10">
+                    {(isFree ? [
+                      { label: t.dashSaved, desc: t.infoLogicFreeDesc1 },
+                      { label: t.dashPureSavings.replace(' {years} vuodessa', ''), desc: t.infoLogicFreeDesc2 },
+                      { label: t.dashInvested.replace(' {years} vuodessa', ''), desc: t.infoLogicFreeDesc3 },
+                      { label: t.dashTotalWealth.replace(' {years} vuoden kuluttua', ''), desc: t.infoLogicFreeDesc4 }
+                    ] : [
+                      { label: t.dashLost, desc: t.infoLogicHookedDesc1 },
+                      { label: t.dashPureCosts.replace(' {years} vuodessa', ''), desc: t.infoLogicHookedDesc2 },
+                      { label: t.dashLostInvested.replace(' {years} vuodessa', ''), desc: t.infoLogicHookedDesc3 },
+                      { label: t.dashLostWealth.replace(' {years} vuodessa', ''), desc: t.infoLogicHookedDesc4 }
+                    ]).map((item, idx) => (
+                      <div key={idx} className="space-y-3">
+                         <h4 className="text-xl lg:text-2xl font-light tracking-tight text-white">
+                           {item.label}
+                         </h4>
+                         <p className="text-base lg:text-xl text-zinc-400 leading-relaxed font-normal">
+                           {item.desc}
+                         </p>
                       </div>
-                    </>
-                  ) : (
-                    <>
-                      <p>{t.infoLogicHookedP1}</p>
-                      <div className="pt-2 space-y-4">
-                        <h4 className="text-xl font-medium text-red-400 mt-6 mb-2 border-b border-white/10 pb-2">{t.infoLogicP1Title}</h4>
-                        <p className="flex flex-col">
-                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashLost}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLostNowDesc}</span>
-                        </p>
-                        
-                        <h4 className="text-xl font-medium text-red-400 mt-8 mb-2 border-b border-white/10 pb-2">{t.infoLogicP2Title}</h4>
-                        <p className="flex flex-col">
-                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashLostInvested}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoLostInvestmentDesc}</span>
-                        </p>
-                        <p className="flex flex-col">
-                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashPureCosts}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoDirectCostDesc}</span>
-                        </p>
-                        <p className="flex flex-col">
-                          <strong className="text-red-400 font-bold uppercase tracking-widest text-[10px] mb-1">{t.dashLostWealth}</strong>
-                          <span className="opacity-80 text-sm leading-normal">{t.infoIndirectLossDesc}</span>
-                        </p>
-                      </div>
-                    </>
-                  )}
+                    ))}
+                  </div>
                 </div>
               </div>
               ) : type === 'disclaimer' ? (
-              <div className="space-y-4">
-                <h3 className="text-3xl lg:text-4xl font-sans font-light text-white/90 mb-8 tracking-tight">{t.disclaimerTitle}</h3>
-                <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
+              <div className="space-y-5">
+                <h3 className="text-3xl lg:text-4xl font-light text-white mb-6 tracking-tighter leading-tight break-words">{t.disclaimerTitle}</h3>
+                <div className="space-y-6 text-base lg:text-xl text-zinc-300 leading-relaxed font-normal">
                   <p>{t.disclaimerP1}</p>
                   <p>{t.disclaimerP2}</p>
                   <p>{t.disclaimerP3}</p>
                 </div>
               </div>
               ) : type === 'privacy' ? (
-              <div className="space-y-4">
-                <h3 className="text-3xl lg:text-4xl font-sans font-light text-white/90 mb-8 tracking-tight">{t.privacyTitle}</h3>
-                <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
-                  <p>
-                    {t.privacyDesc}
-                  </p>
+              <div className="space-y-5">
+                <h3 className="text-3xl lg:text-4xl font-light text-white mb-6 tracking-tighter leading-tight break-words">{t.privacyTitle}</h3>
+                <div className="space-y-6 text-base lg:text-xl text-zinc-300 leading-relaxed font-normal">
+                  <p>{t.privacyDesc}</p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
-                <h3 className="text-3xl lg:text-4xl font-sans font-light text-white/90 mb-8 tracking-tight">{t.infoAboutTitle}</h3>
-                <div className="space-y-6 text-base lg:text-lg text-zinc-500 leading-relaxed font-sans font-normal">
+              <div className="space-y-5">
+                <h3 className="text-3xl lg:text-4xl font-light text-white mb-6 tracking-tighter leading-tight break-words">{t.infoAboutTitle}</h3>
+                <div className="space-y-6 text-base lg:text-xl text-zinc-300 leading-relaxed font-normal">
                   <p>
-                    <span className="text-white/80 font-medium">Addiction Ticker</span> {t.infoAboutP1}
+                    <span className="text-white font-medium">Addiction Ticker</span> {t.infoAboutP1}
                   </p>
-                  <p>
-                    {t.infoAboutP2}
-                  </p>
-                  <p>
-                    {t.infoAboutP3}
-                  </p>
+                  <p>{t.infoAboutP2}</p>
+                  <p>{t.infoAboutP3}</p>
                 </div>
               </div>
             ) }

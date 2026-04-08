@@ -23,6 +23,9 @@ export default function App() {
         if (parsedSettings.expectedReturn === undefined) {
           parsedSettings.expectedReturn = 7.0;
         }
+        if (parsedSettings.investReminderThreshold === undefined) {
+          parsedSettings.investReminderThreshold = 0.01;
+        }
         if (parsedSettings.language !== undefined) {
           delete parsedSettings.language;
           // Silently overwrite legacy settings in the background
@@ -123,7 +126,7 @@ export default function App() {
     if (settings && appState) {
       return (
         <>
-          <Ticker settings={settings} appState={appState} onUpdateState={handleUpdateState} onEditSettings={handleEditSettings} />
+          <Ticker settings={settings} appState={appState} onUpdateState={handleUpdateState} onEditSettings={handleEditSettings} onResetAll={handleResetAll} />
           {view === 'settings' && (
             <div className="fixed inset-0 z-50 bg-[#050505] overflow-y-auto no-scrollbar">
               <Settings 
@@ -132,7 +135,6 @@ export default function App() {
                 onSave={handleSaveEditedSettings} 
                 onUpdateState={handleUpdateState} 
                 onCancel={() => setView('ticker')} 
-                onResetAll={handleResetAll}
               />
             </div>
           )}

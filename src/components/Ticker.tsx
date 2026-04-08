@@ -4,7 +4,7 @@ import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForeca
 import { t, formatCurrency } from '../utils/i18n';
 import { UserSettings } from './Onboarding';
 import TimerDisplay from './TimerDisplay';
-import MetricsDashboard from './MetricsDashboard';
+import FinancialChart, { GraphDataPoint } from './FinancialChart';
 import ForecastSlider from './ForecastSlider';
 import SideDrawer from './SideDrawer';
 import InfoModal, { InfoType } from './InfoModal';
@@ -23,32 +23,29 @@ interface Props {
   appState: AppState;
   onUpdateState: (state: AppState) => void;
   onEditSettings: () => void;
+  onResetAll?: () => void;
 }
 
-export default function Ticker({ settings, appState, onUpdateState, onEditSettings }: Props) {
+export default function Ticker({ settings, appState, onUpdateState, onEditSettings, onResetAll }: Props) {
   const [now, setNow] = useState(Date.now());
   const [stableNow, setStableNow] = useState(Date.now());
   const [forecastYears, setForecastYears] = useState(10);
+  const [viewType, setViewType] = useState<'secured' | 'potential'>('secured');
   const [modalType, setModalType] = useState<'quit' | 'relapse' | 'reset' | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [infoModal, setInfoModal] = useState<InfoType | null>(null);
   const [isInvestBannerOpen, setIsInvestBannerOpen] = useState(false);
 
-
-
   useEffect(() => {
     const tick = () => {
       const currentTime = Date.now();
       setNow(currentTime);
-
       setStableNow(prev => {
         if (currentTime - prev > 60000) return currentTime;
         return prev;
       });
     };
-
     tick();
-    // Päivitetään luvut nopeammalla syklillä jotta "elävä" tuotto pyörii sulavasti (esim. 50ms = 20 fps)
     const id = setInterval(tick, 50);
     return () => clearInterval(id);
   }, []);
@@ -58,8 +55,9 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   }, [appState.startTime]);
 
   const isFree = appState.status === 'vapaa';
-  const colorClass = isFree ? 'text-emerald-400' : 'text-red-400';
-  const gradientColor = isFree ? '#34d399' : '#f87171';
+  // OLED Glow: High-saturation neon variants
+  const colorClass = isFree ? 'text-emerald-400' : 'text-rose-500';
+  const gradientColor = isFree ? '#10b981' : '#f43f5e';
 
   const elapsedMs = now - appState.startTime;
   const totalSeconds = Math.floor(elapsedMs / 1000);
@@ -74,17 +72,13 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const currentYear = new Date().getFullYear();
   const stableTargetDate = new Date(currentYear + forecastYears, 0, 1).getTime();
 
-  // Reaaliaikaiset mittarit ruutua varten, jotta luvut pyörivät "niin tarkasti kuin ikinä mahdollista"
   const elapsedDays = Math.max(0, elapsedMs) / (1000 * 60 * 60 * 24);
   const yearsToTargetExactLive = Math.max(0, (stableTargetDate - now) / (1000 * 60 * 60 * 24 * 365.25));
   const totalYearsLive = elapsedDays / 365.25 + yearsToTargetExactLive;
 
   const accumulated = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, elapsedDays);
-  
-  // Oikea salkun nykyarvo, joka sisältää jo kertyneet menneiden kuukausien/vuosien korot säästetylle summalle (real-time velocity)
   const currentPortfolioValueLive = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, elapsedDays / 365.25, settings.expectedReturn);
   const securedFV = calculateSecuredFutureValue(currentPortfolioValueLive, yearsToTargetExactLive, settings.expectedReturn);
-  
   const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive, settings.expectedReturn);
   const totalDirectSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive * 365.25);
 
@@ -93,30 +87,39 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const pendingAmount = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, pendingDays);
   const isPendingOverdue = pendingDays >= 7;
 
+  // Graph data — build yearly data points from now to forecast target year
+  const graphData: GraphDataPoint[] = useMemo(() => {
+    const points: GraphDataPoint[] = [];
+    const totalSteps = Math.max(forecastYears * 2, 30);
+    const totalYears = forecastYears;
+
+    for (let i = 0; i <= totalSteps; i++) {
+      const yearFraction = (i / totalSteps) * totalYears;
+      const yearLabel = currentYear + Math.round(yearFraction);
+      const directCost = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearFraction * 365.25);
+      const investedValue = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearFraction, settings.expectedReturn);
+      points.push({ year: yearLabel, directCost, investedValue });
+    }
+    return points;
+  }, [forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, currentYear]);
+
   const handleMarkAsInvested = () => {
-    onUpdateState({
-      ...appState,
-      lastTransferTime: Date.now(),
-      lastDismissedAmount: 0
-    });
+    onUpdateState({ ...appState, lastTransferTime: Date.now(), lastDismissedAmount: 0 });
   };
 
   const handleDismissReminder = () => {
-    onUpdateState({
-      ...appState,
-      lastDismissedAmount: pendingAmount
-    });
+    onUpdateState({ ...appState, lastDismissedAmount: pendingAmount });
   };
 
-  const isReminderVisible = pendingAmount > (appState.lastDismissedAmount || 0) + 0.001; // Tiny buffer
-
-  // graphData poistettu, koska uusi MetricsDashboard ei aseta tai piirrä datapisteitä
+  const isReminderVisible = pendingAmount > (appState.lastDismissedAmount || 0) + 0.001;
 
   const handleConfirmAction = () => {
     if (modalType === 'quit') {
       onUpdateState({ status: 'vapaa', startTime: Date.now(), lastTransferTime: Date.now() });
     } else if (modalType === 'relapse') {
       onUpdateState({ status: 'riippuvainen', startTime: Date.now() });
+    } else if (modalType === 'reset') {
+      onResetAll?.();
     }
     setModalType(null);
   };
@@ -131,25 +134,19 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     let text = '';
     if (isFree) {
       text = t.shareTextFree
-        .replace('{A}', days.toString())
         .replace('{B}', formattedCurrent)
-        .replace('{C}', settings.expectedReturn.toString())
         .replace('{D}', formatCurrencyTicker(securedFV))
-        .replace(/{E}/g, forecastYears.toString())
-        .replace('{F}', formattedTotal);
+        .replace(/{E}/g, forecastYears.toString());
     } else {
+      const forecastDirectCosts = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, forecastYears * 365.25);
       text = t.shareTextHooked
         .replace('{A}', forecastYears.toString())
-        .replace('{B}', formattedTotal);
+        .replace('{G}', formatCurrencyTicker(forecastDirectCosts));
     }
 
     if (navigator.share) {
       try {
-        await navigator.share({
-          title: t.tickerHeader,
-          text: text,
-          url: url,
-        });
+        await navigator.share({ title: t.tickerHeader, text, url });
       } catch (err) {
         console.log('Error sharing', err);
       }
@@ -161,62 +158,85 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col justify-center h-full py-4 lg:py-16 overflow-hidden">
-        <div className="absolute right-4 top-8 lg:fixed lg:right-10 lg:top-10 z-50">
-          <button onClick={() => setIsMenuOpen(true)} className="text-zinc-600 hover:text-white transition-all p-4 lg:p-6 bg-white/[0.02] hover:bg-white/[0.05] backdrop-blur-xl rounded-full border border-white/5 shadow-2xl" aria-label="Valikko">
-            <Menu className="w-5 h-5 lg:w-8 lg:h-8" />
+      {/* FIXED TOP BAR: Title & Menu */}
+      <div className="w-full flex items-center justify-center px-6 pt-8 pb-4 relative z-50 text-center">
+        <div className="text-[10px] font-medium text-white uppercase tracking-[0.5em] opacity-80">
+          {t.tickerHeader}
+        </div>
+        <div className="absolute right-4 top-5 z-50">
+          <button
+            onClick={() => setIsMenuOpen(true)}
+            className="text-zinc-400 hover:text-white transition-all p-3 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
+            aria-label="Valikko"
+          >
+            <Menu className="w-5 h-5" />
           </button>
         </div>
+      </div>
 
-        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[minmax(0,45fr)_minmax(0,55fr)] xl:grid-cols-[minmax(0,4fr)_minmax(0,6fr)] lg:gap-16 xl:gap-24 lg:items-center px-1 md:px-8 xl:px-12 lg:max-w-[1400px] 2xl:max-w-[1700px] mx-auto w-full">
-          <div className="flex flex-col items-center justify-center w-full lg:order-1 mt-0 mb-6 lg:my-0 lg:h-full relative lg:space-y-12">
-            <TimerDisplay
-              isFree={isFree}
-              days={days}
-              hours={hours}
-              minutes={minutes}
-              seconds={seconds}
-              colorClass={colorClass}
-              t={t}
-              startTime={appState.startTime}
-              onShowInfo={setInfoModal}
-            />
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
+        {/* Spacer to push content down - Reduced for better clearance */}
+        <div className="flex-[0.1] min-h-[10px]" />
 
-            <div className="hidden lg:flex w-full flex-col items-center gap-6 mt-12">
-              <button
-                onClick={handleShare}
-                className="flex items-center gap-3 px-10 py-5 rounded-full bg-white text-black hover:bg-zinc-200 text-base font-bold uppercase tracking-widest transition-transform hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+        {/* Content Section: Timer */}
+        <div className="flex flex-col items-center w-full pb-0 px-4 relative">
+          <TimerDisplay
+            isFree={isFree}
+            days={days}
+            hours={hours}
+            minutes={minutes}
+            seconds={seconds}
+            colorClass={colorClass}
+            t={t}
+            startTime={appState.startTime}
+            onShowInfo={setInfoModal}
+          />
+        </div>
+
+        {/* Middle section: Chart with toggle + metrics */}
+        <div className="flex-1 flex flex-col w-full overflow-hidden min-h-0">
+          <FinancialChart
+            graphData={graphData}
+            viewType={viewType}
+            onViewTypeChange={setViewType}
+            isFree={isFree}
+            gradientColor={gradientColor}
+            colorClass={colorClass}
+            accumulated={accumulated}
+            securedFV={securedFV}
+            totalForecast={totalForecast}
+            totalDirectSavings={totalDirectSavings}
+            forecastYears={forecastYears}
+            currentYear={currentYear}
+            formatCurrency={formatCurrencyTicker}
+            t={t}
+            onShowInfo={setInfoModal}
+            pendingAmount={(pendingAmount >= (settings.investReminderThreshold ?? 0.01) && isReminderVisible) ? formatCurrencyTicker(pendingAmount) : null}
+            isPendingOverdue={true}
+            onTriggerInvest={() => setIsInvestBannerOpen(true)}
+            onDismissReminder={handleDismissReminder}
+          />
+          
+          {/* Sandwich Forecast Control: Baseline Label -> Slider -> Result Label */}
+          <div className="flex flex-col items-center w-full px-5 pt-4 pb-4">
+            
+            {/* 1. Baseline Label (Gray) — only in potential view */}
+            {viewType === 'potential' && (
+              <div 
+                className="flex items-center gap-2 mb-1 group cursor-pointer"
+                onClick={() => setInfoModal(isFree ? 'totalSaved' : 'directCost')}
               >
-                <Share2 size={20} />
-                {t.shareBtn}
-              </button>
+                <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-700" />
+                <span className="text-[8px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
+                  {isFree 
+                    ? `Tätä menoa puhdas käteissäästö vuonna ${currentYear + forecastYears}` 
+                    : `Tätä menoa suorat kulut yhteensä vuonna ${currentYear + forecastYears}`}
+                </span>
+              </div>
+            )}
 
-              {!isFree && (
-                <button onClick={() => setModalType('quit')} className="text-base text-zinc-500 hover:text-emerald-400 uppercase tracking-[0.2em] transition-colors pb-1 border-b border-transparent hover:border-emerald-400/30">
-                  {t.quitAddiction}
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col w-full lg:order-2 space-y-1 lg:space-y-12 mt-0 lg:mt-0">
-            <MetricsDashboard
-              isFree={isFree} 
-              colorClass={colorClass}
-              accumulated={accumulated}
-              securedFV={securedFV}
-              totalForecast={totalForecast}
-              totalDirectSavings={totalDirectSavings}
-              forecastYears={forecastYears}
-              currentYear={currentYear}
-              formatCurrency={formatCurrencyTicker}
-              t={t}
-              onShowInfo={setInfoModal}
-              pendingAmount={(pendingAmount > 0.01 && isReminderVisible) ? formatCurrencyTicker(pendingAmount) : null}
-              isPendingOverdue={isPendingOverdue}
-              onTriggerInvest={() => setIsInvestBannerOpen(true)}
-              onDismissReminder={handleDismissReminder}
-            >
+            {/* 2. Slider (The Interaction Tool) */}
+            <div className="w-full py-1 mb-1.5">
               <ForecastSlider
                 forecastYears={forecastYears}
                 onForecastChange={setForecastYears}
@@ -227,27 +247,36 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
                 t={t}
                 onShowInfo={setInfoModal}
               />
-            </MetricsDashboard>
-          </div>
+            </div>
 
-          <div className="lg:hidden mt-3 mb-2 w-full flex flex-col items-center gap-3 order-3 relative z-50">
-            {!isFree && (
-              <button
-                onClick={() => setModalType('quit')}
-                className="flex items-center justify-center w-full max-w-xs px-8 py-3.5 rounded-full bg-red-500 hover:bg-red-400 active:scale-95 text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all shadow-[0_0_24px_rgba(239,68,68,0.4)]"
-              >
-                {t.quitAddiction}
-              </button>
-            )}
-
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 px-8 py-3 mt-1 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black text-[10px] font-bold uppercase tracking-[0.3em] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+            {/* 3. Result Label (Värillinen) */}
+            <div 
+              className="flex items-center gap-2 group cursor-pointer"
+              onClick={() => setInfoModal(isFree ? (viewType === 'potential' ? 'potential' : 'valueInYear') : (viewType === 'potential' ? 'indirectLoss' : 'lostInvestment'))}
             >
-              <Share2 size={13} />
-              {t.shareBtn}
-            </button>
+              <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isFree ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}`} />
+              <span className={`text-[8px] uppercase tracking-[0.1em] font-medium ${colorClass} transition-opacity group-hover:opacity-80`}>
+                {viewType === 'secured' 
+                  ? (isFree 
+                      ? `Jo säästetyn pääoman arvo vuonna ${currentYear + forecastYears}`
+                      : `Jo käytetyn rahan menetetty arvo vuonna ${currentYear + forecastYears}`)
+                  : (isFree 
+                      ? `Tätä menoa sijoitussalkun arvo vuonna ${currentYear + forecastYears}` 
+                      : `Tätä menoa menetetty varallisuus vuonna ${currentYear + forecastYears}`)}
+              </span>
+            </div>
           </div>
+        </div>
+
+        {/* Bottom section: Action Buttons — Now with extra breathing room */}
+        <div className="w-full px-5 pb-8 flex flex-col gap-4">
+          <button
+            onClick={handleShare}
+            className="flex items-center justify-center gap-2 w-full px-8 py-3.5 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black text-[10px] font-semibold uppercase tracking-[0.4em] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+          >
+            <Share2 size={13} />
+            {t.shareBtn}
+          </button>
         </div>
       </div>
 
@@ -265,6 +294,11 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         onClose={() => setIsMenuOpen(false)}
         onEditSettings={onEditSettings}
         onShowInfo={setInfoModal}
+        onTriggerAction={(type) => {
+          setModalType(type);
+          setIsMenuOpen(false);
+        }}
+        isFree={isFree}
         t={t}
       />
 
@@ -275,7 +309,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         t={t}
       />
 
-      <InvestConfirmBanner 
+      <InvestConfirmBanner
         isOpen={isInvestBannerOpen}
         onClose={() => setIsInvestBannerOpen(false)}
         onConfirm={handleMarkAsInvested}

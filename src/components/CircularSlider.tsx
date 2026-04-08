@@ -146,7 +146,7 @@ export default function CircularSlider({ value, min, max, step, onChange, suffix
           initial={{ scale: 0.95, opacity: 0.8 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.1 }}
-          className="text-4xl md:text-5xl font-mono font-bold text-white tracking-tight"
+          className="text-4xl md:text-5xl font-sans font-light text-white tracking-tight"
         >
           {displayValue}
           <span className="text-xl text-zinc-400 ml-1 font-sans font-medium">{suffix}</span>

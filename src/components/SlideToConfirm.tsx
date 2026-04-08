@@ -55,7 +55,7 @@ export default function SlideToConfirm({ onConfirm, label, color = 'emerald' }: 
         style={{ opacity: opacityText }}
         className="absolute inset-0 flex items-center justify-center pointer-events-none"
       >
-        <span className="text-zinc-500 font-bold uppercase tracking-[0.4em] text-[9px] lg:text-[10px] z-10 pointer-events-none select-none">
+        <span className="text-zinc-500 font-medium uppercase tracking-[0.4em] text-[9px] lg:text-[10px] z-10 pointer-events-none select-none">
           {label}
         </span>
       </motion.div>

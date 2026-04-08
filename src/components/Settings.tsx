@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Info } from 'lucide-react';
 import { UserSettings } from './Onboarding';
 import { AppState } from './Ticker';
 import WheelPicker, { SingleTextWheelPicker } from './WheelPicker';
-import ConfirmActionModal from './ConfirmActionModal';
+import InfoModal, { InfoType } from './InfoModal';
 import { t, getCurrencySymbol } from '../utils/i18n';
 
 interface Props {
@@ -12,7 +12,6 @@ interface Props {
   onSave: (settings: UserSettings) => void;
   onUpdateState: (state: AppState) => void;
   onCancel: () => void;
-  onResetAll: () => void;
 }
 
 interface SettingConfig {
@@ -25,15 +24,18 @@ interface SettingConfig {
   unit: string;
 }
 
-export default function Settings({ initialSettings, appState, onSave, onUpdateState, onCancel, onResetAll }: Props) {
+export default function Settings({ initialSettings, appState, onSave, onUpdateState, onCancel }: Props) {
   const [dailyCost, setDailyCost] = useState(initialSettings.dailyCost);
   const [annualPriceIncrease, setAnnualPriceIncrease] = useState(initialSettings.annualPriceIncrease);
   const [expectedReturn, setExpectedReturn] = useState(
     initialSettings.expectedReturn !== undefined ? initialSettings.expectedReturn : 7.0
   );
+  const [investReminderThreshold, setInvestReminderThreshold] = useState(
+    initialSettings.investReminderThreshold !== undefined ? initialSettings.investReminderThreshold : 0.01
+  );
   const [notificationLevel, setNotificationLevel] = useState<number>(initialSettings.notificationLevel !== undefined ? initialSettings.notificationLevel : 3);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [modalType, setModalType] = useState<'quit' | 'relapse' | 'reset' | null>(null);
+  const [showInfo, setShowInfo] = useState(false);
 
   const [startTimeString, setStartTimeString] = useState(() => {
     const d = new Date(appState.startTime);
@@ -41,21 +43,18 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     return d.toISOString().slice(0, 16);
   });
 
-
   const currencySymbol = getCurrencySymbol('EUR');
 
   const SLIDER_CONFIGS: Record<string, SettingConfig> = {
     dailyCost: { id: 'dailyCost', label: t.dailyCostLabel, desc: t.qDailyCost, min: 0, max: 100, decimals: 2, unit: currencySymbol },
     annualPriceIncrease: { id: 'annualPriceIncrease', label: t.annualIncreaseLabel, desc: t.annualIncreaseDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     expectedReturn: { id: 'expectedReturn', label: t.expectedReturnLabel, desc: t.expectedReturnDesc, min: 0, max: 20, decimals: 1, unit: '%' },
+    investReminderThreshold: { id: 'investReminderThreshold', label: t.investReminderTitle, desc: t.investReminderDesc, min: 0, max: 500, decimals: 2, unit: currencySymbol },
     notificationLevel: { id: 'notificationLevel', label: t.motivatorLevel || 'Intensity', desc: t.motivatorDesc || '', min: 0, max: 3, decimals: 1, unit: '' },
   };
 
-
-
   const handleSave = () => {
-    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, notificationLevel });
-
+    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel });
     if (appState.status !== 'riippuvainen') {
       const newTime = new Date(startTimeString).getTime();
       if (!isNaN(newTime) && newTime !== appState.startTime) {
@@ -65,68 +64,54 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   };
 
   useEffect(() => {
-    if (editingId === null) {
-      handleSave();
-    }
+    if (editingId === null) handleSave();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, notificationLevel, startTimeString]);
-
-  const handleConfirmAction = () => {
-    if (modalType === 'quit') {
-      onUpdateState({ status: 'vapaa', startTime: Date.now(), lastTransferTime: Date.now(), lastDismissedAmount: 0 });
-    } else if (modalType === 'relapse') {
-      onUpdateState({ status: 'riippuvainen', startTime: Date.now(), lastTransferTime: Date.now(), lastDismissedAmount: 0 });
-    } else if (modalType === 'reset') {
-      onResetAll();
-    }
-    setModalType(null);
-  };
+  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, startTimeString]);
 
   const isHooked = appState.status === 'riippuvainen';
-  const colorClass = isHooked ? 'text-red-400' : 'text-emerald-400';
-  const borderFocusClass = isHooked ? 'focus:border-red-500/10' : 'focus:border-emerald-500/10';
-  const dropShadowClass = isHooked ? 'drop-shadow-[0_0_10px_rgba(239,68,68,0.2)]' : 'drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]';
-  const hoverColorClass = isHooked ? 'group-hover:text-red-300' : 'group-hover:text-emerald-300';
 
-  // ── Unified Picker Drill-down ──────────────────────────────────────────────
   if (editingId) {
     const config = SLIDER_CONFIGS[editingId];
-    
-
-
-    // ── Handle Wheel Picker (Costs/Investing) ────────────────────────────────
     if (config) {
       const currentValue =
         editingId === 'dailyCost' ? dailyCost :
         editingId === 'annualPriceIncrease' ? annualPriceIncrease :
         editingId === 'expectedReturn' ? expectedReturn :
+        editingId === 'investReminderThreshold' ? investReminderThreshold :
         notificationLevel;
 
       const setValue = (val: number) => {
         if (editingId === 'dailyCost') setDailyCost(val);
         if (editingId === 'annualPriceIncrease') setAnnualPriceIncrease(val);
         if (editingId === 'expectedReturn') setExpectedReturn(val);
+        if (editingId === 'investReminderThreshold') setInvestReminderThreshold(val);
         if (editingId === 'notificationLevel') setNotificationLevel(val);
       };
 
       return (
-        <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden touch-action-none pt-20">
-          <header className="flex items-center justify-between px-8 py-4 sticky top-0 z-20">
-            <button onClick={() => setEditingId(null)} className="p-3 -ml-4 text-zinc-600 hover:text-white transition-colors rounded-full hover:bg-white/5">
-              <ArrowLeft size={28} />
+        <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden touch-action-none pt-6 lg:pt-12 font-sans">
+          <header className="flex items-center justify-between px-8 py-4 shrink-0 z-20">
+            <button onClick={() => setEditingId(null)} className="p-4 -ml-4 text-zinc-400 hover:text-white transition-all active:scale-95">
+              <ArrowLeft size={32} strokeWidth={3} />
             </button>
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.5em] opacity-50">Addiction Ticker</span>
-            </div>
-            <div className="w-10" />
+            <span className="text-[10px] font-medium text-white/40 uppercase tracking-[0.6em]">Addiction Ticker</span>
+            <div className="w-12" />
           </header>
 
-          <div className="text-center px-8 pt-10 pb-4">
-            <h2 className="text-3xl lg:text-4xl font-black text-white mb-3 tracking-tight leading-[1.1]">{config.label}</h2>
-            <p className="text-zinc-400 text-sm max-w-md mx-auto leading-relaxed font-medium">{config.desc}</p>
+          <div className="text-center px-8 py-4 shrink-0 flex items-center justify-center gap-4">
+            <h2 className="text-4xl lg:text-5xl font-light text-white tracking-tighter leading-tight relative">
+              {config.label}
+              <button
+                onClick={() => setShowInfo(true)}
+                className="absolute -right-10 lg:-right-14 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-all active:scale-90 p-2"
+                aria-label="Info"
+              >
+                <Info size={24} strokeWidth={2} />
+              </button>
+            </h2>
           </div>
 
-          <div className="flex-1 flex items-center justify-center pb-28">
+          <div className="flex-1 flex items-center justify-center min-h-0 w-full z-10">
             {editingId === 'notificationLevel' ? (
               <SingleTextWheelPicker
                 value={notificationLevel}
@@ -151,156 +136,93 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
             )}
           </div>
 
-          <div className="fixed bottom-0 left-0 right-0 p-8 z-30 max-w-4xl mx-auto">
+          <div className="shrink-0 w-full px-8 pb-10 md:pb-16 pt-4 flex justify-center z-30">
             <button
               onClick={() => setEditingId(null)}
-              className="w-full py-6 rounded-full font-black text-black bg-white hover:bg-zinc-200 transition-all duration-300 uppercase tracking-[0.4em] text-[11px] shadow-[0_20px_60px_rgba(255,255,255,0.15)]"
+              className="w-full max-w-[320px] py-5 md:py-7 rounded-full font-semibold text-black bg-white hover:scale-[1.03] transition-all active:scale-95 uppercase tracking-[0.6em] text-[10px] md:text-xs shadow-[0_20px_40px_rgba(0,0,0,0.2)]"
             >
               {t.done}
             </button>
           </div>
+          <InfoModal
+            type={showInfo ? `q${editingId.charAt(0).toUpperCase() + editingId.slice(1)}` as InfoType : null}
+            onClose={() => setShowInfo(false)}
+            isFree={!isHooked}
+            t={t}
+          />
         </div>
       );
     }
   }
 
-  // ── Helper components ────────────────────────────────────────────────────
-  const SettingRow = ({ label, displayValue, id, colorClassStr, glowClassStr }: { label: string; desc?: string; displayValue: string; id: string; colorClassStr?: string; glowClassStr?: string }) => (
+  const SettingRow = ({ label, displayValue, id }: { label: string; displayValue: string; id: string }) => (
     <button
       onClick={() => setEditingId(id)}
-      className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/[0.03] transition-all hover:bg-white/[0.01] group last:border-b-0"
+      className="w-full flex items-center justify-between py-4 lg:py-5 transition-all hover:bg-white/[0.02] group"
     >
-      <div className="flex items-center text-left flex-1 pr-4">
-        <span className="text-white/80 font-normal text-base lg:text-lg group-hover:text-white transition-colors tracking-tight">{label}</span>
+      <div className="flex items-center text-left flex-1">
+        <span className="text-zinc-200 group-hover:text-emerald-400 font-medium text-base lg:text-xl transition-all tracking-tight">{label}</span>
       </div>
-      <div className="flex items-center gap-3 shrink-0 justify-end">
-        <span className="font-mono tabular-nums text-white/70 font-normal text-base lg:text-lg tracking-tighter text-right">
+      <div className="flex items-center gap-4 shrink-0 justify-end">
+        <span className="font-sans tabular-nums text-white group-hover:text-emerald-400 font-light text-base lg:text-xl tracking-tighter text-right transition-all">
           {displayValue}
         </span>
-        <ChevronRight size={18} className={`text-zinc-800 ${hoverColorClass} transition-colors mr-[-4px]`} />
+        <ChevronRight size={16} className="text-zinc-700 group-hover:text-emerald-500 transition-colors mr-[-4px]" />
       </div>
     </button>
   );
 
-  // ── Main settings list ───────────────────────────────────────────────────
   return (
-    <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden pt-8">
-      <header className="flex items-center justify-between px-8 py-6 md:py-8 z-20">
-        <button onClick={onCancel} className="p-3 -ml-4 text-zinc-600 hover:text-white transition-colors rounded-full hover:bg-white/5">
-          <ArrowLeft size={28} />
+    <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden pt-10 font-sans">
+      <header className="flex items-center justify-between px-8 py-6 z-20">
+        <button onClick={onCancel} className="p-4 -ml-4 text-zinc-400 hover:text-white transition-all active:scale-95">
+          <ArrowLeft size={32} strokeWidth={3} />
         </button>
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.5em]">Addiction Ticker</span>
-          <h1 className="text-lg md:text-2xl font-light text-white/80 mt-1 tracking-[0.15em] uppercase">{t.settingsTitle}</h1>
+          <span className="text-[10px] font-medium text-white/40 uppercase tracking-[0.6em]">Addiction Ticker</span>
+          <h1 className="text-xs font-medium text-white mt-4 tracking-[0.4em] uppercase">{t.settingsTitle}</h1>
         </div>
-        <div className="w-10" />
+        <div className="w-12" />
       </header>
 
-      <div className="flex-1 overflow-y-auto px-8 md:px-12 pb-12 no-scrollbar">
-        <div className="flex flex-col">
+      <div className="flex-1 overflow-y-auto px-8 md:px-14 pb-10 no-scrollbar">
+        <div className="flex flex-col pt-4">
 
-          {/* ── 1. KEY FINANCIAL VARIABLES (most important — first) ── */}
+          {/* SECTION 1: BASIC SETTINGS */}
           <div className="flex flex-col">
+            <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.basicSettings}</span>
+            <SettingRow id="dailyCost" label={t.dailyCostLabel} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(dailyCost)} ${currencySymbol}`} />
+            <SettingRow id="annualPriceIncrease" label={t.annualIncreaseLabel} displayValue={`${annualPriceIncrease.toFixed(1)}%`} />
+            <SettingRow id="expectedReturn" label={t.expectedReturnLabel} displayValue={`${expectedReturn.toFixed(1)}%`} />
+            
+            {!isHooked && (
+              <div className="w-full flex items-center justify-between py-4 lg:py-5 border-t border-white/5">
+                 <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.startTime}</span>
+                 <input
+                   type="datetime-local"
+                   value={startTimeString}
+                   onChange={(e) => setStartTimeString(e.target.value)}
+                   className="bg-transparent p-0 text-white font-sans tabular-nums text-base lg:text-xl font-light focus:outline-none tracking-tighter cursor-pointer appearance-none text-right"
+                 />
+              </div>
+            )}
+          </div>
+
+          <div className="h-px w-full bg-white/5 my-8" />
+
+          {/* SECTION 2: OTHER SETTINGS */}
+          <div className="flex flex-col">
+            <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
+            <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(investReminderThreshold)} ${currencySymbol}`} />
             <SettingRow 
-              id="dailyCost"
-              label={SLIDER_CONFIGS.dailyCost.label}
-              desc={SLIDER_CONFIGS.dailyCost.desc}
-              displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(dailyCost)} ${currencySymbol}`}
-            />
-            <SettingRow 
-              id="annualPriceIncrease"
-              label={SLIDER_CONFIGS.annualPriceIncrease.label}
-              desc={SLIDER_CONFIGS.annualPriceIncrease.desc}
-              displayValue={`${annualPriceIncrease.toFixed(1)}%`}
-            />
-            <SettingRow 
-              id="expectedReturn"
-              label={SLIDER_CONFIGS.expectedReturn.label}
-              desc={SLIDER_CONFIGS.expectedReturn.desc}
-              displayValue={`${expectedReturn.toFixed(1)}%`}
+              id="notificationLevel" 
+              label={SLIDER_CONFIGS.notificationLevel.label} 
+              displayValue={notificationLevel === 3 ? t.motivatorLevel3 : notificationLevel === 2 ? t.motivatorLevel2 : notificationLevel === 1 ? t.motivatorLevel1 : t.motivatorLevel0} 
             />
           </div>
 
-          {/* ── Thin divider ── */}
-          <div className="border-t border-white/[0.04] my-4" />
-
-          {/* ── MOTIVATION & NOTIFICATIONS ── */}
-          <div className="flex flex-col">
-            <div className="flex flex-col py-2 px-4 -mx-4">
-              <span className="text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px] mb-2">{t.motivatorTitle}</span>
-            </div>
-            <SettingRow 
-              id="notificationLevel"
-              label={SLIDER_CONFIGS.notificationLevel.label}
-              desc={SLIDER_CONFIGS.notificationLevel.desc}
-              displayValue={notificationLevel === 3 ? t.motivatorLevel3 : notificationLevel === 2 ? t.motivatorLevel2 : notificationLevel === 1 ? t.motivatorLevel1 : t.motivatorLevel0}
-              colorClassStr="text-white"
-              glowClassStr="text-glow-white"
-            />
           </div>
-
-          {/* ── Thin divider ── */}
-          <div className="border-t border-white/[0.04] my-4" />
-
-
-
-          {/* ── 3. START TIME (only if free) ── */}
-          {!isHooked && (
-            <>
-              <div className="border-t border-white/[0.04] my-4" />
-              <div className="flex flex-col px-4 -mx-4 py-4 lg:py-5 border-b border-white/[0.03] transition-all hover:bg-white/[0.01] rounded-[16px]">
-                <label className="text-white/90 font-medium text-base lg:text-lg mb-2 tracking-tight">{t.currentPeriodStart}</label>
-                <input
-                  type="datetime-local"
-                  value={startTimeString}
-                  onChange={(e) => setStartTimeString(e.target.value)}
-                  className="bg-transparent p-0 text-white/90 font-mono text-lg lg:text-xl font-medium focus:outline-none focus:ring-0 tracking-tighter w-full cursor-pointer appearance-none [-webkit-appearance:none]"
-                />
-                <p className="text-zinc-500 text-[10px] leading-relaxed mt-3 font-normal opacity-80">{t.editStartTimeHint}</p>
-              </div>
-            </>
-          )}
-
-          {/* ── 4. STATUS MANAGEMENT (destructive actions — last) ── */}
-          <div className="border-t border-white/[0.04] my-4" />
-          <div className="flex flex-col">
-            <button
-              onClick={() => setModalType(isHooked ? 'quit' : 'relapse')}
-              className={`w-full flex items-center justify-between py-5 lg:py-6 transition-all hover:bg-white/[0.02] group border-b border-white/[0.06]`}
-            >
-              <div className="flex items-center text-left flex-1 pr-4">
-                <span className={`font-normal text-base lg:text-lg transition-colors ${isHooked ? 'text-white/70 group-hover:text-emerald-400' : 'text-white/70 group-hover:text-red-400'}`}>
-                  {isHooked ? t.quitAddiction : t.resetCounter}
-                </span>
-              </div>
-              <ChevronRight size={16} className="text-zinc-600 group-hover:text-zinc-400 transition-colors mr-[-4px]" />
-            </button>
-
-            <button
-              onClick={() => setModalType('reset')}
-              className="w-full flex items-center justify-between py-5 lg:py-6 transition-all hover:bg-red-500/[0.03] group border-b border-white/[0.06]"
-            >
-              <div className="flex items-center text-left flex-1 pr-4">
-                <span className="font-normal text-base lg:text-lg text-white/70 group-hover:text-red-400 transition-colors">
-                  {t.resetAllData}
-                </span>
-              </div>
-              <ChevronRight size={16} className="text-zinc-600 group-hover:text-red-400 transition-colors mr-[-4px]" />
-            </button>
-          </div>
-
         </div>
       </div>
-
-      {modalType && (
-        <ConfirmActionModal
-          type={modalType}
-          onConfirm={handleConfirmAction}
-          onCancel={() => setModalType(null)}
-          settings={initialSettings}
-        />
-      )}
-
-    </div>
-  );
+    );
 }
