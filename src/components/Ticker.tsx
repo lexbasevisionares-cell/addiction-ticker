@@ -159,7 +159,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
       {/* FIXED TOP BAR: Title & Menu */}
-      <div className="w-full flex items-center justify-center px-6 pt-8 pb-4 relative z-50 text-center">
+      <div className="w-full flex items-center justify-center px-6 pt-5 lg:pt-8 pb-2 relative z-50 text-center">
         <div className="text-[10px] font-medium text-white uppercase tracking-[0.5em] opacity-80">
           {t.tickerHeader}
         </div>
@@ -176,7 +176,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
       <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
         {/* Spacer to push content down - Reduced for better clearance */}
-        <div className="flex-[0.1] min-h-[10px]" />
+        <div className="flex-[0.1] min-h-[2px]" />
 
         {/* Content Section: Timer */}
         <div className="flex flex-col items-center w-full pb-0 px-4 relative">
@@ -218,7 +218,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           />
           
           {/* Sandwich Forecast Control: Baseline Label -> Slider -> Result Label */}
-          <div className="flex flex-col items-center w-full px-5 pt-4 pb-4">
+          <div className="flex flex-col items-center w-full px-5 pt-2 pb-2 lg:pt-4 lg:pb-4">
             
             {/* 1. Baseline Label (Gray) — only in potential view */}
             {viewType === 'potential' && (
@@ -269,7 +269,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Bottom section: Action Buttons — Now with extra breathing room */}
-        <div className="w-full px-5 pb-8 flex flex-col gap-4">
+        <div className="w-full px-5 pb-4 lg:pb-8 flex flex-col gap-4">
           <button
             onClick={handleShare}
             className="flex items-center justify-center gap-2 w-full px-8 py-3.5 rounded-full bg-white hover:bg-zinc-200 active:scale-95 text-black text-[10px] font-semibold uppercase tracking-[0.4em] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"

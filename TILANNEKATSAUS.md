@@ -155,8 +155,8 @@ Apple ilmoitti, että 28.4.2026 jälkeen vaaditaan iOS 26 SDK (Xcode 26). Nykyin
 1. **~~Hioa sovelluksen UI:ta ja toiminnallisuutta~~** — ✅ Tehty (7.4.2026)
 2. **~~Infotäppätekstien auditointi~~** — ✅ Tehty (7.4.2026)
 3. **Ota App Store -kuvakaappaukset iPhonesta** kun UI on valmis. *(käyttäjä tekee)*
-4. **Luo tietosuojakäytäntösivu** (privacy.html). *(tekoäly voi tehdä)*
-5. **Kirjoita App Store -metatekstit** (kuvaus, avainsanat, review-muistiinpanot). *(tekoäly voi tehdä)*
+4. **~~Luo tietosuojakäytäntösivu (privacy.html)~~** — ✅ Tehty (8.4.2026)
+5. **~~Kirjoita App Store -metatekstit~~** — ✅ Tehty (8.4.2026)
 6. **Täytä App Store Connectin metatiedot** (ikäluokitus, arvioijan tiedot, kuvat). *(käyttäjä tekee, tekoäly opastaa)*
 7. **Lähetä sovellus Applen arvioitavaksi** (Submit for Review). *(käyttäjä tekee)*
 
@@ -190,4 +190,4 @@ Apple ilmoitti, että 28.4.2026 jälkeen vaaditaan iOS 26 SDK (Xcode 26). Nykyin
 
 ---
 
-*Viimeksi päivitetty: 7. huhtikuuta 2026, klo 12:41*
+*Viimeksi päivitetty: 8. huhtikuuta 2026*

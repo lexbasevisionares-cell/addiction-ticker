@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 
-const ITEM_HEIGHT = 80; 
+const ITEM_HEIGHT = 62; 
 const VISIBLE_ITEMS = 5; 
 const CENTER_INDEX = Math.floor(VISIBLE_ITEMS / 2); // 2
 
