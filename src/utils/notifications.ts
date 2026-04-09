@@ -27,196 +27,190 @@ export async function clearAllNotifications() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// VIESTIPANKKI: 🟢 VAPAA-TILA
-// Järjestyksessä tunneille 08–22 (indeksi 0 = 08:00, 14 = 22:00)
-// ─────────────────────────────────────────────────────────────────────────────
 const FREE_HOURLY_MESSAGES: Array<{ title: string | ((v: MsgVars) => string); body: (vars: MsgVars) => string }> = [
-  // 08:00 — Strateginen aamun avaus
+  // 08:00
   {
     title: 'Uusi päivä. Strategia jatkuu.',
     body: ({ dailyCostStr }) =>
-      `Herätessäsi olet jo valinnut. Varallisuutesi kertyminen on alkanut tästä sekunnista. Tänään säästät jälleen ${dailyCostStr} pääomaa, joka jää sinulle — ei kenellekään muulle.`,
+      `Tänäänkin olet valinnut taloudellisen vapautesi. Päivittäinen ${dailyCostStr} säästötahtisi kerryttää varallisuuttasi jatkuvasti jokaisella ohikiitävällä sekunnilla.`,
   },
-  // 09:00 — Kertynyt pääoma
+  // 09:00
   {
-    title: ({ amountStr }) => `Kertynyt pääoma: ${amountStr}`,
+    title: ({ amountStr }) => `Kertymä tähän mennessä: ${amountStr}`,
     body: ({ amountStr }) =>
-      `Olet palauttanut itsellesi yhteensä ${amountStr} siitä päivästä lähtien, kun päätit lopettaa riippuvuuden rahoittamisen. Jokainen päivä lisää tähän summaan tasaisesti.`,
+      `Olet palauttanut itsellesi yhteensä ${amountStr} siitä päivästä lähtien, kun teit päätöksen. Jokainen tyhjäkäyntitunti kasvattaa tätä lukua automaattisesti.`,
   },
-  // 10:00 — Korkoa korolle
+  // 10:00
   {
     title: 'Rahasi tekee töitä.',
-    body: ({ investedStr }) =>
-      `Kertynyt pääomasi ei seiso paikallaan. Sijoitettuna se kasvaa korkoa korolle joka hetki. Sijoitusennusteesi 20 vuoden päähän on jo ${investedStr}.`,
+    body: ({ investedStr, benchmarkYearsStr }) =>
+      `Kertynyt käteissäästösi ei seiso paikallaan markkinoilla. Nykyinen säästösummasi kasvaisi sijoitettuna jo ${investedStr} arvoon seuraavan ${benchmarkYearsStr} vuoden aikana.`,
   },
-  // 11:00 — Vaihtoehtoiskustannus (mitä olisi tapahtunut)
+  // 11:00
   {
-    title: 'Mitä olisi tapahtunut?',
+    title: 'Näkymätön tuotto.',
     body: ({ amountStr }) =>
-      `Jos et olisi lopettanut, olisit tähän mennessä kuluttanut ${amountStr} nikotiinituotteisiin. Sen sijaan tämä summa on nyt sinun hallussasi.`,
+      `Jos et olisi lopettanut, olisit tähän mennessä siirtänyt ${amountStr} teollisuuden taskuun. Nyt se summa on turvassa sinun taseessasi.`,
   },
-  // 12:00 — Puolen päivän katsaus
+  // 12:00
   {
     title: 'Puoli päivää. Kaikki hallinnassa.',
-    body: ({ dailyCostStr }) =>
-      `Olet viettänyt tämän päivän tekemättä yhtään tarpeetonta kulutuspäätöstä. Päivän säästösi on jo ${dailyCostStr} lähempänä tavoitettasi. Toinen puolisko jäljellä.`,
-  },
-  // 13:00 — Pitkän aikavälin visio
-  {
-    title: '20 vuoden ennuste kasvaa.',
-    body: ({ totalForecastStr }) =>
-      `Tänään kertyvä pääoma ei ole vain käteistä. Se on osa pitkän aikavälin salkkuennustettasi: ${totalForecastStr} kahdessakymmenessä vuodessa. Strategiasi on toiminnassa.`,
-  },
-  // 14:00 — Päätöksen voima
-  {
-    title: 'Päätös tehtiin. Piste.',
-    body: () =>
-      `Et ole lopettanut "yrittämässä". Olet lopettanut. Joka tunti tämän päätöksen jälkeen on suoraa taloudellista evidenssiä siitä, minkä arvoinen valintasi oli.`,
-  },
-  // 15:00 — Kaupallinen perspektiivi
-  {
-    title: 'Teollisuus menetti sinut asiakkaana.',
-    body: () =>
-      `Nikotiiniteollisuuden liikevaihto laski juuri siksi, että yksi asiakas kieltäytyi maksamasta. Olet äänestänyt kukkarollasi sen puolesta, mihin varallisuutesi kuuluu.`,
-  },
-  // 16:00 — Iltapäivän tilanne
-  {
-    title: 'Päivä on lähes ohitse.',
-    body: ({ dailyCostStr }) =>
-      `Olet tänään rakentanut taloudellista vapauttasi ${dailyCostStr} verran lisää. Jokainen päivä on laatta samassa perustuksessa, jonka päälle varallisuutesi rakentuu.`,
-  },
-  // 17:00 — Pörssianalogi
-  {
-    title: 'Kaupankäynti päättyy. Voitto varmistunut.',
-    body: () =>
-      `Pörssissä tänään oli nousua tai laskua. Sinun päiväsi kannattavuus ei heilahdellut lainkaan. Olet tehnyt yhden varmoimmista taloudellisista päätöksistäsi.`,
-  },
-  // 18:00 — Kertymälaskelma
-  {
-    title: ({ amountStr }) => `Tähänastinen kertymä: ${amountStr}`,
     body: ({ amountStr }) =>
-      `Tänään kertynyt pääoma on jo turvattu. Yhteenlaskettu kertymäsi ${amountStr} kasvaa hiljalleen sinun strategiasi suuntaan — ei teollisuuden.`,
+      `Aamupäivä on ohi ja kokonaiskertymäsi on saavuttanut ${amountStr}. Pidä strategiasi käynnissä iltaan asti.`,
   },
-  // 19:00 — Sijoitusennuste
+  // 13:00
   {
-    title: 'Sijoitusarvo kasvaa.',
-    body: ({ investedStr }) =>
-      `Kertynyt pääomasi kasvaa sijoitettuna ${investedStr} verran seuraavan kahdenkymmenen vuoden aikana. Tänään tehdyt päätökset näkyvät tulevaisuuden salkussasi.`,
+    title: ({ benchmarkYearsStr }) => `${benchmarkYearsStr} vuoden potentiaali hahmottuu.`,
+    body: ({ totalForecastStr, benchmarkYearsStr }) =>
+      `Jos jatkat tällä säästötahdilla seuraavat ${benchmarkYearsStr} vuotta, yhdistetty pääomasi ja sijoitustuottosi nostavat salkkusi ennusteen arvoon ${totalForecastStr}.`,
   },
-  // 20:00 — Voitto lähestyy
+  // 14:00
   {
-    title: 'Päivä on käytännössä voitettu.',
+    title: 'Matematiikka ei valehtele.',
     body: ({ amountStr }) =>
-      `Iltasi on omasi. Olet suorittanut päivän ilman turhia kuluja, ja tämänpäiväinen osuutesi — osa kertymästä ${amountStr} — on lukittu. Uneen mennessä luku kasvaa jälleen.`,
+      `Tunteet vaihtelevat, mutta kertyvä summa (${amountStr}) on matemaattinen fakta. Taloudellinen todistusaineisto on puolellasi.`,
   },
-  // 21:00 — Iltaraportti
+  // 15:00
   {
-    title: ({ dailyCostStr }) => `Päivän tuotto: ${dailyCostStr}`,
+    title: 'Teollisuus menetti asiakkaan.',
+    body: () =>
+      `Tänäänkin toimit kukkaronnyöreilläsi. Et suostu enää maksamaan laittomia 'veroja' riippuvuudesta, ja se näkyy tililläsi.`,
+  },
+  // 16:00
+  {
+    title: 'Iltapäivän katsaus.',
+    body: ({ amountStr }) =>
+      `Varallisuutesi kertymä näyttää tällä sekunnilla lukemaa ${amountStr}. Suunta on vain ylöspäin.`,
+  },
+  // 17:00
+  {
+    title: 'Vankka perustus.',
     body: ({ dailyCostStr }) =>
-      `Tänään olet säästänyt täsmälleen sen, mitä olisit muuten kuluttanut: ${dailyCostStr}. Pieneltäkin tuntuva summa on osa jatkuvaa, kumuloituvaa rakennelmaa. Strategia toimi tänäänkin.`,
+      `Päivittäin säästetty ${dailyCostStr} ei tunnu ehkä lompakossa heti isolta summalta, mutta asettamalla sen osaksi sijoitussuunnitelmaa luot vankkaa perustaa.`,
   },
-  // 22:00 — Päivän sulkeutuminen
+  // 18:00
   {
-    title: 'Päivä sulkeutuu. Tase positiivinen.',
+    title: ({ amountStr }) => `Tämänhetkinen kertymä: ${amountStr}`,
     body: ({ amountStr }) =>
-      `Tänään ei tullut yhtään tarpeetonta kulutuspäätöstä. Pöytäkirjaan merkitään: ${amountStr} kertynyttä pääomaa, jota ei voi ottaa pois. Huomenna jatkuu siitä, mihin tänään jäit.`,
+      `Tähän mennessä pelastamasi ${amountStr} on pysyvästi irrotettu vanhasta kulutustottumuksesta. Olet palauttanut kontrollin pääomastasi.`,
+  },
+  // 19:00
+  {
+    title: 'Potentiaalin skaalautuminen.',
+    body: ({ investedStr, benchmarkYearsStr }) =>
+      `Tähänastinen säästösi kasvaisi korkoa korolle sijoitettuna ${investedStr} summaiseksi ${benchmarkYearsStr} vuodessa. Oikeat päätökset kertaantuvat ajassa.`,
+  },
+  // 20:00
+  {
+    title: 'Ilta on sinun.',
+    body: ({ amountStr }) =>
+      `Yksi täysi päivä kohta taas takana ilman tarpeetonta ostotapahtumaa. Kertymä ${amountStr} kertoo sinulle, että strategia pitää.`,
+  },
+  // 21:00
+  {
+    title: 'Tuottotahdin vahvistus.',
+    body: ({ dailyCostStr }) =>
+      `Säästötahtisi ${dailyCostStr} per päivä tarkoittaa rutiinin kääntämistä eduksesi. Et vain "ole ilman", olet rakentamassa uutta.`,
+  },
+  // 22:00
+  {
+    title: 'Päivä pakettiin.',
+    body: ({ amountStr }) =>
+      `Yö saapuu. Saldo vahvistuu. Pöytäkirjaan merkitään: ${amountStr} kokonaiskertymää. Tästä on erinomainen jatkaa aamulla.`,
   },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// VIESTIPANKKI: 🔴 RIIPPUVAINEN-TILA
-// Järjestyksessä tunneille 08–22
-// ─────────────────────────────────────────────────────────────────────────────
 const HOOKED_HOURLY_MESSAGES: Array<{ title: string | ((v: MsgVars) => string); body: (vars: MsgVars) => string }> = [
   // 08:00
   {
-    title: 'Automaattinen maksu käynnistyi.',
-    body: ({ dailyCostStr }) =>
-      `Päivä on alkanut. Riippuvuuden päivittäinen kuluerä on käynnistynyt automaattisesti. Tänään siirrät taas ${dailyCostStr} varallisuuttasi muiden hallintaan — ellei päätös muutu.`,
+    title: 'Vuoto on aktiivinen.',
+    body: ({ hourlyCostStr }) =>
+      `Päivä alkaa ja mittari käy. Olet asettanut kurssin, joka siirtää keskimäärin ${hourlyCostStr} tunnissa varallisuuttasi muiden hallintaan.`,
   },
   // 09:00
   {
-    title: ({ amountStr }) => `Kuluja tähän mennessä: ${amountStr}`,
+    title: ({ amountStr }) => `Lasku tähän mennessä: ${amountStr}`,
     body: ({ amountStr }) =>
-      `Seuranta on alkanut siitä hetkestä, kun avasit sovelluksen. Olet tähän mennessä siirtänyt ${amountStr} varallisuuttasi riippuvuuden ylläpitoon. Laskuri jatkaa.`,
+      `Kokonaiskulutuksesi seurannan alusta on nyt ${amountStr}. Summa kumuloituu reaaliajassa, sekunti sekunnilta.`,
   },
   // 10:00
   {
-    title: 'Varallisuuden vuoto jatkuu.',
-    body: ({ hourlyCostStr }) =>
-      `Jokainen tunti maksaa sinulle noin ${hourlyCostStr}. Tämä summa ei katoa tyhjyyteen — se siirtyy suoraan jonkin toisen taseen hyväksi. Vuoto on tasainen ja pysäyttämätön.`,
+    title: 'Tasainen taloudellinen rasite.',
+    body: ({ dailyCostStr }) =>
+      `Riippuvuus maksaa sinulle noin ${dailyCostStr} päivässä. Tämä summa ei katoa tyhjyyteen — se siirtyy suoraan teollisuuden taseen hyväksi.`,
   },
   // 11:00
   {
-    title: ({ amountStr }) => `Kumuloituva tappio: ${amountStr}`,
+    title: 'Vaihtoehtoinen polku.',
     body: ({ amountStr }) =>
-      `Seurannan alusta lähtien olet menettänyt ${amountStr} varallisuutta. Yksittäinen menoperä ei tunnu suurelta, mutta kumulatiivinen summa kertoo tarinan selkeämmin kuin yksikään yksittäinen hetki.`,
+      `Olet menettänyt ${amountStr} aloitushetkestä mitattuna. Et menetä vain tätä rahaa, vaan sen kyvyn tuottaa sinulle mitään tulevaisuudessa.`,
   },
   // 12:00
   {
-    title: 'Puolen päivän tappiolaskelma.',
-    body: ({ amountStr, investedStr }) =>
-      `Päivä on puolivälissä. Olet maksanut ${amountStr} riippuvuuden ylläpidosta. Tämä summa olisi sijoitettuna kasvanut ${investedStr} verran kahdessakymmenessä vuodessa.`,
+    title: 'Päivän puoliväli.',
+    body: ({ amountStr, investedStr, benchmarkYearsStr }) =>
+      `Laskurissa on jo ${amountStr} suoria kuluja. Tämä summa markkinoilla voisi kasvaa ${investedStr} arvoiseksi seuraavan ${benchmarkYearsStr} vuoden aikana.`,
   },
   // 13:00
   {
-    title: 'Menetetty sijoitusmahdollisuus.',
-    body: ({ amountStr, investedStr }) =>
-      `Kertynyt kulusi ${amountStr} olisi sijoitettuna kasvanut ${investedStr} verran kahdessakymmenessä vuodessa. Riippuvuus ei vain kuluta rahaa — se syö tulevaisuuden varallisuutta.`,
+    title: 'Menetetty kasvupotentiaali.',
+    body: ({ amountStr, investedStr, benchmarkYearsStr }) =>
+      `Seuraat tilaa sivusta. Tähän asti kuluttamasi ${amountStr} olisi osakemarkkinoilla tuonut sinulle sijoitussalkkuun ${investedStr} arvon ${benchmarkYearsStr} vuodessa.`,
   },
   // 14:00
   {
-    title: 'Tänään maksaa huomenna enemmän.',
+    title: 'Inflaation rangaistus.',
     body: ({ dailyCostStr }) =>
-      `Tuotteiden hinta nousee inflaation myötä vuosittain. Tänään maksamasi ${dailyCostStr} on vasta alkua. Kymmenen vuoden kuluttua maksat todennäköisesti merkittävästi enemmän samasta tavarasta.`,
+      `Hinnat nousevat vuosittain. Tämänpäiväinen kulutustahtisi (${dailyCostStr} / päivä) tulee kalliimmaksi vuoden edetessä.`,
   },
   // 15:00
   {
-    title: 'Maksu suoritettu. Taas.',
+    title: 'Kustannus ilman tuottoa.',
     body: () =>
-      `Riippuvuus on ainoa tilaus, jota et ole itse tilannut, mutta jonka laskun maksat silti säännöllisesti. Se ei laske hintaansa. Se ei tarjoa lojaliteettietuja. Se vain maksaa.`,
+      `Riippuvuus on tilaus, jonka laskun maksat säännöllisesti saamatta tilalle minkäänlaista säilyvää arvoa varallisuuteesi.`,
   },
   // 16:00
   {
-    title: 'Korkoa korolle — väärään suuntaan.',
+    title: 'Vuosittainen suonenisku.',
     body: ({ yearlyCostStr }) =>
-      `Korkoa korolle -ilmiö toimii myös toisin päin: joka vuosi ostat enemmän ja kalliimmalla. Vuosikymmenen päästä vuosikulusi on kasvanut merkittävästi pelkän hintatason nousun takia. Tämän vuoden hinta on jo ${yearlyCostStr}.`,
+      `Nykyisellä kulutustottumuksellasi rahoitat riippuvuuttasi peräti ${yearlyCostStr} edestä vuosittain. Entä inflaatio siihen päälle?`,
   },
   // 17:00
   {
-    title: 'Pörssi sulkeutui. Sinun laskusi kasvaa.',
+    title: 'Tappion kumuloituminen.',
     body: () =>
-      `Tänään osakemarkkinoilla vaihtui omistajuus miljardien arvosta. Sinäkin osallistuit rahansiirtoon — mutta vastakkaiseen suuntaan, ilman vastinetta tai tuottoa itsellesi.`,
+      `Kaupankäynti pörssissä saattaa heilahtaa suuntaan tai toiseen, mutta sinun taloudellinen valintasi kerryttää vain puhdasta tappiota ilman sijoitusriskiä.`,
   },
   // 18:00
   {
-    title: 'Ilta alkaa. Laskuri jatkuu.',
-    body: ({ amountStr, yearlyCostStr }) =>
-      `Olet kuluttanut tänään jo ${amountStr}. Illan aikana summa kasvaa jälleen. Vuosi tällä tahdilla tarkoittaa ${yearlyCostStr} kokonaismenoa — ennen tulevia hinnankorotuksia.`,
+    title: 'Mittari ei pysähdy.',
+    body: ({ amountStr }) =>
+      `Kokonaiskulut seurannan laukaisemisesta ovat nyt ${amountStr}. Summa kertaantuu tasaisesti kellon ympäri.`,
   },
   // 19:00
   {
-    title: 'Vaihtoehtoiskustannus: näkymätön hinta.',
-    body: ({ investedStr }) =>
-      `Et tunne sitä, mitä et koskaan saanut. Mutta laskuri tietää: jokainen käytetty euro edustaa menetettyä sijoituspotentiaalia. Sijoitettuna kertynyt kulusi olisi jo kasvanut ${investedStr} arvoiseksi.`,
+    title: 'Näkymätön vaihtoehtoiskustannus.',
+    body: ({ investedStr, benchmarkYearsStr }) =>
+      `Taloudellinen tilanteesi ei vain vuoda käteistä. Menetät jatkuvasti sen korkoa korolle -tuoton, mikä olisi tuonut salkkuusi peräti ${investedStr} seuraavan ${benchmarkYearsStr} vuoden aikana.`,
   },
   // 20:00
   {
-    title: 'Päivä lähestyy loppuaan. Lasku kasvaa.',
-    body: ({ amountStr, yearlyCostStr }) =>
-      `Tänään olet maksanut ${amountStr} riippuvuudellesi. Kuukauden kuluttua tämä summa on kerrantunut kolmikymmenkertaiseksi. Vuodessa se on ${yearlyCostStr}.`,
+    title: 'Pitkäjänteinen tappio.',
+    body: ({ totalForecastStr, benchmarkYearsStr }) =>
+      `Tällä tahdilla kokonaiskustannukset ja menetetty tuotto tarkoittavat ${totalForecastStr} vaihtoehtoiskustannusta tulevan ${benchmarkYearsStr} vuoden jaksolla.`,
   },
   // 21:00
   {
-    title: ({ amountStr }) => `Päivän loppuraportti: ${amountStr}`,
+    title: ({ amountStr }) => `Kulutus seurannan ajalta: ${amountStr}`,
     body: ({ amountStr }) =>
-      `Tänään on siirretty ${amountStr} varallisuuttasi riippuvuuden ylläpitoon. Tämä summa ei palaa. Se ei tuota sinulle mitään. Se on varallisuutesi hidasta mutta varmaa korroosiota.`,
+      `Olet siirtänyt lukeman ${amountStr} verran arvoa pois itseltäsi. Se summa on korroosiota henkilökohtaisessa taseessasi.`,
   },
   // 22:00
   {
-    title: 'Päivä päättyi. Tase miinuksella.',
-    body: ({ amountStr, yearlyCostStr }) =>
-      `Tänäänkin kertyi ${amountStr} kuluja. Vuodessa tämä tarkoittaa ${yearlyCostStr}. Huomennakin on mahdollisuus valita toisin — laskuri on silti silloinkin läsnä.`,
+    title: 'Päivä vahvistettu.',
+    body: ({ yearlyCostStr }) =>
+      `Vuorokausi lähestyy loppuaan ja suunta pysyi samana. Nykyinen tahtisi vastaa ${yearlyCostStr} rasitetta vuodessa. Valinta on sinun.`,
   },
 ];
 
@@ -230,6 +224,7 @@ interface MsgVars {
   yearlyCostStr: string;
   investedStr: string;
   totalForecastStr: string;
+  benchmarkYearsStr: string;
 }
 
 function resolveTitle(msg: { title: string | ((v: MsgVars) => string) }, vars: MsgVars): string {
@@ -244,8 +239,10 @@ function buildVars(settings: UserSettings, appState: AppState, targetDate: Date)
   const positiveDays = Math.max(0, daysElapsed);
 
   const accumulated = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, positiveDays);
-  const invested = calculateSecuredFutureValue(accumulated, 20, settings.expectedReturn);
-  const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, 20, settings.expectedReturn);
+  
+  const benchmarkYears = 10; // Vakioitu aikajänne referenssiksi ilmoituksiin
+  const invested = calculateSecuredFutureValue(accumulated, benchmarkYears, settings.expectedReturn);
+  const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, benchmarkYears, settings.expectedReturn);
   const yearlyCost = settings.dailyCost * 365.25;
 
   return {
@@ -255,6 +252,7 @@ function buildVars(settings: UserSettings, appState: AppState, targetDate: Date)
     yearlyCostStr: formatCurrency(yearlyCost, 'EUR'),
     investedStr: formatCurrency(Math.abs(invested), 'EUR'),
     totalForecastStr: formatCurrency(Math.abs(totalForecast), 'EUR'),
+    benchmarkYearsStr: benchmarkYears.toString(),
   };
 }
 
@@ -299,8 +297,8 @@ export async function scheduleMotivationPlan(settings: UserSettings, appState: A
     ];
 
     for (const milestone of freeMilestones) {
+      // Ilmoitus tulee tasaisesti merkkihetkenä! (EI pakotettu kello 10:00 vääristämään lukua)
       const targetDate = new Date(appState.startTime + milestone.days * 24 * 60 * 60 * 1000);
-      targetDate.setHours(10, 0, 0, 0);
       if (targetDate.getTime() > now) {
         const vars = buildVars(settings, appState, targetDate);
         notifications.push({
@@ -324,7 +322,6 @@ export async function scheduleMotivationPlan(settings: UserSettings, appState: A
 
     for (const milestone of hookedMilestones) {
       const targetDate = new Date(appState.startTime + milestone.days * 24 * 60 * 60 * 1000);
-      targetDate.setHours(10, 0, 0, 0);
       if (targetDate.getTime() > now) {
         const vars = buildVars(settings, appState, targetDate);
         notifications.push({
