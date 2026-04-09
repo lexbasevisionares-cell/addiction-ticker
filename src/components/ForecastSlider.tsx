@@ -11,17 +11,18 @@ interface Props {
   formatCurrency: (value: number) => string;
   t: TranslationStrings;
   onShowInfo: (type: InfoType) => void;
+  maxYears: number;
 }
 
-export default function ForecastSlider({ forecastYears, onForecastChange, gradientColor }: Props) {
-  const pct = ((forecastYears - 1) / 74) * 100;
+export default function ForecastSlider({ forecastYears, onForecastChange, gradientColor, maxYears }: Props) {
+  const pct = ((forecastYears - 1) / (maxYears - 1)) * 100;
 
   return (
     <div className="w-full">
       <input
         type="range"
         min="1"
-        max="75"
+        max={maxYears}
         value={forecastYears}
         onChange={(e) => onForecastChange(parseInt(e.target.value))}
         style={{

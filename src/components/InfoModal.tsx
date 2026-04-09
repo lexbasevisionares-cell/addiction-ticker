@@ -1,9 +1,7 @@
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { TranslationStrings } from '../utils/i18n';
-
-export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer' | 'hookedTimer' | 'lostNow' | 'lostInvestment' | 'qDailyCost' | 'qAnnualPriceIncrease' | 'qExpectedReturn' | 'qInvestReminderThreshold' | 'qNotificationLevel';
-
+export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer' | 'hookedTimer' | 'lostNow' | 'lostInvestment' | 'qDailyCost' | 'qAnnualPriceIncrease' | 'qExpectedReturn' | 'qInvestReminderThreshold' | 'qNotificationLevel' | 'qMaxForecastYears';
 interface Props {
   type: InfoType | null;
   onClose: () => void;
@@ -40,6 +38,8 @@ export default function InfoModal({ type, onClose, isFree, t }: Props) {
         return { title: (t as any).modalInvestReminderTitle, description: (t as any).modalInvestReminderDesc, color: 'text-zinc-300' };
       case 'qNotificationLevel':
         return { title: (t as any).modalMotivatorTitle, description: (t as any).modalMotivatorDesc, color: 'text-zinc-300' };
+      case 'qMaxForecastYears':
+        return { title: (t as any).modalMaxForecastYearsTitle, description: (t as any).modalMaxForecastYearsDesc, color: 'text-zinc-300' };
       default:
         return null;
     }

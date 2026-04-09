@@ -24,7 +24,7 @@ interface Props {
   totalDirectSavings: number;
   forecastYears: number;
   currentYear: number;
-  formatCurrency: (value: number) => string;
+  formatCurrency: (value: number, fractionDigits?: number) => string;
   t: TranslationStrings;
   onShowInfo: (type: InfoType) => void;
   pendingAmount: string | null;
@@ -68,12 +68,11 @@ export default function FinancialChart({
   const leftValue = hoveredData 
     ? displayData.directCost 
     : (viewType === 'potential' ? totalDirectSavings : accumulated);
-  const leftValueString = formatCurrency(leftValue);
-  // Round right side value to whole numbers ONLY in potential view, keep decimals in secured view and hover.
-  const isHovered = hoveredData !== null;
-  const rightValueString = (isHovered || viewType === 'secured')
-    ? formatCurrency(rightSideValue) 
-    : new Intl.NumberFormat('fi-FI', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(rightSideValue);
+
+  const showDecimals = viewType === 'secured';
+
+  const leftValueString = formatCurrency(leftValue, showDecimals ? 2 : 0);
+  const rightValueString = formatCurrency(rightSideValue, showDecimals ? 2 : 0);
 
   const fontSizeClass = 'text-[clamp(1.5rem,6vw,3.5rem)]';
 
@@ -260,11 +259,11 @@ export default function FinancialChart({
                     <div className="bg-black/90 backdrop-blur-3xl border border-white/10 px-6 py-4 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.8)] pointer-events-none">
                       <div className="text-[10px] lg:text-xs uppercase tracking-[0.4em] text-zinc-500 font-medium mb-2">{t.year} {data.year}</div>
                       <div className={`font-sans tabular-nums text-4xl lg:text-5xl 2xl:text-6xl font-light ${colorClass} tracking-tighter`}>
-                        {formatCurrency(data.investedValue)}
+                        {formatCurrency(data.investedValue, showDecimals ? 2 : 0)}
                       </div>
                       {viewType === 'potential' && (
                         <div className="font-sans tabular-nums text-sm lg:text-base font-medium text-zinc-400 mt-2">
-                          {formatCurrency(data.directCost)}
+                          {formatCurrency(data.directCost, showDecimals ? 2 : 0)}
                         </div>
                       )}
                     </div>

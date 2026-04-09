@@ -12,6 +12,7 @@ export interface UserSettings {
   annualPriceIncrease: number;
   expectedReturn: number;
   investReminderThreshold?: number;
+  maxForecastYears?: number;
 
   notificationLevel: number;
 }

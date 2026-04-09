@@ -58,6 +58,13 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   // OLED Glow: High-saturation neon variants
   const colorClass = isFree ? 'text-emerald-400' : 'text-rose-500';
   const gradientColor = isFree ? '#10b981' : '#f43f5e';
+  const maxYears = settings.maxForecastYears ?? 75;
+
+  useEffect(() => {
+    if (forecastYears > maxYears) {
+      setForecastYears(maxYears);
+    }
+  }, [maxYears]);
 
   const elapsedMs = now - appState.startTime;
   const totalSeconds = Math.floor(elapsedMs / 1000);
@@ -237,6 +244,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             <div className="w-full py-[clamp(4px,1dvh,12px)] mb-[clamp(4px,1dvh,8px)]">
               <ForecastSlider
                 forecastYears={forecastYears}
+                maxYears={maxYears}
                 onForecastChange={setForecastYears}
                 gradientColor={gradientColor}
                 isFree={isFree}

@@ -34,6 +34,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     initialSettings.investReminderThreshold !== undefined ? initialSettings.investReminderThreshold : 0.01
   );
   const [notificationLevel, setNotificationLevel] = useState<number>(initialSettings.notificationLevel !== undefined ? initialSettings.notificationLevel : 3);
+  const [maxForecastYears, setMaxForecastYears] = useState<number>(initialSettings.maxForecastYears !== undefined ? initialSettings.maxForecastYears : 75);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState(false);
 
@@ -50,11 +51,12 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     annualPriceIncrease: { id: 'annualPriceIncrease', label: t.annualIncreaseLabel, desc: t.annualIncreaseDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     expectedReturn: { id: 'expectedReturn', label: t.expectedReturnLabel, desc: t.expectedReturnDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     investReminderThreshold: { id: 'investReminderThreshold', label: t.investReminderTitle, desc: t.investReminderDesc, min: 0, max: 500, decimals: 2, unit: currencySymbol },
+    maxForecastYears: { id: 'maxForecastYears', label: (t as any).maxForecastYearsLabel, desc: (t as any).maxForecastYearsDesc, min: 10, max: 100, decimals: 0, unit: 'v' },
     notificationLevel: { id: 'notificationLevel', label: t.motivatorLevel || 'Intensity', desc: t.motivatorDesc || '', min: 0, max: 3, decimals: 1, unit: '' },
   };
 
   const handleSave = () => {
-    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel });
+    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears });
     if (appState.status !== 'riippuvainen') {
       const newTime = new Date(startTimeString).getTime();
       if (!isNaN(newTime) && newTime !== appState.startTime) {
@@ -66,7 +68,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   useEffect(() => {
     if (editingId === null) handleSave();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, startTimeString]);
+  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, startTimeString]);
 
   const isHooked = appState.status === 'riippuvainen';
 
@@ -78,6 +80,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
         editingId === 'annualPriceIncrease' ? annualPriceIncrease :
         editingId === 'expectedReturn' ? expectedReturn :
         editingId === 'investReminderThreshold' ? investReminderThreshold :
+        editingId === 'maxForecastYears' ? maxForecastYears :
         notificationLevel;
 
       const setValue = (val: number) => {
@@ -85,6 +88,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
         if (editingId === 'annualPriceIncrease') setAnnualPriceIncrease(val);
         if (editingId === 'expectedReturn') setExpectedReturn(val);
         if (editingId === 'investReminderThreshold') setInvestReminderThreshold(val);
+        if (editingId === 'maxForecastYears') setMaxForecastYears(val);
         if (editingId === 'notificationLevel') setNotificationLevel(val);
       };
 
@@ -214,6 +218,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
           <div className="flex flex-col">
             <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
             <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(investReminderThreshold)} ${currencySymbol}`} />
+            <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} v`} />
             <SettingRow 
               id="notificationLevel" 
               label={SLIDER_CONFIGS.notificationLevel.label} 

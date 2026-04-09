@@ -88,6 +88,8 @@ export const TRANSLATIONS = {
     settingsStatus: 'Tila',
     resetCounterDesc: 'Nollaa kello ja aloita säästäminen alusta. Tämä on tietoinen päätös hyväksyä repsahdus.',
     quitAddictionDesc: 'Lopeta riippuvuus tästä hetkestä alkaen ja aloita taloudellisen vapauden rakentaminen.',
+    maxForecastYearsLabel: 'Ennusteen maksimiaika',
+    maxForecastYearsDesc: 'Kuinka moneen vuoteen asti haluat voida liikuttaa ennusteen aikajanaa?',
     // Modals
     confirmQuit: 'Vahvista päätös',
     confirmQuitDesc: 'Tästä hetkestä eteenpäin en enää rahoita riippuvuuttani. Olen valmis kohtaamaan vieroitusoireet.',
@@ -139,6 +141,8 @@ export const TRANSLATIONS = {
     modalExpectedReturnDesc: 'Jos sijoittaisit säästyneet rahat laajasti osakemarkkinoille, kuinka paljon arvioisit niiden tuottavan? Esimerkiksi pörssin historiallinen keskituotto on usein pyörinyt noin 7–10 % tasolla. Jos olet epävarma, 7 % on realistinen pitkän aikavälin arvio.',
     modalInvestReminderTitle: 'Siirtomuistutuksen kynnys',
     modalInvestReminderDesc: 'Sovellus erottelee viisaasti "kertyvän käteisen" ja "sijoitetun pääoman". Kun siirrät kertyneen käteissumman fyysisesti tai digitaalisesti oikeaan salkkuusi, odottava käteissaldo nollaantuu. Tämä kynnys määrittää, milloin sovellus muistuttaa sinua tekemään kyseisen siirron.',
+    modalMaxForecastYearsTitle: 'Ennusteen maksimiaika',
+    modalMaxForecastYearsDesc: 'Määrittää, kuinka kauas tulevaisuuteen pystyt maksimissaan rullaamaan päänäkymän pyyhkäisy-slideria. Jos haluat tarkastella vain lähivuosia ja vetää slideria tarkemmin sormella, aseta pienempi arvo (esim. 10 vuotta). Jos tavoittelet vuosikymmenten vaihtoehtoiskustannuksen näkemistä, aseta vähintään 50 vuotta.',
     modalMotivatorTitle: 'Tsempin taso',
     modalMotivatorDesc: 'Tämä määrittää, kuinka aggressiivisesti valmentaja muistuttaa sinua taloudellisista realiteeteistasi. Intensiivinen asetus pitää lukujen kylmän totuuden mielessäsi säännöllisesti, kun taas pois päältä kytketty antaa sinun tarkistaa luvut vain näytöltä.',
     // Info Metric Descriptions
