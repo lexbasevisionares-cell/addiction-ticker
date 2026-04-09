@@ -178,8 +178,10 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         ))}
       </div>
 
-      {/* Top Section: Progress Bar + Title */}
-      <div className="shrink-0 pt-10 pb-4 flex flex-col items-center w-full z-20">
+      {/* Top Section: Title (Brand) -> Progress Bar (Navigation) */}
+      <div className="shrink-0 pt-[clamp(32px,5.5vh,48px)] pb-4 flex flex-col items-center w-full z-20">
+        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mb-5">Addiction Ticker</span>
+        
         <div className="w-full max-w-lg px-8 flex gap-1.5 pointer-events-none">
           {screens.map((_, i) => (
              <div key={i} className="h-0.5 flex-1 bg-white/5 rounded-full overflow-hidden">
@@ -187,11 +189,10 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
              </div>
           ))}
         </div>
-        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mt-5">Addiction Ticker</span>
       </div>
 
-      {/* Middle Section: Question Content */}
-      <div className="flex-1 flex flex-col items-center justify-center min-h-0 px-8 z-10">
+      {/* Middle Section: Question Content - Optical Centering applied via mt-[-4vh] */}
+      <div className="flex-1 flex flex-col items-center justify-center min-h-0 px-8 mt-[-4vh] z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={step}

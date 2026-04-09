@@ -197,12 +197,18 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
-      {/* FIXED TOP BAR: Title & Menu */}
-      <div className="w-full flex items-center justify-center px-6 pt-5 lg:pt-8 pb-2 relative z-50 text-center">
-        <div className="text-[11px] font-semibold text-white uppercase tracking-[0.6em]">
+      {/* FIXED TOP BAR: Title (Brand) -> Progress Placeholder (Anchor matched) */}
+      <div className="w-full flex flex-col items-center justify-center px-6 pt-[clamp(32px,5.5vh,48px)] pb-2 relative z-50 text-center">
+        <div className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mb-5">
           {t.tickerHeader}
         </div>
-        <div className="absolute right-4 top-5 z-50">
+        
+        {/* Invisible progress bar placeholder to match Onboarding height exactly */}
+        <div className="w-full max-w-lg px-8 flex gap-1.5 opacity-0 pb-0.5 pointer-events-none">
+          <div className="h-0.5 flex-1 bg-white/5 rounded-full" />
+        </div>
+
+        <div className="absolute right-4 top-[clamp(32px,5.5vh,48px)] z-50">
           <button
             onClick={() => setIsMenuOpen(true)}
             className="text-zinc-400 hover:text-white transition-all p-3 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
@@ -213,9 +219,9 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
       </div>
 
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden justify-between">
-        {/* Spacer to push content down - adapts based on height */}
-        <div className="flex-[0.05] min-h-[4px]" />
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden justify-between mt-[-1vh]">
+        {/* Spacer to push content down - more breathing room created by higher header */}
+        <div className="flex-[0.06] min-h-[8px]" />
 
         {/* Content Section: Timer */}
         <div className="flex flex-col items-center w-full pb-0 px-4 relative">

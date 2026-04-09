@@ -209,8 +209,10 @@ export default function OnboardingWelcome({ onStart }: Props) {
       onClick={handleTap}
     >
       
-      {/* Top Section: Progress Bar + Title */}
-      <div className="shrink-0 pt-14 md:pt-10 pb-2 flex flex-col items-center w-full">
+      {/* Top Section: Title (Brand) -> Progress Bar (Navigation) */}
+      <div className="shrink-0 pt-[clamp(32px,5.5vh,48px)] pb-2 flex flex-col items-center w-full relative z-20">
+        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mb-5">Addiction Ticker</span>
+        
         <div className="w-full max-w-lg px-6 flex gap-1.5 pointer-events-none">
           {PHASES.map((_, i) => (
             <div key={i} className="h-0.5 flex-1 bg-white/5 rounded-full overflow-hidden">
@@ -223,11 +225,10 @@ export default function OnboardingWelcome({ onStart }: Props) {
             </div>
           ))}
         </div>
-        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mt-5">Addiction Ticker</span>
       </div>
 
-      {/* Middle Section: Narrative Content */}
-      <div className={`flex-1 flex flex-col items-center ${isFinalPhase ? 'justify-evenly' : 'justify-center'} min-h-0 px-8`}>
+      {/* Middle Section: Narrative Content - Optical Centering applied via mt-[-4vh] */}
+      <div className={`flex-1 flex flex-col items-center ${isFinalPhase ? 'justify-evenly' : 'justify-center'} min-h-0 px-8 mt-[-4vh]`}>
         {isFinalPhase ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.98, filter: "blur(10px)" }}
