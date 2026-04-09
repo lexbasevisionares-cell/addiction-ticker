@@ -9,11 +9,29 @@ let tickLoopBuffer: AudioBuffer | null = null;
 let coinFreeBuffer: AudioBuffer | null = null;
 let coinHookedBuffer: AudioBuffer | null = null;
 
-// The currently playing loop source (so we can stop it)
-let loopSource: AudioBufferSourceNode | null = null;
-let loopGainNode: GainNode | null = null;
+// Loop management
+let loopActive = false;
+let loopTimerId: ReturnType<typeof setTimeout> | null = null;
+let activeLoopSources: AudioBufferSourceNode[] = [];
+let loopMasterGain: GainNode | null = null;
 
 let initializedEventListeners = false;
+
+// Trim MP3 encoder padding from decoded buffer for gapless looping
+const trimBuffer = (ctx: AudioContext, buffer: AudioBuffer): AudioBuffer => {
+  const channels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  // MP3 encoders add ~1152 samples of silence at start and end
+  const trimSamples = 1152;
+  const newLength = Math.max(1, buffer.length - trimSamples * 2);
+  const trimmed = ctx.createBuffer(channels, newLength, sampleRate);
+  for (let ch = 0; ch < channels; ch++) {
+    const src = buffer.getChannelData(ch);
+    const dst = trimmed.getChannelData(ch);
+    dst.set(src.subarray(trimSamples, trimSamples + newLength));
+  }
+  return trimmed;
+};
 
 const loadBuffer = async (url: string): Promise<AudioBuffer | null> => {
   if (!audioCtx) return null;
@@ -52,8 +70,12 @@ export const initAudio = () => {
       initializedEventListeners = true;
     }
 
-    // Pre-load all audio buffers
-    loadBuffer('/cinematic_tick.mp3').then(b => { tickLoopBuffer = b; });
+    // Pre-load all audio buffers (trim tick for gapless looping)
+    loadBuffer('/cinematic_tick.mp3').then(b => {
+      if (b && audioCtx) {
+        tickLoopBuffer = trimBuffer(audioCtx, b);
+      }
+    });
     loadBuffer('/coin_free.mp3').then(b => { coinFreeBuffer = b; });
     loadBuffer('/coin_hooked.mp3').then(b => { coinHookedBuffer = b; });
 
@@ -67,34 +89,73 @@ export const ensureAudioContext = () => {
   return audioCtx;
 };
 
+// Schedule one iteration of the tick loop with crossfade overlap
+const scheduleNextLoop = () => {
+  if (!loopActive || !audioCtx || !tickLoopBuffer || !loopMasterGain) return;
+
+  const ctx = audioCtx;
+  const duration = tickLoopBuffer.duration;
+  const crossfade = 0.15; // 150ms crossfade overlap
+
+  const source = ctx.createBufferSource();
+  source.buffer = tickLoopBuffer;
+
+  const fadeGain = ctx.createGain();
+  fadeGain.connect(loopMasterGain);
+  source.connect(fadeGain);
+
+  // Fade in at the start
+  fadeGain.gain.setValueAtTime(0, ctx.currentTime);
+  fadeGain.gain.linearRampToValueAtTime(1, ctx.currentTime + crossfade);
+
+  // Fade out at the end
+  fadeGain.gain.setValueAtTime(1, ctx.currentTime + duration - crossfade);
+  fadeGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+
+  source.start(ctx.currentTime);
+  source.stop(ctx.currentTime + duration);
+
+  activeLoopSources.push(source);
+  source.onended = () => {
+    activeLoopSources = activeLoopSources.filter(s => s !== source);
+  };
+
+  // Schedule the NEXT iteration to start crossfade-ms before this one ends
+  const nextIn = (duration - crossfade) * 1000;
+  loopTimerId = setTimeout(scheduleNextLoop, nextIn);
+};
+
 // Start the cinematic clock tick looping in the background
 export const startTickLoop = () => {
   const ctx = ensureAudioContext();
   if (!ctx || ctx.state !== 'running') return;
   if (!tickLoopBuffer) return;
-  if (loopSource) return; // Already playing
+  if (loopActive) return; // Already playing
 
-  loopGainNode = ctx.createGain();
-  loopGainNode.gain.value = 0.35; // Subtle background volume
-  loopGainNode.connect(ctx.destination);
+  loopActive = true;
 
-  loopSource = ctx.createBufferSource();
-  loopSource.buffer = tickLoopBuffer;
-  loopSource.loop = true; // Seamless infinite loop
-  loopSource.connect(loopGainNode);
-  loopSource.start(ctx.currentTime);
+  loopMasterGain = ctx.createGain();
+  loopMasterGain.gain.value = 0.35; // Subtle background volume
+  loopMasterGain.connect(ctx.destination);
+
+  scheduleNextLoop();
 };
 
 // Stop the looping clock tick
 export const stopTickLoop = () => {
-  if (loopSource) {
-    try { loopSource.stop(); } catch (_) {}
-    loopSource.disconnect();
-    loopSource = null;
+  loopActive = false;
+  if (loopTimerId) {
+    clearTimeout(loopTimerId);
+    loopTimerId = null;
   }
-  if (loopGainNode) {
-    loopGainNode.disconnect();
-    loopGainNode = null;
+  activeLoopSources.forEach(s => {
+    try { s.stop(); } catch (_) {}
+    s.disconnect();
+  });
+  activeLoopSources = [];
+  if (loopMasterGain) {
+    loopMasterGain.disconnect();
+    loopMasterGain = null;
   }
 };
 
