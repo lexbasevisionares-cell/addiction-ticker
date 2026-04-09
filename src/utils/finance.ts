@@ -17,7 +17,6 @@ export function calculateSecuredFutureValue(accumulated: number, yearsToTarget: 
   const r = r_percent / 100;
   if (r === 0) return accumulated;
   const result = accumulated * Math.pow(1 + r, yearsToTarget);
-  console.log(`CalculateSecured: acc=${accumulated.toFixed(2)}, years=${yearsToTarget.toFixed(2)}, r=${r} -> result=${result.toFixed(2)}`);
   return result;
 }
 

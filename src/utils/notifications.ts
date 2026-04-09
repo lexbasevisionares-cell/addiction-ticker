@@ -116,7 +116,6 @@ export async function scheduleMotivationPlan(settings: UserSettings, appState: A
   if (notificationsToSchedule.length > 0) {
     try {
       await LocalNotifications.schedule({ notifications: notificationsToSchedule });
-      console.log(`Scheduled ${notificationsToSchedule.length} notifications.`);
     } catch (e) {
       console.error('Error scheduling notifications', e);
     }
