@@ -28,26 +28,39 @@ export default function TimerDisplay({ isFree, days, hours, minutes, seconds, co
         </div>
       </div>
 
-      {/* Timer - Ultra-clean Sans-Serif design */}
-      <div className="flex items-baseline justify-center gap-[clamp(2px,1.5vw,16px)] font-sans tracking-tighter">
-        <div className="flex flex-col items-center">
-          <span className="text-[clamp(2.25rem,10vw,8rem)] font-light text-white leading-none tabular-nums tracking-tighter">{days}</span>
-          <span className="text-[clamp(8px,1.5dvh,14px)] text-zinc-400 uppercase font-medium tracking-[0.5em] mt-[clamp(8px,2dvh,20px)]">{t.days}</span>
+      {/* Timer - Ultra-clean fixed-width layout for perfect symmetry */}
+      <div className="flex items-baseline justify-between w-full max-w-[95vw] lg:max-w-4xl mx-auto font-sans px-2">
+        {/* Days */}
+        <div className="flex-1 flex flex-col items-center min-w-0">
+          <span className="text-[clamp(2.25rem,10.5vw,8rem)] font-light text-white leading-none tabular-nums tracking-tighter">{days}</span>
+          <span className="text-[clamp(8px,1.5dvh,12px)] text-zinc-400 uppercase font-medium tracking-[0.4em] mt-[clamp(8px,2dvh,20px)] whitespace-nowrap">{t.days}</span>
         </div>
-        <span className="text-[clamp(1.5rem,6vw,5rem)] text-white font-light -mt-2 lg:-mt-8">:</span>
-        <div className="flex flex-col items-center">
-          <span className="text-[clamp(2.25rem,10vw,8rem)] font-light text-white leading-none tabular-nums tracking-tighter">{hours.toString().padStart(2, '0')}</span>
-          <span className="text-[clamp(8px,1.5dvh,14px)] text-zinc-400 uppercase font-medium tracking-[0.5em] mt-[clamp(8px,2dvh,20px)]">{t.hours}</span>
+
+        {/* Separator */}
+        <span className="text-[clamp(1.5rem,6vw,5rem)] text-white font-light opacity-30 select-none pb-[0.8em] lg:pb-[0.6em]">:</span>
+
+        {/* Hours */}
+        <div className="flex-1 flex flex-col items-center min-w-0">
+          <span className="text-[clamp(2.25rem,10.5vw,8rem)] font-light text-white leading-none tabular-nums tracking-tighter">{hours.toString().padStart(2, '0')}</span>
+          <span className="text-[clamp(8px,1.5dvh,12px)] text-zinc-400 uppercase font-medium tracking-[0.4em] mt-[clamp(8px,2dvh,20px)] whitespace-nowrap">{t.hours}</span>
         </div>
-        <span className="text-[clamp(1.5rem,6vw,5rem)] text-white font-light -mt-2 lg:-mt-8">:</span>
-        <div className="flex flex-col items-center">
-          <span className="text-[clamp(2.25rem,10vw,8rem)] font-light text-white leading-none tabular-nums tracking-tighter">{minutes.toString().padStart(2, '0')}</span>
-          <span className="text-[clamp(8px,1.5dvh,14px)] text-zinc-400 uppercase font-medium tracking-[0.5em] mt-[clamp(8px,2dvh,20px)]">{t.mins}</span>
+
+        {/* Separator */}
+        <span className="text-[clamp(1.5rem,6vw,5rem)] text-white font-light opacity-30 select-none pb-[0.8em] lg:pb-[0.6em]">:</span>
+
+        {/* Minutes */}
+        <div className="flex-1 flex flex-col items-center min-w-0">
+          <span className="text-[clamp(2.25rem,10.5vw,8rem)] font-light text-white leading-none tabular-nums tracking-tighter">{minutes.toString().padStart(2, '0')}</span>
+          <span className="text-[clamp(8px,1.5dvh,12px)] text-zinc-400 uppercase font-medium tracking-[0.4em] mt-[clamp(8px,2dvh,20px)] whitespace-nowrap">{t.mins}</span>
         </div>
-        <span className="text-[clamp(1.5rem,6vw,5rem)] text-white font-light -mt-2 lg:-mt-8">:</span>
-        <div className="flex flex-col items-center">
-          <span className={`text-[clamp(2.25rem,10vw,8rem)] font-light leading-none tabular-nums tracking-tighter ${colorClass}`}>{seconds.toString().padStart(2, '0')}</span>
-          <span className={`text-[clamp(8px,1.5dvh,14px)] uppercase font-medium tracking-[0.5em] mt-[clamp(8px,2dvh,20px)] ${colorClass} opacity-100 drop-shadow-[0_0_8px_currentColor]`}>{t.secs}</span>
+
+        {/* Separator */}
+        <span className="text-[clamp(1.5rem,6vw,5rem)] text-white font-light opacity-30 select-none pb-[0.8em] lg:pb-[0.6em]">:</span>
+
+        {/* Seconds */}
+        <div className="flex-1 flex flex-col items-center min-w-0">
+          <span className={`text-[clamp(2.25rem,10.5vw,8rem)] font-light leading-none tabular-nums tracking-tighter ${colorClass}`}>{seconds.toString().padStart(2, '0')}</span>
+          <span className={`text-[clamp(8px,1.5dvh,12px)] uppercase font-medium tracking-[0.4em] mt-[clamp(8px,2dvh,20px)] ${colorClass} opacity-100 drop-shadow-[0_0_8px_currentColor] whitespace-nowrap`}>{t.secs}</span>
         </div>
       </div>
     </div>
