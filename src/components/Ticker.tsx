@@ -94,17 +94,19 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   useLayoutEffect(() => {
     if (!settings.soundscapeEnabled) return;
 
-    const currentCents = Math.floor(accumulated * 100);
+    // Match the 3-decimal precision shown on screen (formatCurrency with 3 digits)
+    // The displayed number changes every ~1/1000 of a euro, so track millieuros
+    const currentMillis = Math.floor(accumulated * 1000);
 
     if (lastSecondRef.current !== -1 && totalSeconds > lastSecondRef.current) {
       playTick(isFree);
     }
-    if (lastCentRef.current !== -1 && currentCents > lastCentRef.current) {
+    if (lastCentRef.current !== -1 && currentMillis > lastCentRef.current) {
       playCentDrop(isFree);
     }
 
     lastSecondRef.current = totalSeconds;
-    lastCentRef.current = currentCents;
+    lastCentRef.current = currentMillis;
   }, [totalSeconds, accumulated, isFree, settings.soundscapeEnabled]);
 
   useEffect(() => {
