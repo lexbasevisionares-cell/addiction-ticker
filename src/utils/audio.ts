@@ -68,28 +68,33 @@ export const playTick = (isFree: boolean) => {
   const osc = ctx.createOscillator();
   const gainNode = ctx.createGain();
 
-  osc.connect(gainNode);
+  // A high-pass filter removes the low "thud", leaving only the sharp mechanical needle click
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'highpass';
+  filter.frequency.value = 2000;
+
+  osc.connect(filter);
+  filter.connect(gainNode);
   gainNode.connect(ctx.destination);
 
-  // Digital luxury tick: very low, soft, short impact
-  osc.type = 'sine';
+  // Sharp, high-pitched mechanical tick
+  osc.type = 'square';
   
+  // The classic "quartz" click: very high frequency dropping instantly to create a sharp transient
   if (isFree) {
-    // Subtle, deep heartbeat thud
-    osc.frequency.setValueAtTime(80, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(6000, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.015);
   } else {
-    // Slightly more urgent, higher digital click
-    osc.frequency.setValueAtTime(120, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.05);
+    osc.frequency.setValueAtTime(4000, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.015);
   }
 
   gainNode.gain.setValueAtTime(0, ctx.currentTime);
-  gainNode.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01); // Quick attack
-  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1); // Quick decay
+  gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.001); // Instant attack (1ms)
+  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02); // Extremely fast decay (20ms)
 
   osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.1);
+  osc.stop(ctx.currentTime + 0.03);
 };
 
 export const playCentDrop = (isFree: boolean) => {
