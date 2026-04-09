@@ -1,6 +1,8 @@
 import React from 'react';
 import type { TranslationStrings } from '../utils/i18n';
 import type { InfoType } from './InfoModal';
+import { Capacitor } from '@capacitor/core';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 interface Props {
   forecastYears: number;
@@ -24,7 +26,15 @@ export default function ForecastSlider({ forecastYears, onForecastChange, gradie
         min="1"
         max={maxYears}
         value={forecastYears}
-        onChange={(e) => onForecastChange(parseInt(e.target.value))}
+        onChange={(e) => {
+          const val = parseInt(e.target.value);
+          if (val !== forecastYears) {
+            if (Capacitor.isNativePlatform()) {
+              Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+            }
+            onForecastChange(val);
+          }
+        }}
         style={{
           background: `linear-gradient(to right, ${gradientColor}80 ${pct}%, #252525 ${pct}%)`,
           '--thumb-color': gradientColor

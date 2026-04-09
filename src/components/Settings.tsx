@@ -4,6 +4,7 @@ import { UserSettings } from './Onboarding';
 import { AppState } from './Ticker';
 import WheelPicker, { SingleTextWheelPicker } from './WheelPicker';
 import InfoModal, { InfoType } from './InfoModal';
+import { Capacitor } from '@capacitor/core';
 import { t, getCurrencySymbol } from '../utils/i18n';
 
 interface Props {
@@ -219,11 +220,13 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
             <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
             <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(investReminderThreshold)} ${currencySymbol}`} />
             <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} v`} />
-            <SettingRow 
-              id="notificationLevel" 
-              label={SLIDER_CONFIGS.notificationLevel.label} 
-              displayValue={notificationLevel === 3 ? t.motivatorLevel3 : notificationLevel === 2 ? t.motivatorLevel2 : notificationLevel === 1 ? t.motivatorLevel1 : t.motivatorLevel0} 
-            />
+            {Capacitor.isNativePlatform() && (
+              <SettingRow 
+                id="notificationLevel" 
+                label={SLIDER_CONFIGS.notificationLevel.label} 
+                displayValue={notificationLevel === 3 ? t.motivatorLevel3 : notificationLevel === 2 ? t.motivatorLevel2 : notificationLevel === 1 ? t.motivatorLevel1 : t.motivatorLevel0} 
+              />
+            )}
           </div>
 
           </div>
