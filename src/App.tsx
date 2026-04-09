@@ -57,6 +57,7 @@ export default function App() {
         }
         
         setAppState(parsedState);
+        scheduleMotivationPlan(parsedSettings, parsedState);
         setView('ticker');
       }
     } catch (e) {
