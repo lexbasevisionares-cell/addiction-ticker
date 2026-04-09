@@ -171,9 +171,9 @@ export const TRANSLATIONS = {
     privacyTitle: 'Tietosuoja & Analytiikka',
     privacyDesc: 'Addiction Ticker on suunniteltu absoluuttista yksityisyyttä silmällä pitäen. Sovelluksessa ei ole ulkoisia tietokantoja, pilvisynkronointia tai kolmannen osapuolen seurantakoodeja. Kaikki syöttämäsi tiedot tallentuvat vain tämän laitteen paikalliseen muistiin. Taloudellinen vapautesi on vain sinun asiasi.',
     // Automaattiset tiedonannot
-    motivatorTitle: 'Automaattiset tiedonannot',
-    motivatorLevel: 'Vaikutusvoima',
-    motivatorDesc: 'Kuinka tiheästi haluat automaattisia tiedonantoja varallisuutesi kehityksestä?',
+    motivatorTitle: 'Ilmoitukset',
+    motivatorLevel: 'Tsempin taso',
+    motivatorDesc: 'Kuinka tiheästi haluat ilmoituksia varallisuutesi kehityksestä?',
     motivatorLevel0: 'Pois päältä',
     motivatorLevel1: 'Vain virstanpylväät',
     motivatorLevel2: 'Tasapainoinen',
