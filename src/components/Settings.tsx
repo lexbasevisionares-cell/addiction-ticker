@@ -54,7 +54,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     expectedReturn: { id: 'expectedReturn', label: t.expectedReturnLabel, desc: t.expectedReturnDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     investReminderThreshold: { id: 'investReminderThreshold', label: t.investReminderTitle, desc: t.investReminderDesc, min: 0, max: 500, decimals: 2, unit: currencySymbol },
     maxForecastYears: { id: 'maxForecastYears', label: (t as any).maxForecastYearsLabel, desc: (t as any).maxForecastYearsDesc, min: 10, max: 100, decimals: 0, unit: 'v' },
-    notificationLevel: { id: 'notificationLevel', label: t.motivatorLevel || 'Intensity', desc: t.motivatorDesc || '', min: 0, max: 3, decimals: 1, unit: '' },
+    notificationLevel: { id: 'notificationLevel', label: t.motivatorLevel || 'Vaikutusvoima', desc: t.motivatorDesc || '', min: 0, max: 3, decimals: 1, unit: '' },
   };
 
   const handleSave = () => {
