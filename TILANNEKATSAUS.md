@@ -56,6 +56,11 @@
 - **Tiedostot:** `App.tsx`, `Ticker.tsx`, `Settings.tsx`
 - **⚠️ OPPI:** Apple-laitteissa Capacitor-projektissa vältä `100dvh` CSS:ssä, jos bodyssä on jo `padding: env(safe-area-inset)`. Käytä aina `h-full`.
 
+### 🔧 UI-hionta: Adaptiivinen pystysuuntainen skaalaus (9.4.2026, commit 2429f63)
+- **Ongelma:** Pitkillä näytöillä (esim. iPhone 13 Pro) sovellus jätti valtavia tyhjiä pystysuuntaisia "aukkoja" elementtien väliin sen sijaan, että visuaaliset elementit olisivat täyttäneet tilan optimoidusti. Otsikko jäi leijumaan omituisuuteen.
+- **Korjaus:** "Addiction Ticker" -otsikko ja valikkopainike nostettiin "safe arean" yläreunaan, tehden niistä ankkurin. Sisällön pystysuuntainen sijoittelu ("flex-grow" ja "min-height: dvh") muutettiin viemään käytettävissä oleva tila tehokkaammin. Myös Onboardingin otsikkoa laskettiin vastaamaan uutta paikkaa ettei asettelu "hyppää".
+- **Tiedostot:** `Ticker.tsx`, `Onboarding.tsx`
+
 ### 🔧 Kriittinen layout-bugikorjaus (commit c4aec65)
 - **8 metriikkaselitystä** (`i18n.ts`) kirjoitettu uudelleen 100% matemaattisesti täsmällisiksi
 - **Kriittinen korjaus:** "Piilokulu" → "Menetetty varallisuus" — vanha teksti väitti ettei sisällä suoria kuluja, mutta näytetty luku (`totalForecast`) sisälsi ne

@@ -178,11 +178,17 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         ))}
       </div>
 
-      {/* Top Section: Title (Brand) -> Progress Bar (Navigation) */}
-      <div className="shrink-0 pt-[clamp(8px,1.5dvh,24px)] pb-4 flex flex-col items-center w-full z-20">
-        <span className="text-[12px] md:text-[14px] font-semibold text-white/90 uppercase tracking-[0.6em] mb-[1.5dvh]">Addiction Ticker</span>
+      {/* FIXED TOP BAR: PERFECTLY ALIGNED GRID TO MATCH TICKER */}
+      <div className="w-full px-6 pt-[clamp(8px,1dvh,16px)] pb-4 relative z-20 flex flex-col items-center">
+        <div className="w-full relative flex items-center justify-center h-12">
+          {/* Title centered */}
+          <div className="text-[12px] md:text-[13px] font-semibold text-white/90 uppercase tracking-[0.6em] pointer-events-none">
+            Addiction Ticker
+          </div>
+        </div>
         
-        <div className="w-full max-w-lg px-8 flex gap-1.5 pointer-events-none">
+        {/* Progress Bar (Visible in Onboarding) */}
+        <div className="w-full max-w-lg px-8 flex gap-1.5 mt-3 pointer-events-none">
           {screens.map((_, i) => (
              <div key={i} className="h-0.5 flex-1 bg-white/5 rounded-full overflow-hidden">
                <div className={`h-full transition-all duration-700 ease-in-out ${i <= step ? 'bg-white/60 w-full' : 'bg-transparent w-0'}`} />

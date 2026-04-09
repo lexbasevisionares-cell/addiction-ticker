@@ -197,31 +197,35 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
-      {/* FIXED TOP BAR: Title (Brand) -> Progress Placeholder (Anchor matched) */}
-      <div className="w-full flex flex-col items-center justify-center px-6 pt-[clamp(8px,1.5dvh,24px)] pb-2 relative z-50 text-center">
-        <div className="text-[12px] md:text-[14px] font-semibold text-white/90 uppercase tracking-[0.6em] mb-[1.5dvh]">
-          {t.tickerHeader}
-        </div>
-        
-        {/* Invisible progress bar placeholder to match Onboarding height exactly */}
-        <div className="w-full max-w-lg px-8 flex gap-1.5 opacity-0 pb-0.5 pointer-events-none">
-          <div className="h-0.5 flex-1 bg-white/5 rounded-full" />
+      {/* FIXED TOP BAR: PERFECTLY ALIGNED GRID */}
+      <div className="w-full px-6 pt-[clamp(8px,1dvh,16px)] pb-2 relative z-50 flex flex-col items-center">
+        <div className="w-full relative flex items-center justify-center h-12">
+          {/* Title centered */}
+          <div className="text-[12px] md:text-[13px] font-semibold text-white/90 uppercase tracking-[0.6em] pointer-events-none">
+            {t.tickerHeader}
+          </div>
+          
+          {/* Menu Button right-aligned but sharing horizontal center axis */}
+          <div className="absolute right-0 flex items-center h-full">
+            <button
+              onClick={() => setIsMenuOpen(true)}
+              className="text-zinc-400 hover:text-white transition-all p-2.5 md:p-3 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
+              aria-label="Valikko"
+            >
+              <Menu className="w-5 h-5 mx-0.5" />
+            </button>
+          </div>
         </div>
 
-        <div className="absolute right-4 top-[clamp(8px,1.5dvh,24px)] z-50">
-          <button
-            onClick={() => setIsMenuOpen(true)}
-            className="text-zinc-400 hover:text-white transition-all p-3 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
-            aria-label="Valikko"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+        {/* Invisible progress bar placeholder to match Onboarding height exactly */}
+        <div className="w-full max-w-lg px-8 flex gap-1.5 opacity-0 mt-3 pb-0.5 pointer-events-none">
+          <div className="h-0.5 flex-1 bg-white/5 rounded-full" />
         </div>
       </div>
 
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden justify-between">
-        {/* Spacer to push content down - flex grow allows distributing space on tall screens */}
-        <div className="flex-[0.1] min-h-[4dvh]" />
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
+        {/* Spacer to push content down - flex grow allows distributing space on tall screens, but kept constrained so chart takes priority */}
+        <div className="flex-[0.05] min-h-[clamp(4px,2dvh,24px)]" />
 
         {/* Content Section: Timer */}
         <div className="flex flex-col items-center w-full pb-0 px-4 relative">
@@ -238,8 +242,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           />
         </div>
 
-        {/* Middle section: Chart with toggle + metrics */}
-        <div className="flex-1 flex flex-col w-full overflow-hidden min-h-0">
+        {/* Middle section: Chart with toggle + metrics. flex-1 allows it to grow, but now we give it a min/max priority */}
+        <div className="flex-1 flex flex-col w-full overflow-visible min-h-[35dvh] max-h-[50dvh] justify-center mt-auto mb-auto relative z-0">
           <FinancialChart
             graphData={graphData}
             viewType={viewType}
@@ -313,10 +317,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Bottom section: Stealth Share Link */}
-        <div className="w-full pb-[clamp(24px,5dvh,48px)] flex justify-center mt-[clamp(8px,2dvh,24px)]">
+        <div className="w-full pb-[clamp(24px,4dvh,48px)] flex justify-center mt-auto">
           <button
             onClick={handleShare}
-            className="group flex items-center justify-center gap-2.5 text-zinc-400 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-2 px-4 drop-shadow-sm"
+            className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
           >
             <Share2 size={13} className="stroke-[2.5]" />
             <span>{isFree ? t.shareAccomplishment : t.shareSituation}</span>
