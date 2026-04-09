@@ -10,6 +10,7 @@ import SideDrawer from './SideDrawer';
 import InfoModal, { InfoType } from './InfoModal';
 import ConfirmActionModal from './ConfirmActionModal';
 import InvestConfirmBanner from './InvestConfirmBanner';
+import { playTick, playCentDrop } from '../utils/audio';
 
 export interface AppState {
   status: 'vapaa' | 'riippuvainen';
@@ -96,10 +97,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     
     if (settings.soundscapeEnabled) {
       if (lastSecond !== -1 && totalSeconds > lastSecond) {
-        import('../utils/audio').then(m => m.playTick(isFree));
+        playTick(isFree);
       }
       if (lastCent !== -1 && currentCents > lastCent) {
-        import('../utils/audio').then(m => m.playCentDrop(isFree));
+        playCentDrop(isFree);
       }
     }
     setLastSecond(totalSeconds);
