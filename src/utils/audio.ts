@@ -95,7 +95,7 @@ const scheduleNextLoop = () => {
 
   const ctx = audioCtx;
   const duration = tickLoopBuffer.duration;
-  const crossfade = 0.15; // 150ms crossfade overlap
+  const crossfade = 0.03; // 30ms micro-crossfade — imperceptible but prevents click
 
   const source = ctx.createBufferSource();
   source.buffer = tickLoopBuffer;
@@ -104,13 +104,13 @@ const scheduleNextLoop = () => {
   fadeGain.connect(loopMasterGain);
   source.connect(fadeGain);
 
-  // Fade in at the start
-  fadeGain.gain.setValueAtTime(0, ctx.currentTime);
-  fadeGain.gain.linearRampToValueAtTime(1, ctx.currentTime + crossfade);
+  // Ultra-short fade in (exponential preserves perceived volume better)
+  fadeGain.gain.setValueAtTime(0.001, ctx.currentTime);
+  fadeGain.gain.exponentialRampToValueAtTime(1, ctx.currentTime + crossfade);
 
-  // Fade out at the end
+  // Ultra-short fade out at the very end
   fadeGain.gain.setValueAtTime(1, ctx.currentTime + duration - crossfade);
-  fadeGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+  fadeGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
 
   source.start(ctx.currentTime);
   source.stop(ctx.currentTime + duration);
