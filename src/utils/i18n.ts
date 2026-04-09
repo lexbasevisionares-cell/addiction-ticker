@@ -86,6 +86,8 @@ export const TRANSLATIONS = {
     expectedReturnLabel: 'Tuotto-odotus',
     expectedReturnDesc: 'Kuinka paljon arvioit sijoitustesi tuottavan keskimäärin osakemarkkinoilla vuodessa?',
     settingsStatus: 'Tila',
+    settingsSoundLabel: 'Äänimaisema',
+    settingsSoundDesc: 'Aktivoi hienostuneet merkkiäänet säästöjen kertymiselle ja sekuntien kulumiselle.',
     resetCounterDesc: 'Nollaa kello ja aloita säästäminen alusta. Tämä on tietoinen päätös hyväksyä repsahdus.',
     quitAddictionDesc: 'Lopeta riippuvuus tästä hetkestä alkaen ja aloita taloudellisen vapauden rakentaminen.',
     maxForecastYearsLabel: 'Ennusteen maksimiaika',

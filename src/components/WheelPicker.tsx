@@ -157,7 +157,7 @@ interface DualWheelProps {
   min: number;
   max: number;
   onChange: (val: number) => void;
-  decimals?: 1 | 2;
+  decimals?: 0 | 1 | 2;
   suffix?: string;
   label?: string;
   locale?: string;
@@ -184,17 +184,21 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
         </div>
 
         <div className="flex items-center z-10 relative w-full justify-center">
-          <div className="w-[100px] lg:w-[150px] flex justify-end">
+          <div className={`w-[100px] lg:w-[150px] flex ${decimals === 0 ? 'justify-center' : 'justify-end'}`}>
             <WheelColumn items={integerItems} selectedIndex={integerItems.indexOf(intVal)} onChange={(idx) => onChange(integerItems[idx] + fracVal / Math.pow(10, decimals))} formatItem={(v) => v.toString()} width="100%" />
           </div>
-          <div className="flex items-center justify-center translate-y-[-4px] h-[90px] w-6">
-            <span className="text-5xl lg:text-6xl font-sans tabular-nums text-white font-light">
-              {locale === 'fi-FI' ? ',' : '.'}
-            </span>
-          </div>
-          <div className="w-[100px] lg:w-[150px] flex justify-start">
-            <WheelColumn items={decimalItems} selectedIndex={decimalItems.indexOf(fracVal)} onChange={(idx) => onChange(intVal + decimalItems[idx] / Math.pow(10, decimals))} formatItem={(v) => v.toString().padStart(decimals, '0')} width="100%" />
-          </div>
+          {decimals > 0 && (
+            <>
+              <div className="flex items-center justify-center translate-y-[-4px] h-[90px] w-6">
+                <span className="text-5xl lg:text-6xl font-sans tabular-nums text-white font-light">
+                  {locale === 'fi-FI' ? ',' : '.'}
+                </span>
+              </div>
+              <div className="w-[100px] lg:w-[150px] flex justify-start">
+                <WheelColumn items={decimalItems} selectedIndex={decimalItems.indexOf(fracVal)} onChange={(idx) => onChange(intVal + decimalItems[idx] / Math.pow(10, decimals))} formatItem={(v) => v.toString().padStart(decimals, '0')} width="100%" />
+              </div>
+            </>
+          )}
           {suffix && (
             <div className="absolute right-2 lg:right-6 h-[90px] flex items-center">
               <span className="text-2xl lg:text-3xl font-medium text-white uppercase tracking-[0.4em] font-sans">

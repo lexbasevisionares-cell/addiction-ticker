@@ -21,7 +21,7 @@ interface SettingConfig {
   desc: string;
   min: number;
   max: number;
-  decimals: 1 | 2;
+  decimals: 0 | 1 | 2;
   unit: string;
 }
 
@@ -36,6 +36,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   );
   const [notificationLevel, setNotificationLevel] = useState<number>(initialSettings.notificationLevel !== undefined ? initialSettings.notificationLevel : 3);
   const [maxForecastYears, setMaxForecastYears] = useState<number>(initialSettings.maxForecastYears !== undefined ? initialSettings.maxForecastYears : 75);
+  const [soundscapeEnabled, setSoundscapeEnabled] = useState<boolean>(initialSettings.soundscapeEnabled !== undefined ? initialSettings.soundscapeEnabled : false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showInfo, setShowInfo] = useState(false);
 
@@ -57,7 +58,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   };
 
   const handleSave = () => {
-    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears });
+    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled });
     if (appState.status !== 'riippuvainen') {
       const newTime = new Date(startTimeString).getTime();
       if (!isNaN(newTime) && newTime !== appState.startTime) {
@@ -69,7 +70,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   useEffect(() => {
     if (editingId === null) handleSave();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, startTimeString]);
+  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled, startTimeString]);
 
   const isHooked = appState.status === 'riippuvainen';
 
@@ -177,6 +178,22 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     </button>
   );
 
+  const ToggleRow = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) => (
+    <div className="w-full flex items-center justify-between py-4 lg:py-5">
+      <div className="flex items-center text-left flex-1">
+        <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{label}</span>
+      </div>
+      <div className="flex items-center shrink-0 justify-end">
+        <button
+          onClick={() => onChange(!checked)}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${checked ? 'bg-emerald-500' : 'bg-zinc-700'}`}
+        >
+          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${checked ? 'translate-x-6' : 'translate-x-1'}`} />
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="h-full bg-[#050505] text-white flex flex-col max-w-4xl mx-auto relative overflow-hidden pt-10 font-sans">
       <header className="flex items-center justify-between px-8 py-6 z-20">
@@ -220,6 +237,19 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
             <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
             <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(investReminderThreshold)} ${currencySymbol}`} />
             <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} v`} />
+            <ToggleRow 
+              label={(t as any).settingsSoundLabel || 'Äänimaisema'} 
+              checked={soundscapeEnabled} 
+              onChange={(val) => {
+                setSoundscapeEnabled(val);
+                // Initialize audio context lazily on user tap
+                if (val) {
+                  import('../utils/audio').then(module => {
+                    module.initAudio();
+                  });
+                }
+              }} 
+            />
             {Capacitor.isNativePlatform() && (
               <SettingRow 
                 id="notificationLevel" 

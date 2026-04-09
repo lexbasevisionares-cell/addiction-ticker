@@ -13,6 +13,7 @@ export interface UserSettings {
   expectedReturn: number;
   investReminderThreshold?: number;
   maxForecastYears?: number;
+  soundscapeEnabled?: boolean;
 
   notificationLevel: number;
 }
@@ -53,9 +54,11 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         annualPriceIncrease: initialSettings.annualPriceIncrease,
         expectedReturn: initialSettings.expectedReturn,
         investReminderThreshold: initialSettings.investReminderThreshold,
+        maxForecastYears: initialSettings.maxForecastYears,
+        soundscapeEnabled: initialSettings.soundscapeEnabled,
       };
     }
-    return { dailyCost: 7.00, annualPriceIncrease: 5.0, expectedReturn: 7.0, investReminderThreshold: 0.01, notificationLevel: 3 };
+    return { dailyCost: 7.00, annualPriceIncrease: 5.0, expectedReturn: 7.0, investReminderThreshold: 0.01, notificationLevel: 3, maxForecastYears: 75, soundscapeEnabled: false };
   });
 
   const screens: { type: string; data: any }[] = [];
@@ -91,7 +94,9 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         dailyCost: answers.dailyCost,
         annualPriceIncrease: answers.annualPriceIncrease,
         expectedReturn: answers.expectedReturn,
-        notificationLevel: (answers as any).notificationLevel !== undefined ? (answers as any).notificationLevel : 3
+        notificationLevel: (answers as any).notificationLevel !== undefined ? (answers as any).notificationLevel : 3,
+        maxForecastYears: (answers as any).maxForecastYears,
+        soundscapeEnabled: (answers as any).soundscapeEnabled !== undefined ? (answers as any).soundscapeEnabled : false
       }, status);
     }
   };

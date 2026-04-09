@@ -35,6 +35,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [infoModal, setInfoModal] = useState<InfoType | null>(null);
   const [isInvestBannerOpen, setIsInvestBannerOpen] = useState(false);
+  const [lastSecond, setLastSecond] = useState<number>(-1);
+  const [lastCent, setLastCent] = useState<number>(-1);
 
   useEffect(() => {
     const tick = () => {
@@ -88,6 +90,22 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const securedFV = calculateSecuredFutureValue(currentPortfolioValueLive, yearsToTargetExactLive, settings.expectedReturn);
   const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive, settings.expectedReturn);
   const totalDirectSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive * 365.25);
+
+  useEffect(() => {
+    const currentCents = Math.floor(accumulated * 100);
+    
+    if (settings.soundscapeEnabled) {
+      if (lastSecond !== -1 && totalSeconds > lastSecond) {
+        import('../utils/audio').then(m => m.playTick(isFree));
+      }
+      if (lastCent !== -1 && currentCents > lastCent) {
+        import('../utils/audio').then(m => m.playCentDrop(isFree));
+      }
+    }
+    setLastSecond(totalSeconds);
+    setLastCent(currentCents);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalSeconds, accumulated, isFree, settings.soundscapeEnabled]);
 
   const lastTransferTime = appState.lastTransferTime || appState.startTime;
   const pendingDays = (now - lastTransferTime) / (1000 * 60 * 60 * 24);
