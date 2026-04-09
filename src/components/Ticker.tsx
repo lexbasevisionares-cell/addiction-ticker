@@ -10,7 +10,7 @@ import SideDrawer from './SideDrawer';
 import InfoModal, { InfoType } from './InfoModal';
 import ConfirmActionModal from './ConfirmActionModal';
 import InvestConfirmBanner from './InvestConfirmBanner';
-import { playTick, playCentDrop } from '../utils/audio';
+import { playCentDrop, startTickLoop, stopTickLoop, initAudio } from '../utils/audio';
 import { useRef } from 'react';
 
 export interface AppState {
@@ -89,18 +89,26 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive, settings.expectedReturn);
   const totalDirectSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive * 365.25);
 
+  // Start/stop the cinematic clock loop based on soundscapeEnabled setting
+  useEffect(() => {
+    if (settings.soundscapeEnabled) {
+      initAudio();
+      // Small delay to give initAudio time to resume the AudioContext
+      const t = setTimeout(() => startTickLoop(), 300);
+      return () => { clearTimeout(t); stopTickLoop(); };
+    } else {
+      stopTickLoop();
+    }
+  }, [settings.soundscapeEnabled]);
+
   // Audio: useLayoutEffect fires AFTER React updates the DOM but BEFORE the browser paints.
-  // This means the sound triggers at the exact same visual frame as the number change.
+  // This means the coin drop triggers at the exact same visual frame as the number change.
   useLayoutEffect(() => {
     if (!settings.soundscapeEnabled) return;
 
     // Use Math.round(*100) to match exactly how Intl.NumberFormat rounds to 2 decimal places
-    // e.g. accumulated=1.335 → display shows "1,34" AND Math.round(133.5)=134 → audio fires together
     const currentCents = Math.round(accumulated * 100);
 
-    if (lastSecondRef.current !== -1 && totalSeconds > lastSecondRef.current) {
-      playTick(isFree);
-    }
     if (lastCentRef.current !== -1 && currentCents > lastCentRef.current) {
       playCentDrop(isFree);
     }
