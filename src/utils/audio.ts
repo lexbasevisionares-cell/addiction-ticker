@@ -5,6 +5,8 @@ let coinFreeBuffer: AudioBuffer | null = null;
 let coinHookedBuffer: AudioBuffer | null = null;
 
 // Initialize on first user interaction to bypass autoplay policies
+let initializedEventListeners = false;
+
 export const initAudio = () => {
   if (!audioCtx) {
     const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
@@ -14,6 +16,21 @@ export const initAudio = () => {
       // Attempt to resume immediately if suspended
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
+      }
+      
+      // Fallback: If it's still suspended (likely due to no user gesture),
+      // we attach a global interaction listener to resume it on the first tap/click.
+      if (!initializedEventListeners) {
+        const unlock = () => {
+          if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          document.removeEventListener('click', unlock);
+          document.removeEventListener('touchstart', unlock);
+        };
+        document.addEventListener('click', unlock);
+        document.addEventListener('touchstart', unlock);
+        initializedEventListeners = true;
       }
       
       // Pre-fetch the real MP3 coin drop sounds
