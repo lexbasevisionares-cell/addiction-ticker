@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo } from 'react';
+import { useState, useEffect, useLayoutEffect, useMemo, memo } from 'react';
 import { Menu, Share2 } from 'lucide-react';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from '../utils/finance';
 import { t, formatCurrency } from '../utils/i18n';
@@ -39,39 +39,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const [isInvestBannerOpen, setIsInvestBannerOpen] = useState(false);
   const lastCentRef = useRef<number>(-1);
   const lastSecondRef = useRef<number>(-1);
-  const soundEnabledRef = useRef(settings.soundscapeEnabled ?? false);
-  const isFreeRef = useRef(appState.status === 'vapaa');
-
-  // Keep refs in sync so interval can access latest values without re-subscribing
-  soundEnabledRef.current = settings.soundscapeEnabled ?? false;
-  isFreeRef.current = appState.status === 'vapaa';
 
   useEffect(() => {
     const tick = () => {
       const currentTime = Date.now();
-      // Compute derived values directly from raw timestamp
-      if (soundEnabledRef.current) {
-        const elapsedMs = currentTime - appState.startTime;
-        const currentSecond = Math.floor(elapsedMs / 1000);
-        const elapsedDays = Math.max(0, elapsedMs) / (1000 * 60 * 60 * 24);
-        // Use EXACT same formula as calculateAccumulated to guarantee bit-for-bit match with visual number
-        const i = settings.annualPriceIncrease / 100;
-        const years = elapsedDays / 365.25;
-        const rawAccumulated = i === 0
-          ? settings.dailyCost * elapsedDays
-          : settings.dailyCost * 365.25 * (Math.pow(1 + i, years) - 1) / Math.log(1 + i);
-        const currentCents = Math.floor(rawAccumulated * 100);
-
-        if (lastSecondRef.current !== -1 && currentSecond > lastSecondRef.current) {
-          playTick(isFreeRef.current);
-        }
-        if (lastCentRef.current !== -1 && currentCents > lastCentRef.current) {
-          playCentDrop(isFreeRef.current);
-        }
-        lastSecondRef.current = currentSecond;
-        lastCentRef.current = currentCents;
-      }
-
       setNow(currentTime);
       setStableNow(prev => {
         if (currentTime - prev > 60000) return currentTime;
@@ -81,19 +52,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     tick();
     const id = setInterval(tick, 50);
     return () => clearInterval(id);
-  }, [appState.startTime, settings.dailyCost, settings.annualPriceIncrease]);
-
-  useEffect(() => {
-    // Reset sound tracking refs when sound turns on freshly
-    if (settings.soundscapeEnabled) {
-      lastCentRef.current = -1;
-      lastSecondRef.current = -1;
-    }
-  }, [settings.soundscapeEnabled]);
-
-  useEffect(() => {
-    setStableNow(Date.now());
-  }, [appState.startTime]);
+  }, []);
 
   const isFree = appState.status === 'vapaa';
   // OLED Glow: High-saturation neon variants
@@ -129,6 +88,28 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const securedFV = calculateSecuredFutureValue(currentPortfolioValueLive, yearsToTargetExactLive, settings.expectedReturn);
   const totalForecast = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive, settings.expectedReturn);
   const totalDirectSavings = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, totalYearsLive * 365.25);
+
+  // Audio: useLayoutEffect fires AFTER React updates the DOM but BEFORE the browser paints.
+  // This means the sound triggers at the exact same visual frame as the number change.
+  useLayoutEffect(() => {
+    if (!settings.soundscapeEnabled) return;
+
+    const currentCents = Math.floor(accumulated * 100);
+
+    if (lastSecondRef.current !== -1 && totalSeconds > lastSecondRef.current) {
+      playTick(isFree);
+    }
+    if (lastCentRef.current !== -1 && currentCents > lastCentRef.current) {
+      playCentDrop(isFree);
+    }
+
+    lastSecondRef.current = totalSeconds;
+    lastCentRef.current = currentCents;
+  }, [totalSeconds, accumulated, isFree, settings.soundscapeEnabled]);
+
+  useEffect(() => {
+    setStableNow(Date.now());
+  }, [appState.startTime]);
 
   const lastTransferTime = appState.lastTransferTime || appState.startTime;
   const pendingDays = (now - lastTransferTime) / (1000 * 60 * 60 * 24);
