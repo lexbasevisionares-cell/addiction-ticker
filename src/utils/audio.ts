@@ -1,6 +1,8 @@
 // Simple Audio Engine using Web Audio API for synthetic digital luxury sounds
 
 let audioCtx: AudioContext | null = null;
+let coinFreeBuffer: AudioBuffer | null = null;
+let coinHookedBuffer: AudioBuffer | null = null;
 
 // Initialize on first user interaction to bypass autoplay policies
 export const initAudio = () => {
@@ -13,6 +15,21 @@ export const initAudio = () => {
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
+      
+      // Pre-fetch the real MP3 coin drop sounds
+      const loadAudio = async (url: string) => {
+        try {
+          const response = await fetch(url);
+          const arrayBuffer = await response.arrayBuffer();
+          return await audioCtx!.decodeAudioData(arrayBuffer);
+        } catch (e) {
+          console.error("Failed to load audio:", url, e);
+          return null;
+        }
+      };
+      
+      loadAudio('/coin_free.mp3').then(b => coinFreeBuffer = b);
+      loadAudio('/coin_hooked.mp3').then(b => coinHookedBuffer = b);
     }
   } else if (audioCtx.state === 'suspended') {
     audioCtx.resume();
@@ -62,67 +79,21 @@ export const playCentDrop = (isFree: boolean) => {
   const ctx = ensureAudioContext();
   if (!ctx || ctx.state !== 'running') return;
 
-  const masterGain = ctx.createGain();
-  masterGain.connect(ctx.destination);
+  const buffer = isFree ? coinFreeBuffer : coinHookedBuffer;
+  if (!buffer) return; // If not loaded yet, silently skip
+
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
   
-  // Overall low volume for background subtlety
-  masterGain.gain.value = 0.6;
+  const gainNode = ctx.createGain();
+  gainNode.connect(ctx.destination);
+  source.connect(gainNode);
 
-  const pTime = ctx.currentTime;
-
-  // 1. IMPACT: White noise burst for the clink
-  const bufferSize = ctx.sampleRate * 0.05; // 50ms of noise
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
-  }
-  const noiseSource = ctx.createBufferSource();
-  noiseSource.buffer = buffer;
+  // Subtle volume scaling
+  gainNode.gain.value = isFree ? 0.4 : 0.6;
   
-  // Use a bandpass filter to make the noise thin and metallic
-  const noiseFilter = ctx.createBiquadFilter();
-  noiseFilter.type = 'bandpass';
-  noiseFilter.frequency.value = 5000;
-  noiseFilter.Q.value = 1;
+  // Very slight pitch variation (0.95 to 1.05) to prevent machine-gun effect
+  source.playbackRate.value = 0.95 + (Math.random() * 0.1);
 
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.setValueAtTime(1, pTime);
-  noiseGain.gain.exponentialRampToValueAtTime(0.01, pTime + 0.03); // extreme short snap
-
-  noiseSource.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(masterGain);
-  
-  noiseSource.start(pTime);
-
-  // 2. RINGING: Additive synthesis using multiple high oscillators
-  // Metallic sounds have inharmonic partials
-  const freqs = isFree 
-    ? [2000, 3105, 4510] // Bright, thin coin (silver)
-    : [1500, 2400, 3200]; // Darker, heavier coin (bronze/hollow)
-
-  freqs.forEach((freq, i) => {
-    const osc = ctx.createOscillator();
-    osc.type = 'sine'; // Sines are best for additive synthesis ringing
-    
-    // Each partial drops slightly in pitch over its lifecycle (Doppler/metal effect)
-    osc.frequency.setValueAtTime(freq, pTime);
-    osc.frequency.exponentialRampToValueAtTime(freq * 0.95, pTime + 0.3);
-
-    const oscGain = ctx.createGain();
-    
-    // Higher partials decay faster for realism
-    const decayTime = isFree ? 0.4 - (i * 0.1) : 0.3 - (i * 0.05);
-    
-    oscGain.gain.setValueAtTime(0, pTime);
-    oscGain.gain.linearRampToValueAtTime(0.2, pTime + 0.01);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, pTime + decayTime);
-
-    osc.connect(oscGain);
-    oscGain.connect(masterGain);
-
-    osc.start(pTime);
-    osc.stop(pTime + decayTime);
-  });
+  source.start(ctx.currentTime);
 };
