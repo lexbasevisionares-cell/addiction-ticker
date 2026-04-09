@@ -94,19 +94,19 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   useLayoutEffect(() => {
     if (!settings.soundscapeEnabled) return;
 
-    // Match the 3-decimal precision shown on screen (formatCurrency with 3 digits)
-    // The displayed number changes every ~1/1000 of a euro, so track millieuros
-    const currentMillis = Math.floor(accumulated * 1000);
+    // Use Math.round(*100) to match exactly how Intl.NumberFormat rounds to 2 decimal places
+    // e.g. accumulated=1.335 → display shows "1,34" AND Math.round(133.5)=134 → audio fires together
+    const currentCents = Math.round(accumulated * 100);
 
     if (lastSecondRef.current !== -1 && totalSeconds > lastSecondRef.current) {
       playTick(isFree);
     }
-    if (lastCentRef.current !== -1 && currentMillis > lastCentRef.current) {
+    if (lastCentRef.current !== -1 && currentCents > lastCentRef.current) {
       playCentDrop(isFree);
     }
 
     lastSecondRef.current = totalSeconds;
-    lastCentRef.current = currentMillis;
+    lastCentRef.current = currentCents;
   }, [totalSeconds, accumulated, isFree, settings.soundscapeEnabled]);
 
   useEffect(() => {
