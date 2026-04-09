@@ -101,7 +101,8 @@ export const playCentDrop = (isFree: boolean) => {
   const ctx = ensureAudioContext();
   if (!ctx || ctx.state !== 'running') return;
 
-  const buffer = isFree ? coinFreeBuffer : coinHookedBuffer;
+  // Swapped: use Hooked audio for Free (Green) and Free audio for Hooked (Red)
+  const buffer = isFree ? coinHookedBuffer : coinFreeBuffer;
   if (!buffer) return; // If not loaded yet, silently skip
 
   const source = ctx.createBufferSource();
