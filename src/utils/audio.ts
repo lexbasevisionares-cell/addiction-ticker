@@ -68,33 +68,33 @@ export const playTick = (isFree: boolean) => {
   const osc = ctx.createOscillator();
   const gainNode = ctx.createGain();
 
-  // A high-pass filter removes the low "thud", leaving only the sharp mechanical needle click
-  const filter = ctx.createBiquadFilter();
-  filter.type = 'highpass';
-  filter.frequency.value = 2000;
-
-  osc.connect(filter);
-  filter.connect(gainNode);
+  osc.connect(gainNode);
   gainNode.connect(ctx.destination);
 
-  // Sharp, high-pitched mechanical tick
-  osc.type = 'square';
+  // Use a pure sine wave for a delicate, narrow sound (no "woody" harmonics)
+  osc.type = 'sine';
   
-  // The classic "quartz" click: very high frequency dropping instantly to create a sharp transient
   if (isFree) {
-    osc.frequency.setValueAtTime(6000, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.015);
+    // Ultra-delicate, bright watch tick
+    // Drops from very high (8000Hz) to high (2000Hz) to create a microscopic "snap"
+    osc.frequency.setValueAtTime(8000, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(2000, ctx.currentTime + 0.010);
+    
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.001); // Very quiet (0.05)
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.010); // Gone in 10ms
   } else {
-    osc.frequency.setValueAtTime(4000, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.015);
+    // Slightly duller, sadder tick
+    osc.frequency.setValueAtTime(5000, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.015);
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.04, ctx.currentTime + 0.001);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
   }
 
-  gainNode.gain.setValueAtTime(0, ctx.currentTime);
-  gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.001); // Instant attack (1ms)
-  gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02); // Extremely fast decay (20ms)
-
   osc.start(ctx.currentTime);
-  osc.stop(ctx.currentTime + 0.03);
+  osc.stop(ctx.currentTime + 0.02);
 };
 
 export const playCentDrop = (isFree: boolean) => {
