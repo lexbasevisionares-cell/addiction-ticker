@@ -179,8 +179,8 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
       </div>
 
       {/* Top Section: Title (Brand) -> Progress Bar (Navigation) */}
-      <div className="shrink-0 pt-[clamp(32px,5.5vh,48px)] pb-4 flex flex-col items-center w-full z-20">
-        <span className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mb-5">Addiction Ticker</span>
+      <div className="shrink-0 pt-[clamp(8px,1.5dvh,24px)] pb-4 flex flex-col items-center w-full z-20">
+        <span className="text-[12px] md:text-[14px] font-semibold text-white/90 uppercase tracking-[0.6em] mb-[1.5dvh]">Addiction Ticker</span>
         
         <div className="w-full max-w-lg px-8 flex gap-1.5 pointer-events-none">
           {screens.map((_, i) => (

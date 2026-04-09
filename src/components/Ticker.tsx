@@ -198,8 +198,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
       {/* FIXED TOP BAR: Title (Brand) -> Progress Placeholder (Anchor matched) */}
-      <div className="w-full flex flex-col items-center justify-center px-6 pt-[clamp(32px,5.5vh,48px)] pb-2 relative z-50 text-center">
-        <div className="text-[11px] font-semibold text-white uppercase tracking-[0.6em] mb-5">
+      <div className="w-full flex flex-col items-center justify-center px-6 pt-[clamp(8px,1.5dvh,24px)] pb-2 relative z-50 text-center">
+        <div className="text-[12px] md:text-[14px] font-semibold text-white/90 uppercase tracking-[0.6em] mb-[1.5dvh]">
           {t.tickerHeader}
         </div>
         
@@ -208,7 +208,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           <div className="h-0.5 flex-1 bg-white/5 rounded-full" />
         </div>
 
-        <div className="absolute right-4 top-[clamp(32px,5.5vh,48px)] z-50">
+        <div className="absolute right-4 top-[clamp(8px,1.5dvh,24px)] z-50">
           <button
             onClick={() => setIsMenuOpen(true)}
             className="text-zinc-400 hover:text-white transition-all p-3 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
@@ -219,9 +219,9 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
       </div>
 
-      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden justify-between mt-[-1vh]">
-        {/* Spacer to push content down - more breathing room created by higher header */}
-        <div className="flex-[0.06] min-h-[8px]" />
+      <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden justify-between">
+        {/* Spacer to push content down - flex grow allows distributing space on tall screens */}
+        <div className="flex-[0.1] min-h-[4dvh]" />
 
         {/* Content Section: Timer */}
         <div className="flex flex-col items-center w-full pb-0 px-4 relative">
@@ -313,10 +313,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Bottom section: Stealth Share Link */}
-        <div className="w-full pb-[clamp(16px,4dvh,32px)] flex justify-center mt-[clamp(8px,2dvh,24px)]">
+        <div className="w-full pb-[clamp(24px,5dvh,48px)] flex justify-center mt-[clamp(8px,2dvh,24px)]">
           <button
             onClick={handleShare}
-            className="group flex items-center justify-center gap-2.5 text-zinc-400 hover:text-white transition-colors active:scale-95 text-[10px] font-semibold uppercase tracking-[0.4em] py-2 px-4 drop-shadow-sm"
+            className="group flex items-center justify-center gap-2.5 text-zinc-400 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-2 px-4 drop-shadow-sm"
           >
             <Share2 size={13} className="stroke-[2.5]" />
             <span>{isFree ? t.shareAccomplishment : t.shareSituation}</span>
