@@ -224,11 +224,12 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
       </div>
 
       <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
-        {/* Spacer to push content down - flex grow allows distributing space on tall screens, but kept constrained so chart takes priority */}
-        <div className="flex-[0.05] min-h-[clamp(4px,2dvh,24px)]" />
+        
+        {/* Elastic Spacer 1: Top margin */}
+        <div className="flex-[0.1] min-h-[clamp(8px,2dvh,32px)]" />
 
-        {/* Content Section: Timer */}
-        <div className="flex flex-col items-center w-full pb-0 px-4 relative">
+        {/* Content Section 1: Timer */}
+        <div className="flex-none flex flex-col items-center w-full px-4 relative">
           <TimerDisplay
             isFree={isFree}
             days={days}
@@ -242,8 +243,11 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           />
         </div>
 
-        {/* Middle section: Chart with toggle + metrics. flex-1 allows it to grow, but now we give it a min/max priority */}
-        <div className="flex-1 flex flex-col w-full overflow-visible min-h-[35dvh] max-h-[50dvh] justify-center mt-auto mb-auto relative z-0">
+        {/* Elastic Spacer 2: Space between Timer and Chart */}
+        <div className="flex-[0.3] min-h-[clamp(16px,4dvh,40px)]" />
+
+        {/* Content Section 2: Chart with toggle + metrics. flex-1 allows it to grow robustly */}
+        <div className="flex-[2] flex flex-col w-full overflow-visible min-h-0 relative z-0">
           <FinancialChart
             graphData={graphData}
             viewType={viewType}
@@ -267,7 +271,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           />
           
           {/* Sandwich Forecast Control: Baseline Label -> Slider -> Result Label */}
-          <div className="flex flex-col items-center w-full px-5 pt-2 pb-2 lg:pt-4 lg:pb-4">
+          <div className="flex-none flex flex-col items-center w-full px-5 pt-[clamp(8px,2dvh,24px)] pb-[clamp(12px,2dvh,24px)]">
             
             {/* 1. Baseline Label (Gray) — visibility toggled to preserve exact layout height */}
             <div 
@@ -283,7 +287,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             </div>
 
             {/* 2. Slider (The Interaction Tool) */}
-            <div className="w-full py-[clamp(4px,1dvh,12px)] mb-[clamp(4px,1dvh,8px)]">
+            <div className="w-full py-[clamp(8px,1.5dvh,16px)] mb-[clamp(8px,1dvh,12px)]">
               <ForecastSlider
                 forecastYears={forecastYears}
                 maxYears={maxYears}
@@ -316,8 +320,11 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           </div>
         </div>
 
-        {/* Bottom section: Stealth Share Link */}
-        <div className="w-full pb-[clamp(24px,4dvh,48px)] flex justify-center mt-auto">
+        {/* Elastic Spacer 3: Space between Slider and Share button */}
+        <div className="flex-[0.3] min-h-[clamp(8px,3dvh,32px)]" />
+
+        {/* Content Section 3: Stealth Share Link */}
+        <div className="flex-none w-full pb-[clamp(24px,5dvh,48px)] flex justify-center">
           <button
             onClick={handleShare}
             className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
