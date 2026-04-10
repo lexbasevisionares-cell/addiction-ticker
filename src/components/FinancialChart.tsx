@@ -74,7 +74,7 @@ export default function FinancialChart({
   const leftValueString = formatCurrency(leftValue, showDecimals ? 2 : 0);
   const rightValueString = formatCurrency(rightSideValue, showDecimals ? 2 : 0);
 
-  const fontSizeClass = 'text-[clamp(1.5rem,6vw,3.5rem)]';
+  const fontSizeClass = 'text-[clamp(1.75rem,6.5vw,4rem)]';
 
   return (
     <div className="w-full relative flex flex-col h-full">
@@ -85,7 +85,7 @@ export default function FinancialChart({
           <div className="inline-flex items-center p-1 bg-white/[0.02] backdrop-blur-2xl rounded-full border border-white/[0.05] relative shadow-2xl">
             <button 
               onClick={() => onViewTypeChange('secured')}
-              className={`relative px-4 py-1.5 text-[9px] lg:text-[11px] uppercase tracking-[0.4em] font-medium transition-colors duration-300 ${
+              className={`relative px-4 py-1.5 text-[11px] md:text-[12px] lg:text-[13px] uppercase tracking-[0.4em] font-medium transition-colors duration-300 ${
                 viewType === 'secured' ? (isFree ? 'text-emerald-400' : 'text-red-400') : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >
@@ -101,7 +101,7 @@ export default function FinancialChart({
             
             <button 
               onClick={() => onViewTypeChange('potential')}
-              className={`relative px-4 py-1.5 text-[9px] lg:text-[11px] uppercase tracking-[0.4em] font-medium transition-colors duration-300 ${
+              className={`relative px-4 py-1.5 text-[11px] md:text-[12px] lg:text-[13px] uppercase tracking-[0.4em] font-medium transition-colors duration-300 ${
                 viewType === 'potential' ? (isFree ? 'text-emerald-400' : 'text-red-400') : 'text-zinc-500 hover:text-zinc-300'
               }`}
             >

@@ -196,7 +196,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   };
 
   return (
-    <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-hidden relative">
+    <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-y-auto overflow-x-hidden relative">
       {/* FIXED TOP BAR: PERFECTLY ALIGNED GRID */}
       <div className="w-full px-6 pt-[clamp(8px,1dvh,16px)] pb-2 relative z-50 flex flex-col items-center">
         <div className="w-full relative flex items-center justify-center h-12">
@@ -226,10 +226,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
       <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
         
         {/* Elastic Spacer 1: Top margin */}
-        <div className="flex-[0.1] min-h-[clamp(8px,2dvh,32px)]" />
+        <div className="flex-[0.5] min-h-[clamp(8px,1dvh,24px)] shrink-0" />
 
         {/* Content Section 1: Timer */}
-        <div className="flex-none flex flex-col items-center w-full px-4 relative">
+        <div className="flex-none flex flex-col items-center w-full px-4 relative shrink-0">
           <TimerDisplay
             isFree={isFree}
             days={days}
@@ -244,10 +244,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Elastic Spacer 2: Space between Timer and Chart */}
-        <div className="flex-[0.3] min-h-[clamp(16px,4dvh,40px)]" />
+        <div className="flex-[1] min-h-[clamp(16px,2dvh,32px)] shrink-0" />
 
-        {/* Content Section 2: Chart with toggle + metrics. flex-1 allows it to grow robustly */}
-        <div className="flex-[2] flex flex-col w-full overflow-visible min-h-0 relative z-0">
+        {/* Content Section 2: Chart with toggle + metrics. flex-auto respects content height */}
+        <div className="flex-auto flex flex-col w-full overflow-visible min-h-min relative z-0 shrink-0">
           <FinancialChart
             graphData={graphData}
             viewType={viewType}
@@ -321,10 +321,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Elastic Spacer 3: Space between Slider and Share button */}
-        <div className="flex-[0.3] min-h-[clamp(8px,3dvh,32px)]" />
+        <div className="flex-[1] min-h-[clamp(8px,2dvh,24px)] shrink-0" />
 
         {/* Content Section 3: Stealth Share Link */}
-        <div className="flex-none w-full pb-[clamp(24px,5dvh,48px)] flex justify-center">
+        <div className="flex-none w-full pb-[clamp(16px,3dvh,32px)] flex justify-center shrink-0">
           <button
             onClick={handleShare}
             className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
