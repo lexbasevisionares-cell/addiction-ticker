@@ -13,7 +13,9 @@ interface Props {
 
 export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, onTriggerAction, isFree }: Props) {
   const { t } = useI18n();
-  const isWebBrowser = Capacitor.getPlatform() === 'web';
+  const isWeb = Capacitor.getPlatform() === 'web';
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const shouldShowiOSPromo = isWeb && !isAndroid;
   const APP_STORE_URL = 'https://apps.apple.com/us/app/addiction-ticker/id6761534960';
   return (
     <AnimatePresence>
@@ -68,7 +70,7 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
                     <span className="tracking-tight">{item.label}</span>
                   </button>
                 ))}
-                {isWebBrowser && (
+                {shouldShowiOSPromo && (
                   <a
                     href={APP_STORE_URL}
                     target="_blank"

@@ -31,8 +31,10 @@ interface Props {
 
 export default function Ticker({ settings, appState, onUpdateState, onEditSettings, onResetAll }: Props) {
   const { t, formatCurrencyString: fmtCurStr } = useI18n();
-  // Official Capacitor platform detection
-  const isWebBrowser = Capacitor.getPlatform() === 'web';
+  // Show iOS promo only on Web AND not on Android devices
+  const isWeb = Capacitor.getPlatform() === 'web';
+  const isAndroid = /Android/i.test(navigator.userAgent);
+  const shouldShowiOSPromo = isWeb && !isAndroid;
   const APP_STORE_URL = 'https://apps.apple.com/us/app/addiction-ticker/id6761534960';
   const [now, setNow] = useState(Date.now());
   const [stableNow, setStableNow] = useState(Date.now());
@@ -322,7 +324,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
 
         {/* Content Section 3: Action Buttons — App Store (Left) + Share (Right) */}
         <div className="flex-none w-full pb-[clamp(16px,3dvh,32px)] flex justify-center items-center gap-6 md:gap-8 shrink-0">
-          {isWebBrowser && (
+          {shouldShowiOSPromo && (
             <a
               href={APP_STORE_URL}
               target="_blank"
