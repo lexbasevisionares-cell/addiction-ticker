@@ -6,10 +6,10 @@ import { requestNotificationPermission, scheduleMotivationPlan, clearAllNotifica
 import { I18nProvider } from './context/I18nContext';
 import { Language, Currency } from './utils/i18n';
 
-type ViewState = 'onboarding' | 'ticker' | 'settings';
+type ViewState = 'loading' | 'onboarding' | 'ticker' | 'settings';
 
 export default function App() {
-  const [view, setView] = useState<ViewState>('onboarding');
+  const [view, setView] = useState<ViewState>('loading');
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [appState, setAppState] = useState<AppState | null>(null);
 
@@ -67,6 +67,8 @@ export default function App() {
       localStorage.removeItem('addiction_settings');
       localStorage.removeItem('addiction_state');
     }
+    // If no saved data (or error), go to onboarding
+    setView(prev => prev === 'loading' ? 'onboarding' : prev);
   }, []);
 
   const handleSaveSettings = (newSettings: UserSettings, initialStatus?: InitialStatus) => {
@@ -122,6 +124,10 @@ export default function App() {
   };
 
   const renderContent = () => {
+    if (view === 'loading') {
+      return null;
+    }
+
     if (view === 'onboarding') {
       return <Onboarding onSave={handleSaveSettings} initialSettings={settings} />;
     }

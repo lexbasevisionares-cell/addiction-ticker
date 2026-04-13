@@ -124,9 +124,9 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   const renderScreenContent = () => {
     if (currentScreen.type === 'preferences') {
       return (
-        <div className="flex flex-col items-center justify-center w-full relative px-4">
-          <div className="w-full max-w-sm space-y-2">
-            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5">
+        <div className="flex flex-col items-center justify-center w-full relative px-4 mt-6">
+          <div className="w-full max-w-sm space-y-4">
+            <div className="w-full flex items-center justify-between py-6 lg:py-8 border-b border-white/20">
               <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.languageLabel}</span>
               <select 
                 value={language}
@@ -137,7 +137,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                 <option value="fi" className="bg-zinc-900 text-white">Suomi</option>
               </select>
             </div>
-            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5">
+            <div className="w-full flex items-center justify-between py-6 lg:py-8 border-b border-white/20">
               <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.currencyLabel}</span>
               <select 
                 value={currency}
@@ -240,7 +240,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
       </div>
 
       {/* Middle Section: Question Content - Optical Centering applied via mt-[-4vh] */}
-      <div className="flex-1 flex flex-col items-center justify-center min-h-0 px-8 mt-[-4vh] z-10">
+      <div className={`flex-1 flex flex-col items-center justify-center min-h-0 px-8 z-10 ${currentScreen.type === 'question' ? 'mt-[2vh]' : 'mt-[-4vh]'}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={step}
@@ -250,8 +250,8 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} 
             className="w-full flex flex-col items-center justify-center max-w-xl"
           >
-            <div className={`flex flex-col items-center justify-center gap-3 px-4 mb-6`}>
-              <div className="flex items-center justify-center gap-3">
+            <div className={`flex flex-col items-center justify-center gap-3 px-4 ${currentScreen.type === 'preferences' ? 'mb-10' : 'mb-6'}`}>
+              <div className="flex items-center justify-center gap-5">
                 <h1 className={`font-sans font-light tracking-tighter text-white leading-[1.1] text-center text-balance ${
                   currentScreen.type === 'question' 
                     ? 'text-3xl md:text-4xl lg:text-5xl' 

@@ -179,8 +179,8 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
 
       <div className="relative flex items-center justify-center w-full">
         <div className="absolute inset-x-[-40px] top-[50%] translate-y-[-50%] z-0 h-[90px] pointer-events-none">
-          <div className="absolute inset-x-0 top-0 h-px bg-white/5" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-white/5" />
+          <div className="absolute inset-x-0 top-0 h-px bg-white/25" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-white/25" />
         </div>
 
         <div className="flex items-center z-10 relative w-full justify-center">
@@ -189,8 +189,8 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
           </div>
           {decimals > 0 && (
             <>
-              <div className="flex items-center justify-center translate-y-[-4px] h-[90px] w-6">
-                <span className="text-5xl lg:text-6xl font-sans tabular-nums text-white font-light">
+              <div className="flex items-center justify-center translate-y-[-4px] h-[90px] w-8">
+                <span className="text-6xl lg:text-7xl font-sans tabular-nums text-white/70 font-light">
                   {locale === 'fi-FI' ? ',' : '.'}
                 </span>
               </div>
@@ -201,7 +201,7 @@ export default function DualWheelPicker({ value, min, max, onChange, decimals = 
           )}
           {suffix && (
             <div className="absolute right-2 lg:right-6 h-[90px] flex items-center">
-              <span className="text-2xl lg:text-3xl font-medium text-white uppercase tracking-[0.4em] font-sans">
+              <span className="text-3xl lg:text-4xl font-light text-white/70 font-sans">
                 {suffix}
               </span>
             </div>
@@ -219,8 +219,8 @@ export function SingleTextWheelPicker({ value, options, onChange, label }: { val
       {label && <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-[0.8em] mb-10 text-center">{label}</span>}
       <div className="relative flex items-center justify-center w-full overflow-hidden">
         <div className="absolute inset-x-[-40px] top-[50%] translate-y-[-50%] z-0 h-[90px] pointer-events-none">
-          <div className="absolute inset-x-0 top-0 h-px bg-white/5" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-white/5" />
+          <div className="absolute inset-x-0 top-0 h-px bg-white/25" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-white/25" />
         </div>
         <div className="flex items-center z-10 px-4 relative w-full justify-center">
           <div className="flex-1 max-w-[400px]">
