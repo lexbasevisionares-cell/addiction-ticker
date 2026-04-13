@@ -136,6 +136,39 @@
             transform: scale(0.98);
         }
 
+        .btn-appstore {
+            background-color: #000;
+            color: #fff;
+            border: 1.5px solid #333;
+            gap: 10px;
+            font-size: 15px;
+        }
+
+        .btn-appstore svg {
+            flex-shrink: 0;
+        }
+
+        .btn-appstore .btn-appstore-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.2;
+        }
+
+        .btn-appstore .btn-appstore-sub {
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-appstore .btn-appstore-main {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
         .btn-primary {
             background-color: var(--text-primary);
             color: var(--bg-color);
@@ -219,9 +252,19 @@
         </div>
 
         <div class="buttons">
+            <a href="https://apps.apple.com/app/addiction-ticker/id6478950889" class="btn btn-appstore" target="_blank" rel="noopener noreferrer">
+                <svg width="24" height="24" viewBox="0 0 814 1000" fill="white" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-37.5-155.5-103.3C206.5 794.6 136 683.5 136 583.4c0-152.5 99.6-232.6 196.5-232.6 52.5 0 96 34.5 129 34.5 31.5 0 80.9-36.5 141.9-36.5 22.8 0 108.2 2 159.6 82.8zM524.5 147.6c22.8-28 37.5-67.5 37.5-107 0-5.4-.5-10.8-1.5-15.8-35.5 1.5-78 23.8-104.5 53.8-20.5 23.5-38.5 62.8-38.5 103 0 6 1 12 1.5 14 2.5.5 6.5 1 10.5 1 32 0 72.3-21.5 95-49z"/>
+                </svg>
+                <div class="btn-appstore-text">
+                    <span class="btn-appstore-sub" data-lang="fi">Lataa</span>
+                    <span class="btn-appstore-sub" data-lang="en">Download on the</span>
+                    <span class="btn-appstore-main">App Store</span>
+                </div>
+            </a>
             <a href="/" class="btn btn-primary">
-                <span data-lang="fi">Avaa Selainversio</span>
-                <span data-lang="en">Open Web Version</span>
+                <span data-lang="fi">Kokeile Selainversiota</span>
+                <span data-lang="en">Try Web Version</span>
             </a>
             <a href="privacy.html" class="btn btn-secondary">
                 <span data-lang="fi">Tietosuojaseloste</span>
