@@ -1,6 +1,7 @@
 import { Settings as SettingsIcon, X, HelpCircle, Info, ShieldCheck, Scale, RotateCcw, Trash2, Apple } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../context/I18nContext';
+import { Capacitor } from '@capacitor/core';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -12,7 +13,7 @@ interface Props {
 
 export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, onTriggerAction, isFree }: Props) {
   const { t } = useI18n();
-  const isWebBrowser = !('Capacitor' in window);
+  const isWebBrowser = Capacitor.getPlatform() === 'web';
   const APP_STORE_URL = 'https://apps.apple.com/us/app/addiction-ticker/id6761534960';
   return (
     <AnimatePresence>
@@ -104,7 +105,7 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
               {/* Footer */}
               <div className="mt-8 pt-4 pb-4 lg:pt-10 shrink-0">
                 <p className="text-[9px] font-medium text-zinc-600 uppercase tracking-[0.4em]">
-                  Addiction Ticker v1.2.0
+                  Addiction Ticker v1.1.1
                 </p>
               </div>
             </div>

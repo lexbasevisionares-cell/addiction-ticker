@@ -1,5 +1,6 @@
 import { useState, useEffect, useLayoutEffect, useMemo, memo } from 'react';
 import { Menu, Share2, Apple } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from '../utils/finance';
 import { useI18n } from '../context/I18nContext';
 import { UserSettings } from './Onboarding';
@@ -30,8 +31,8 @@ interface Props {
 
 export default function Ticker({ settings, appState, onUpdateState, onEditSettings, onResetAll }: Props) {
   const { t, formatCurrencyString: fmtCurStr } = useI18n();
-  // Detect if running in a browser (vs. native Capacitor app)
-  const isWebBrowser = !('Capacitor' in window);
+  // Official Capacitor platform detection
+  const isWebBrowser = Capacitor.getPlatform() === 'web';
   const APP_STORE_URL = 'https://apps.apple.com/us/app/addiction-ticker/id6761534960';
   const [now, setNow] = useState(Date.now());
   const [stableNow, setStableNow] = useState(Date.now());
