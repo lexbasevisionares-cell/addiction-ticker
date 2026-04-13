@@ -320,26 +320,29 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         {/* Elastic Spacer 3: Space between Slider and Share button */}
         <div className="flex-[1] min-h-[clamp(8px,2dvh,24px)] shrink-0" />
 
-        {/* Content Section 3: Action Buttons — Share + optional App Store */}
-        <div className="flex-none w-full pb-[clamp(16px,3dvh,32px)] flex justify-center items-center gap-6 shrink-0">
-          <button
-            onClick={handleShare}
-            className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
-          >
-            <Share2 size={13} className="stroke-[2.5]" />
-            <span>{isFree ? t.shareAccomplishment : t.shareSituation}</span>
-          </button>
+        {/* Content Section 3: Action Buttons — App Store (Left) + Share (Right) */}
+        <div className="flex-none w-full pb-[clamp(16px,3dvh,32px)] flex justify-center items-center gap-6 md:gap-8 shrink-0">
           {isWebBrowser && (
             <a
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
+              className="active:scale-95 transition-transform"
             >
-              <Apple size={13} className="stroke-[2.5]" />
-              <span>{t.downloadApp}</span>
+              <img 
+                src="/app-store-badge.svg" 
+                alt="Download on the App Store" 
+                className="h-[36px] md:h-[42px] w-auto drop-shadow-lg"
+              />
             </a>
           )}
+          <button
+            onClick={handleShare}
+            className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 drop-shadow-sm"
+          >
+            <Share2 size={13} className="stroke-[2.5]" />
+            <span>{isFree ? t.shareAccomplishment : t.shareSituation}</span>
+          </button>
         </div>
       </div>
 
