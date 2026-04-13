@@ -32,7 +32,13 @@ export default function App() {
           parsedSettings.language = navigator.language.startsWith('fi') ? 'fi' : 'en';
         }
         if (!parsedSettings.currency) {
-          parsedSettings.currency = navigator.language.startsWith('fi') ? 'EUR' : 'USD';
+          if (navigator.language.startsWith('fi')) {
+            parsedSettings.currency = 'EUR';
+          } else if (navigator.language === 'en-GB' || navigator.language.startsWith('en-GB')) {
+            parsedSettings.currency = 'GBP';
+          } else {
+            parsedSettings.currency = 'USD';
+          }
         }
         if (parsedSettings.timeFormat !== undefined) {
           delete parsedSettings.timeFormat;
@@ -151,7 +157,12 @@ export default function App() {
   };
 
   const activeLang = settings?.language || (navigator.language.startsWith('fi') ? 'fi' : 'en');
-  const activeCur = settings?.currency || (navigator.language.startsWith('fi') ? 'EUR' : 'USD');
+  const getDefaultCurrency = () => {
+    if (navigator.language.startsWith('fi')) return 'EUR';
+    if (navigator.language.startsWith('en-GB')) return 'GBP';
+    return 'USD';
+  };
+  const activeCur = settings?.currency || getDefaultCurrency();
 
   return (
     <I18nProvider initialLanguage={activeLang as Language} initialCurrency={activeCur as Currency}>
