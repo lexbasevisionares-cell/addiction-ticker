@@ -1,6 +1,4 @@
 import React from 'react';
-import type { TranslationStrings } from '../utils/i18n';
-import type { InfoType } from './InfoModal';
 import { Capacitor } from '@capacitor/core';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
@@ -8,11 +6,6 @@ interface Props {
   forecastYears: number;
   onForecastChange: (years: number) => void;
   gradientColor: string;
-  isFree: boolean;
-  colorClass: string;
-  formatCurrency: (value: number) => string;
-  t: TranslationStrings;
-  onShowInfo: (type: InfoType) => void;
   maxYears: number;
 }
 

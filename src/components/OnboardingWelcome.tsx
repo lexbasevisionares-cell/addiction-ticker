@@ -1,71 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { getCurrencySymbol } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 
 interface Props {
   onStart: () => void;
 }
-
-// The structural definition of each narrative phase
-const PHASES = [
-  { lines: ["Mitä nikotiiniriippuvuutesi", "todella maksaa?"], stagger: 0.8, duration: 5000, align: "center" },
-  { 
-    lines: ["Savukkeet.", "Nuuska.", "Sähkötupakka.", "Pussit.", "Sillä ei ole väliä."], 
-    stagger: 0.5, 
-    duration: 6500, 
-    align: "center" 
-  },
-  { 
-    lines: [
-      "On olemassa luku, josta useimmat", 
-      "käyttäjät eivät ole tietoisia.",
-      "Tai jota he eivät halua nähdä."
-    ], 
-    stagger: 0.8, 
-    duration: 6000, 
-    align: "center" 
-  },
-  { 
-    lines: ["Kuvitellaan tilanne,", "jossa kulu on 8 € päivässä."], 
-    stagger: 0.8, 
-    duration: 5000, 
-    align: "center" 
-  },
-  { 
-    lines: [
-      "1 kuukausi: 243 €.", 
-      "1 vuosi: 2 920 €.", 
-      "10 vuotta: 29 200 €.", 
-      "30 vuotta: 87 600 €.",
-      { text: "50 vuotta: 146 000 €.", color: "text-red-500", impact: true }
-    ], 
-    stagger: 0.6, 
-    duration: 10500,
-    align: "left"
-  },
-  { 
-    lines: [
-      "Entä jos sijoittaisit ne mieluummin?", 
-      "243 €/kk globaaliin indeksirahastoon.", 
-      "7 % vuosittaisella tuotto-odotuksella."
-    ], 
-    stagger: 1.0, 
-    duration: 6500, 
-    align: "center" 
-  },
-  { 
-    lines: [
-      "10 vuotta: 42 000 €.", 
-      "20 vuotta: 126 000 €.",
-      "30 vuotta: 296 000 €.",
-      "40 vuotta: 637 000 €.",
-      { text: "50 vuotta: 1 280 000 €.", color: "text-emerald-500", impact: true }
-    ], 
-    stagger: 0.6, 
-    duration: 10500, 
-    align: "center" 
-  },
-  { decision: true, duration: Infinity }
-];
 
 // Cinematic drift impact
 const itemVariants = {
@@ -102,7 +42,100 @@ const impactVariants = {
 export default function OnboardingWelcome({ onStart }: Props) {
   const [phase, setPhase] = useState(0);
   const [tickerYear, setTickerYear] = useState(0);
+  const { t, formatCurrencyString, language, currency } = useI18n();
   
+  const costPerDay = 8;
+  const redValue = tickerYear * 365 * costPerDay;
+  const r = 0.07;
+  const n = 12;
+  const pmt = 243;
+  const months = tickerYear * 12;
+  const greenValue = months === 0 ? 0 : pmt * (Math.pow(1 + r/n, months) - 1) / (r/n);
+
+  const renderLargeAmount = (value: number, colorClass: string) => {
+    const symbol = getCurrencySymbol(currency);
+    const locale = language === 'fi' ? 'fi-FI' : (currency === 'GBP' ? 'en-GB' : 'en-US');
+    const formattedNumber = new Intl.NumberFormat(locale, {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+    const numClasses = `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter tabular-nums leading-none ${colorClass}`;
+    const symClasses = `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter leading-none ${colorClass}`;
+    if (language === 'fi') {
+      return (
+        <div className="whitespace-nowrap flex items-baseline gap-3 font-sans">
+          <span className={numClasses}>{formattedNumber}</span>
+          <span className={symClasses}>{symbol}</span>
+        </div>
+      );
+    } else {
+      return (
+        <div className="whitespace-nowrap flex items-baseline font-sans">
+          <span className={symClasses}>{symbol}</span>
+          <span className={numClasses}>{formattedNumber}</span>
+        </div>
+      );
+    }
+  };
+
+  const PHASES = useMemo(() => [
+    { lines: [t.obAnimQ1L1, t.obAnimQ1L2], stagger: 0.8, duration: 5000, align: "center" },
+    { 
+      lines: [t.obAnimQ2L1, t.obAnimQ2L2, t.obAnimQ2L3, t.obAnimQ2L4, t.obAnimQ2L5], 
+      stagger: 0.5, 
+      duration: 6500, 
+      align: "center" 
+    },
+    { 
+      lines: [t.obAnimQ3L1, t.obAnimQ3L2, t.obAnimQ3L3], 
+      stagger: 0.8, 
+      duration: 6000, 
+      align: "center" 
+    },
+    { 
+      lines: [t.obAnimQ4L1, t.obAnimQ4L2.replace('{amount}', formatCurrencyString(costPerDay, 0))], 
+      stagger: 0.8, 
+      duration: 5000, 
+      align: "center" 
+    },
+    { 
+      lines: [
+        t.obAnimQ5L1.replace('{v1}', formatCurrencyString(243, 0)), 
+        t.obAnimQ5L2.replace('{v2}', formatCurrencyString(2920, 0)), 
+        t.obAnimQ5L3.replace('{v3}', formatCurrencyString(29200, 0)), 
+        t.obAnimQ5L4.replace('{v4}', formatCurrencyString(87600, 0)),
+        { text: t.obAnimQ5L5.replace('{v5}', formatCurrencyString(146000, 0)), color: "text-red-500", impact: true }
+      ], 
+      stagger: 0.6, 
+      duration: 10500,
+      align: "left"
+    },
+    { 
+      lines: [
+        t.obAnimQ6L1, 
+        t.obAnimQ6L2.replace('{amount}', formatCurrencyString(243, 0)), 
+        t.obAnimQ6L3
+      ], 
+      stagger: 1.0, 
+      duration: 6500, 
+      align: "center" 
+    },
+    { 
+      lines: [
+        t.obAnimQ7L1.replace('{v1}', formatCurrencyString(42000, 0)), 
+        t.obAnimQ7L2.replace('{v2}', formatCurrencyString(126000, 0)),
+        t.obAnimQ7L3.replace('{v3}', formatCurrencyString(296000, 0)),
+        t.obAnimQ7L4.replace('{v4}', formatCurrencyString(637000, 0)),
+        { text: t.obAnimQ7L5.replace('{v5}', formatCurrencyString(1280000, 0)), color: "text-emerald-500", impact: true }
+      ], 
+      stagger: 0.6, 
+      duration: 10500, 
+      align: "center" 
+    },
+    { decision: true, duration: Infinity }
+  ], [t, formatCurrencyString, language, currency]);
+
   const isFinalPhase = phase === PHASES.length - 1;
 
   useEffect(() => {
@@ -136,14 +169,6 @@ export default function OnboardingWelcome({ onStart }: Props) {
     return () => cancelAnimationFrame(animationFrameId);
   }, [isFinalPhase]);
 
-  const costPerDay = 8;
-  const redValue = tickerYear * 365 * costPerDay;
-  const r = 0.07;
-  const n = 12;
-  const pmt = 243;
-  const months = tickerYear * 12;
-  const greenValue = months === 0 ? 0 : pmt * (Math.pow(1 + r/n, months) - 1) / (r/n);
-
   useEffect(() => {
     if (phase >= PHASES.length - 1) return;
     
@@ -153,7 +178,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
     }, currentPhase.duration);
     
     return () => clearTimeout(timer);
-  }, [phase]);
+  }, [phase, PHASES]);
 
   const handleTap = (e: React.MouseEvent<HTMLDivElement>) => {
     const clickX = e.clientX;
@@ -183,7 +208,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
           }}
           className={`flex flex-col ${currentPhase.align === "left" ? "items-start" : "items-center"} justify-center pointer-events-none gap-6 md:gap-10`}
        >
-         {currentPhase.lines && currentPhase.lines.map((line, idx) => {
+         {currentPhase.lines && (currentPhase.lines as any[]).map((line, idx) => {
            const isObject = typeof line === 'object';
            const text = isObject ? line.text : line;
            const colorClass = isObject ? line.color : '';
@@ -239,11 +264,11 @@ export default function OnboardingWelcome({ onStart }: Props) {
             {/* MENETÄ. SIJOITA. */}
             <div className="flex flex-col items-center gap-4">
               <div className="flex w-full justify-center gap-6 sm:gap-20 items-center max-w-2xl">
-                <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-red-500 tracking-tighter">MENETÄ.</h2>
-                <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-emerald-500 tracking-tighter">SIJOITA.</h2>
+                <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-red-500 tracking-tighter">{t.obAnimLose}</h2>
+                <h2 className="text-5xl md:text-7xl lg:text-9xl font-light text-emerald-500 tracking-tighter">{t.obAnimInvest}</h2>
               </div>
               <p className="text-[11px] md:text-lg font-semibold tracking-[0.4em] uppercase text-white/60">
-                Jokainen sekunti on valinta.
+                {t.obAnimChoice}
               </p>
             </div>
 
@@ -255,27 +280,34 @@ export default function OnboardingWelcome({ onStart }: Props) {
                   {Math.floor(tickerYear).toString().padStart(2, '0')}
                 </span>
                 <span className="text-white/60 text-[11px] md:text-[14px] uppercase tracking-[0.6em] font-semibold ml-4">
-                  vuotta
+                  {t.obAnimYearSuffix}
                 </span>
               </div>
 
-              {/* METRICS ROW */}
-              <div className="w-full flex flex-row items-center justify-center px-4 max-w-5xl mx-auto">
-                <div className="flex-1 flex flex-col items-end pr-5 md:pr-16 lg:pr-32">
-                  <span className="text-[10px] md:text-[12px] uppercase tracking-[0.4em] text-red-500/90 font-bold mb-4">Riippuvainen</span>
-                  <div className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-sans font-light text-red-500 tracking-tighter tabular-nums leading-none">
-                    -{redValue.toLocaleString('fi-FI', { maximumFractionDigits: 0 })}
+              {/* METRICS ROW — bulletproof 50/50 split */}
+              <div className="w-full">
+
+                {/* Labels: CSS grid keeps each label in exactly 50% column — never shifts */}
+                <div className="w-full grid grid-cols-2 mb-3">
+                  <div className="flex justify-center">
+                    <span className="text-[10px] md:text-[12px] uppercase tracking-[0.4em] text-red-500/90 font-bold">{t.obAnimHooked}</span>
+                  </div>
+                  <div className="flex justify-center">
+                    <span className="text-[10px] md:text-[12px] uppercase tracking-[0.4em] text-emerald-500/90 font-bold">{t.obAnimFree}</span>
                   </div>
                 </div>
-                
-                <div className="w-px h-12 md:h-24 bg-white/5 mx-2 md:mx-10 shrink-0" />
-                
-                <div className="flex-1 flex flex-col items-start pl-5 md:pl-16 lg:pl-32">
-                  <span className="text-[10px] md:text-[12px] uppercase tracking-[0.4em] text-emerald-500/90 font-bold mb-4">Vapaa</span>
-                  <div className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-sans font-light text-emerald-500 tracking-tighter tabular-nums leading-none">
-                    +{greenValue.toLocaleString('fi-FI', { maximumFractionDigits: 0 })}
+
+                {/* Numbers: each in exactly w-1/2, center divider is absolute so layout can't shift */}
+                <div className="w-full relative flex flex-row">
+                  <div className="absolute inset-y-0 left-1/2 w-px bg-white/5 -translate-x-px" />
+                  <div className="w-1/2 flex justify-center items-baseline py-2 pr-4">
+                    {renderLargeAmount(redValue, 'text-red-500')}
+                  </div>
+                  <div className="w-1/2 flex justify-center items-baseline py-2 pl-4">
+                    {renderLargeAmount(greenValue, 'text-emerald-500')}
                   </div>
                 </div>
+
               </div>
             </div>
           </motion.div>
@@ -298,11 +330,11 @@ export default function OnboardingWelcome({ onStart }: Props) {
           transition={isFinalPhase ? { duration: 3, repeat: Infinity, ease: "easeInOut" } : {}}
           className="w-full max-w-sm relative flex items-center justify-center bg-white text-black font-semibold py-5 md:py-6 px-10 rounded-full overflow-hidden transition-[transform,opacity] hover:scale-[1.03] active:scale-[0.98] text-[10px] md:text-xs tracking-[0.6em] uppercase group"
         >
-          <span className="relative z-10">Aseta numerosi</span>
+          <span className="relative z-10">{t.setYourNumbers}</span>
           <div className="absolute inset-0 -translate-x-[150%] group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-black/10 to-transparent" />
         </motion.button>
         <p className="text-[10px] md:text-[11px] text-zinc-400 font-semibold uppercase tracking-[0.2em] mt-5 md:mt-7 text-center">
-           Numerosi paljastavat totuuden.
+           {t.obAnimTruth}
         </p>
       </div>
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { TranslationStrings } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 import type { InfoType } from './InfoModal';
 
 interface Props {
@@ -13,8 +13,6 @@ interface Props {
   totalForecast: number;
   forecastYears: number;
   currentYear: number;
-  formatCurrency: (value: number, fractionDigits?: number) => string;
-  t: TranslationStrings;
   onShowInfo: (type: InfoType) => void;
   pendingAmount: string | null;
   isPendingOverdue: boolean;
@@ -24,11 +22,11 @@ interface Props {
 
 export default function MetricsDashboard({
   isFree, colorClass, accumulated, securedFV, totalDirectSavings, totalForecast,
-  forecastYears, currentYear, formatCurrency, t, onShowInfo,
+  forecastYears, currentYear, onShowInfo,
   pendingAmount, isPendingOverdue, onTriggerInvest, onDismissReminder,
   children
 }: Props & { children: React.ReactNode }) {
-
+  const { t, formatCurrencyString: formatCurrency } = useI18n();
   const yrs = forecastYears.toString();
 
   return (

@@ -1,7 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useMemo, memo } from 'react';
 import { Menu, Share2 } from 'lucide-react';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from '../utils/finance';
-import { t, formatCurrency } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 import { UserSettings } from './Onboarding';
 import TimerDisplay from './TimerDisplay';
 import FinancialChart, { GraphDataPoint } from './FinancialChart';
@@ -29,6 +29,7 @@ interface Props {
 }
 
 export default function Ticker({ settings, appState, onUpdateState, onEditSettings, onResetAll }: Props) {
+  const { t, formatCurrencyString: fmtCurStr } = useI18n();
   const [now, setNow] = useState(Date.now());
   const [stableNow, setStableNow] = useState(Date.now());
   const [forecastYears, setForecastYears] = useState(10);
@@ -163,7 +164,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     setModalType(null);
   };
 
-  const formatCurrencyTicker = (val: number, fractionDigits: number = 2) => formatCurrency(val, 'EUR', fractionDigits);
+  const formatCurrencyTicker = (val: number, fractionDigits: number = 2) => fmtCurStr(val, fractionDigits);
 
   const handleShare = async () => {
     const url = 'https://addictionticker.netlify.app/';
@@ -237,7 +238,6 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             minutes={minutes}
             seconds={seconds}
             colorClass={colorClass}
-            t={t}
             startTime={appState.startTime}
             onShowInfo={setInfoModal}
           />
@@ -261,8 +261,6 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             totalDirectSavings={totalDirectSavings}
             forecastYears={forecastYears}
             currentYear={currentYear}
-            formatCurrency={formatCurrencyTicker}
-            t={t}
             onShowInfo={setInfoModal}
             pendingAmount={(pendingAmount >= (settings.investReminderThreshold ?? 0.01) && isReminderVisible) ? formatCurrencyTicker(pendingAmount) : null}
             isPendingOverdue={true}
@@ -281,8 +279,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-500" />
               <span className="text-[10px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
                 {isFree 
-                  ? `Tätä menoa puhdas käteissäästö vuonna ${currentYear + forecastYears}` 
-                  : `Tätä menoa suorat kulut yhteensä vuonna ${currentYear + forecastYears}`}
+                  ? t.sliderBaseFree.replace('{year}', (currentYear + forecastYears).toString())
+                  : t.sliderBaseHooked.replace('{year}', (currentYear + forecastYears).toString())}
               </span>
             </div>
 
@@ -293,11 +291,6 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
                 maxYears={maxYears}
                 onForecastChange={setForecastYears}
                 gradientColor={gradientColor}
-                isFree={isFree}
-                colorClass={colorClass}
-                formatCurrency={formatCurrencyTicker}
-                t={t}
-                onShowInfo={setInfoModal}
               />
             </div>
 
@@ -310,11 +303,11 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
               <span className={`text-[10px] uppercase tracking-[0.1em] font-medium ${colorClass} transition-opacity group-hover:opacity-100 opacity-90`}>
                 {viewType === 'secured' 
                   ? (isFree 
-                      ? `Jo säästetyn pääoman arvo vuonna ${currentYear + forecastYears}`
-                      : `Jo käytetyn rahan menetetty arvo vuonna ${currentYear + forecastYears}`)
+                      ? t.sliderResultSecuredFree.replace('{year}', (currentYear + forecastYears).toString())
+                      : t.sliderResultSecuredHooked.replace('{year}', (currentYear + forecastYears).toString()))
                   : (isFree 
-                      ? `Tätä menoa sijoitussalkun arvo vuonna ${currentYear + forecastYears}` 
-                      : `Tätä menoa menetetty varallisuus vuonna ${currentYear + forecastYears}`)}
+                      ? t.sliderResultPotentialFree.replace('{year}', (currentYear + forecastYears).toString())
+                      : t.sliderResultPotentialHooked.replace('{year}', (currentYear + forecastYears).toString()))}
               </span>
             </div>
           </div>
@@ -354,14 +347,12 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           setIsMenuOpen(false);
         }}
         isFree={isFree}
-        t={t}
       />
 
       <InfoModal
         type={infoModal}
         onClose={() => setInfoModal(null)}
         isFree={isFree}
-        t={t}
       />
 
       <InvestConfirmBanner
@@ -369,7 +360,6 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         onClose={() => setIsInvestBannerOpen(false)}
         onConfirm={handleMarkAsInvested}
         pendingAmount={formatCurrencyTicker(pendingAmount)}
-        t={t}
       />
     </div>
   );

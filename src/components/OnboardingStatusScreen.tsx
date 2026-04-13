@@ -1,14 +1,14 @@
 import { Check } from 'lucide-react';
-import { TranslationStrings } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 
 interface Props {
   statusType: 'now' | 'past' | 'hooked' | null;
   onStatusChange: (status: 'now' | 'past' | 'hooked') => void;
-  t: TranslationStrings;
   borderless?: boolean;
 }
 
-export default function OnboardingStatusScreen({ statusType, onStatusChange, t }: Props) {
+export default function OnboardingStatusScreen({ statusType, onStatusChange }: Props) {
+  const { t } = useI18n();
   const options = [
     { id: 'now', icon: '✨', label: t.statusNowTitle, desc: t.statusNowDesc },
     { id: 'past', icon: '🎉', label: t.statusPastTitle, desc: t.statusPastDesc },

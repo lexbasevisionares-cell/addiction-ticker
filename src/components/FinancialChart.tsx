@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, Tooltip } from 'recharts';
 import { Info, ArrowRight, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { TranslationStrings } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 import type { InfoType } from './InfoModal';
 
 export interface GraphDataPoint {
@@ -24,8 +24,6 @@ interface Props {
   totalDirectSavings: number;
   forecastYears: number;
   currentYear: number;
-  formatCurrency: (value: number, fractionDigits?: number) => string;
-  t: TranslationStrings;
   onShowInfo: (type: InfoType) => void;
   pendingAmount: string | null;
   isPendingOverdue: boolean;
@@ -35,9 +33,10 @@ interface Props {
 
 export default function FinancialChart({
   graphData, viewType, onViewTypeChange, isFree, gradientColor, colorClass, accumulated, securedFV, totalForecast,
-  totalDirectSavings, forecastYears, currentYear, formatCurrency, t, onShowInfo,
+  totalDirectSavings, forecastYears, currentYear, onShowInfo,
   pendingAmount, isPendingOverdue, onTriggerInvest, onDismissReminder
 }: Props) {
+  const { t, formatCurrencyString: formatCurrency } = useI18n();
   const [hoveredData, setHoveredData] = useState<GraphDataPoint | null>(null);
   const [isInteracting, setIsInteracting] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);

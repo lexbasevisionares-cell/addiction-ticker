@@ -1,15 +1,15 @@
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { TranslationStrings } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 export type InfoType = 'logic' | 'about' | 'privacy' | 'savedNow' | 'totalSaved' | 'directCost' | 'valueInYear' | 'indirectLoss' | 'potential' | 'disclaimer' | 'hookedTimer' | 'lostNow' | 'lostInvestment' | 'qDailyCost' | 'qAnnualPriceIncrease' | 'qExpectedReturn' | 'qInvestReminderThreshold' | 'qNotificationLevel' | 'qMaxForecastYears';
 interface Props {
   type: InfoType | null;
   onClose: () => void;
   isFree: boolean;
-  t: TranslationStrings;
 }
 
-export default function InfoModal({ type, onClose, isFree, t }: Props) {
+export default function InfoModal({ type, onClose, isFree }: Props) {
+  const { t } = useI18n();
   const getMetricContent = () => {
     switch (type) {
       case 'savedNow':

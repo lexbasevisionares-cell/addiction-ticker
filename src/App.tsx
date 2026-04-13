@@ -3,6 +3,8 @@ import Onboarding, { UserSettings, InitialStatus } from './components/Onboarding
 import Ticker, { AppState } from './components/Ticker';
 import Settings from './components/Settings';
 import { requestNotificationPermission, scheduleMotivationPlan, clearAllNotifications } from './utils/notifications';
+import { I18nProvider } from './context/I18nContext';
+import { Language, Currency } from './utils/i18n';
 
 type ViewState = 'onboarding' | 'ticker' | 'settings';
 
@@ -26,14 +28,14 @@ export default function App() {
         if (parsedSettings.investReminderThreshold === undefined) {
           parsedSettings.investReminderThreshold = 0.01;
         }
-        if (parsedSettings.language !== undefined) {
-          delete parsedSettings.language;
-          // Silently overwrite legacy settings in the background
-          localStorage.setItem('addiction_settings', JSON.stringify(parsedSettings));
+        if (!parsedSettings.language) {
+          parsedSettings.language = navigator.language.startsWith('fi') ? 'fi' : 'en';
         }
         if (!parsedSettings.currency) {
-          parsedSettings.currency = 'EUR';
-          parsedSettings.timeFormat = '24h';
+          parsedSettings.currency = navigator.language.startsWith('fi') ? 'EUR' : 'USD';
+        }
+        if (parsedSettings.timeFormat !== undefined) {
+          delete parsedSettings.timeFormat;
         }
         setSettings(parsedSettings);
         
@@ -146,12 +148,17 @@ export default function App() {
     return null;
   };
 
+  const activeLang = settings?.language || (navigator.language.startsWith('fi') ? 'fi' : 'en');
+  const activeCur = settings?.currency || (navigator.language.startsWith('fi') ? 'EUR' : 'USD');
+
   return (
-    <div className="w-full h-full bg-[#050505] overflow-hidden">
-      {/* App Content */}
+    <I18nProvider initialLanguage={activeLang as Language} initialCurrency={activeCur as Currency}>
       <div className="w-full h-full bg-[#050505] overflow-hidden">
-        {renderContent()}
+        {/* App Content */}
+        <div className="w-full h-full bg-[#050505] overflow-hidden">
+          {renderContent()}
+        </div>
       </div>
-    </div>
+    </I18nProvider>
   );
 }

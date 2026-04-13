@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { t } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 import { UserSettings } from './Onboarding';
 
 interface Props {
@@ -10,6 +10,7 @@ interface Props {
 }
 
 export default function ConfirmActionModal({ type, onConfirm, onCancel }: Props) {
+  const { t } = useI18n();
   const isDestructive = type === 'reset' || type === 'relapse';
   
   const content = {

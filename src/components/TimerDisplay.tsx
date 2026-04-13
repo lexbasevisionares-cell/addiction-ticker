@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react';
-import { t } from '../utils/i18n';
 import type { InfoType } from './InfoModal';
+import { useI18n } from '../context/I18nContext';
 
 interface Props {
   isFree: boolean;
@@ -9,12 +9,12 @@ interface Props {
   minutes: number;
   seconds: number;
   colorClass: string;
-  t: typeof t;
   startTime: number;
   onShowInfo?: (type: InfoType) => void;
 }
 
-export default function TimerDisplay({ isFree, days, hours, minutes, seconds, colorClass, t, onShowInfo }: Props) {
+export default function TimerDisplay({ isFree, days, hours, minutes, seconds, colorClass, onShowInfo }: Props) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col items-center w-full relative">
       {/* Status text - Now clickable for info instead of having an icon */}

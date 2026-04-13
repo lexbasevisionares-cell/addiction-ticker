@@ -1,6 +1,12 @@
-
+export type Language = 'fi' | 'en';
 export type Currency = 'EUR' | 'USD' | 'GBP';
-export type TimeFormat = '24h' | '12h';
+
+export function getCurrencySymbol(currency: Currency): string {
+  if (currency === 'EUR') return '€';
+  if (currency === 'USD') return '$';
+  if (currency === 'GBP') return '£';
+  return '€';
+}
 
 export const TRANSLATIONS = {
   fi: {
@@ -55,6 +61,14 @@ export const TRANSLATIONS = {
     potentialInYears: 'Sijoitusvarallisuus',
     potentialYearsSuffix: 'vuodessa',
     
+    // Slider texts
+    sliderBaseFree: 'Tätä menoa puhdas käteissäästö vuonna {year}',
+    sliderBaseHooked: 'Tätä menoa suorat kulut yhteensä vuonna {year}',
+    sliderResultSecuredFree: 'Jo säästetyn pääoman arvo vuonna {year}',
+    sliderResultSecuredHooked: 'Jo käytetyn rahan menetetty arvo vuonna {year}',
+    sliderResultPotentialFree: 'Tätä menoa sijoitussalkun arvo vuonna {year}',
+    sliderResultPotentialHooked: 'Tätä menoa menetetty varallisuus vuonna {year}',
+    
     // Dashboard Card Labels (Free / Hooked)
     dashSaved: 'Käteistä säästynyt tähän mennessä',
     dashLost: 'Käytetty nikotiiniin tähän mennessä',
@@ -68,6 +82,7 @@ export const TRANSLATIONS = {
     settingsTitle: 'Asetukset',
     menuTitle: 'Valikko',
     preferences: 'Kieli & Alue',
+    preferencesSubtitle: 'Havaittu automaattisesti. Muuta tarvittaessa.',
     languageLabel: 'Kieli',
     currencyLabel: 'Valuutta',
     timeFormatLabel: 'Kellonaikamuoto',
@@ -182,22 +197,300 @@ export const TRANSLATIONS = {
     disclaimerTitle: 'Vastuuvapauslauseke',
     disclaimerP1: 'Addiction Ticker on puhtaasti matemaattinen visualisointityökalu. Sovelluksen esittämät luvut ovat hypoteettisia skenaarioita, jotka perustuvat yksinomaan käyttäjän itse syöttämiin parametreihin.',
     disclaimerP2: 'Sovellus ei anna sijoitusneuvontaa, eikä mikään sen esittämä data ole kehotus ostaa tai myydä arvopapereita. Historiallinen tuotto tai korkoa korolle -laskelmat eivät ole tae tulevasta. Käyttäjä on yksin vastuussa omista taloudellisista päätöksistään ja sijoituksiin sisältyvistä riskeistä.',
-    disclaimerP3: 'Lisäksi sovellus on tarkoitettu vain motivaation tueksi, eikä se korvaa ammattimaista lääketieteellistä hoitoa riippuvuuksien hoidossa.'
+    disclaimerP3: 'Lisäksi sovellus on tarkoitettu vain motivaation tueksi, eikä se korvaa ammattimaista lääketieteellistä hoitoa riippuvuuksien hoidossa.',
+    
+    // Notifications Background (Moved from notifications.ts)
+    notifFreeTitle: 'Ilmaista rahaa kertyy',
+    notifFreeBody: 'Aika kuluu ja säästöt kasvavat. Pidä tämä suunta!',
+    notifHookedTitle: 'Aika valuu hukkaan',
+    notifHookedBody: 'Jokainen sekunti maksaa sinulle lisää. Oletko valmis lopettamaan?',
+    notifPortfolioUpdate: 'Portfolio-päivitys',
+    notifNewMilestone: 'Uusi virstanpylväs saavutettu: {amount}',
+    notifWeeklyCheckinText: 'Olet säästänyt {amount} tällä viikolla. Kuukaudessa tämä tarkoittaa... Katso ennuste.',
+    notifGoalReminderText: 'Oletko siirtänyt kertyneet {amount} salkkuusi?',
+    notifDailyCostReminder: 'Päivittäinen kulusi on taas veloitettu.',
+
+    // Onboarding Cinematic (Moved from OnboardingWelcome.tsx)
+    obAnimQ1L1: "Mitä nikotiiniriippuvuutesi",
+    obAnimQ1L2: "todella maksaa?",
+    obAnimQ2L1: "Savukkeet.",
+    obAnimQ2L2: "Nuuska.",
+    obAnimQ2L3: "Sähkötupakka.",
+    obAnimQ2L4: "Pussit.",
+    obAnimQ2L5: "Sillä ei ole väliä.",
+    obAnimQ3L1: "On olemassa luku, josta useimmat",
+    obAnimQ3L2: "käyttäjät eivät ole tietoisia.",
+    obAnimQ3L3: "Tai jota he eivät halua nähdä.",
+    obAnimQ4L1: "Kuvitellaan tilanne,",
+    obAnimQ4L2: "jossa kulu on {amount} päivässä.",
+    obAnimQ5L1: "1 kuukausi: {v1}.",
+    obAnimQ5L2: "1 vuosi: {v2}.",
+    obAnimQ5L3: "10 vuotta: {v3}.",
+    obAnimQ5L4: "30 vuotta: {v4}.",
+    obAnimQ5L5: "50 vuotta: {v5}.",
+    obAnimQ6L1: "Entä jos sijoittaisit ne mieluummin?",
+    obAnimQ6L2: "{amount}/kk globaaliin indeksirahastoon.",
+    obAnimQ6L3: "7 % vuosittaisella tuotto-odotuksella.",
+    obAnimQ7L1: "10 vuotta: {v1}.",
+    obAnimQ7L2: "20 vuotta: {v2}.",
+    obAnimQ7L3: "30 vuotta: {v3}.",
+    obAnimQ7L4: "40 vuotta: {v4}.",
+    obAnimQ7L5: "50 vuotta: {v5}.",
+    obAnimLose: "MENETÄ.",
+    obAnimInvest: "SIJOITA.",
+    obAnimChoice: "Jokainen sekunti on valinta.",
+    obAnimYearSuffix: "vuotta",
+    obAnimHooked: "Riippuvainen",
+    obAnimFree: "Vapaa",
+    obAnimTruth: "Numerosi paljastavat totuuden."
+  },
+  
+  en: {
+    // Welcome
+    welcomeHeadline: 'Every second is a choice.',
+    welcomeSubheadline: 'See the price of your addiction — or the value of your freedom.',
+    setYourNumbers: 'Set Your Numbers',
+    // Status
+    statusTitle: 'What is your situation right now?',
+    statusNowTitle: 'I quit exactly now',
+    statusNowDesc: 'Time starts from this second',
+    statusPastTitle: 'I have already quit',
+    statusPastDesc: 'Set the exact time you quit',
+    statusHookedTitle: 'I am still using',
+    statusHookedDesc: 'I am planning to quit',
+    next: 'Next',
+    done: 'Done',
+    back: 'Back',
+    // Questions
+    qDailyCost: 'How much money do you spend on nicotine daily?',
+    qAnnualIncrease: 'How many percent do you estimate the price will rise annually?',
+    qExpectedReturn: 'If you invested in the stock market, what average annual return would you expect?',
+    investReminderTitle: 'Transfer Reminder Threshold',
+    investReminderDesc: 'When do you want a reminder to transfer funds?',
+    basicSettings: 'Basic Settings',
+    otherSettings: 'Other Settings',
+    // Ticker
+    tickerHeader: 'Addiction Ticker',
+    freeFor: 'You have been free for',
+    hookedStatus: 'You have been hooked for',
+    days: 'Days',
+    hours: 'Hours',
+    mins: 'Mins',
+    secs: 'Secs',
+    since: 'Since you started',
+    shareBtn: 'Share Result',
+    shareAccomplishment: 'Share accomplishment',
+    shareSituation: 'Share situation',
+    resetCounter: 'Break the free streak',
+    quitAddiction: 'Quit addiction',
+    year: 'Year',
+    hookedFor: 'Hooked',
+    hookedYearsSuffix: 'years',
+    savedNow: 'Saved',
+    lostNow: 'Spent',
+    directCost: 'Costs',
+    valueInYear: 'Invested by {year}',
+    lostInvestment: 'Lost returns',
+    indirectLoss: 'Lost wealth',
+    timeline: 'Timeline',
+    years: 'Years',
+    potentialInYears: 'Investment wealth',
+    potentialYearsSuffix: 'in a year',
+    
+    // Slider texts
+    sliderBaseFree: 'At this rate, pure cash savings in {year}',
+    sliderBaseHooked: 'At this rate, total direct costs in {year}',
+    sliderResultSecuredFree: 'Value of already saved capital in {year}',
+    sliderResultSecuredHooked: 'Lost value of already spent money in {year}',
+    sliderResultPotentialFree: 'At this rate, investment portfolio value in {year}',
+    sliderResultPotentialHooked: 'At this rate, lost wealth in {year}',
+    
+    // Dashboard Card Labels (Free / Hooked)
+    dashSaved: 'Cash saved so far',
+    dashLost: 'Spent on nicotine so far',
+    dashInvested: 'Already saved will grow in {years} years',
+    dashLostInvested: 'That money would have grown in {years} years',
+    dashPureSavings: 'You will save in {years} years',
+    dashPureCosts: 'You will spend in {years} years',
+    dashTotalWealth: 'Portfolio value in {years} years',
+    dashLostWealth: 'You will lose wealth in {years} years',
+    // Settings
+    settingsTitle: 'Settings',
+    menuTitle: 'Menu',
+    preferences: 'Language & Region',
+    preferencesSubtitle: 'Detected automatically. Change if needed.',
+    languageLabel: 'Language',
+    currencyLabel: 'Currency',
+    timeFormatLabel: 'Time format', // Legacy text
+    howItWorks: 'How does this work?',
+    aboutApp: 'About the app',
+    edit: 'Edit',
+    save: 'Save changes',
+    startTime: 'Start time',
+    currentPeriodStart: 'Start of current period',
+    editStartTimeHint: 'You can edit the time you quit.',
+    costs: 'Costs',
+    investing: 'Investing',
+    dailyCostLabel: 'Daily cost',
+    annualIncreaseLabel: 'Price increase',
+    annualIncreaseDesc: 'Estimated annual price increase (inflation/taxes).',
+    expectedReturnLabel: 'Expected return',
+    expectedReturnDesc: 'How much do you estimate your investments to yield on average?',
+    settingsStatus: 'Status',
+    settingsSoundLabel: 'Soundscape',
+    settingsSoundDesc: 'Activate sophisticated sound cues for accumulating savings and passing seconds.',
+    resetCounterDesc: 'Reset the clock and start saving from scratch. This is a conscious decision to accept a relapse.',
+    quitAddictionDesc: 'Quit the addiction from this moment and start building financial freedom.',
+    maxForecastYearsLabel: 'Max forecast time',
+    maxForecastYearsDesc: 'How many years into the future do you want to be able to scroll the timeline?',
+    // Modals
+    confirmQuit: 'Confirm decision',
+    confirmQuitDesc: 'From this moment on, I will no longer fund my addiction. I am ready to face the withdrawal symptoms.',
+    confirmRelapse: 'Are you sure?',
+    confirmRelapseDesc: 'I admit my weakness. I reset the clock consciously and accept that I will start accumulating financial losses again.',
+    slideToConfirm: 'Slide to confirm',
+    shareTextFree: 'Saved: {B}. Growth potential: {D} ({E}y). Calculate your potential:',
+    shareTextHooked: 'Costs in {A} years: {G}. What is your final bill?',
+    linkCopied: 'Link and text copied to clipboard!',
+    selectLanguage: 'Valitse kieli / Select Language',
+    selectCurrency: 'Valitse valuutta / Select Currency',
+    selectTimeFormat: 'Valitse kello / Select Time Format', // Legacy text
+    // Info Modals
+    infoLogicTitle: 'How does this work?',
+    infoLogicGeneral: 'This calculator is based on cold mathematics and divides the price of your addiction into two levels: direct financial loss and lost compound interest. The human mind does not naturally grasp how small daily expenses multiply over decades. Therefore, we split the numbers into the past ("what has already happened") and the future ("what will happen on the chosen timeline").',
+    
+    // Free State Logic
+    infoLogicFreeDesc1: 'This is a real-time growing sum of purely the money you have managed to save since your decision to quit. The number acts as a nest egg for all future calculations.',
+    infoLogicFreeDesc2: 'This estimates how much pure money you will save on your desired timeline based on your set daily consumption. The number also accounts for the estimated annual price increase of the market (e.g., inflation or tax hikes), but does not include investment returns.',
+    infoLogicFreeDesc3: 'This is the return forecast of just the "money saved so far". It ruthlessly shows the value to which the money already in your hand could grow on the selected timeline and expected return, even if you never saved another cent.',
+    infoLogicFreeDesc4: 'This is your ultimate potential. The sum adds together the daily saved cash flow and the heavy compound interest return accumulating on top of it. This number is the wealth you build by redirecting the cash flow from the industry to yourself. Numbers are calculated before taxes.',
+
+    // Hooked State Logic
+    infoLogicHookedDesc1: 'Money has started draining from your hands the moment you opened this calculator. This is the ruthless sum you have just burned or spent on products during tracking.',
+    infoLogicHookedDesc2: 'This is a forecast of the direct, financial costs of the addiction on your chosen timeline. It embeds your estimated annual price increase of products (inflation/taxes) so you understand the price of your vice does not stay still.',
+    infoLogicHookedDesc3: 'You are building negative wealth. This value immediately shows what sum your "money spent so far" would have grown to in the market if it had been invested with your set expected return. It is the first hint of opportunity cost.',
+    infoLogicHookedDesc4: 'This is the true, comprehensive final bill of your addiction. It combines both the capital you regularly waste and the compound interest phenomenon they would bring, which you completely lose. The final sum represents the amount of money with which you voluntarily fund the industry instead of your own portfolio.',
+
+    infoLogicP1Title: 'So far',
+    infoLogicP2Title: 'Future',
+    infoHookedTimerTitle: 'Why does the counter start from zero?',
+    infoHookedTimerP1: 'This time is calculated from the moment you first opened this view.',
+    infoHookedTimerP2: 'The application is consciously built so it does not show you the sum you have possibly already lost during previous years. It is likely already significant.',
+    infoHookedTimerP3: 'But there is no use crying over spilled milk. The most important thing is to keep your eyes on the things you can still affect — and that is exactly what this application shows you.',
+    infoFreeTimerTitle: 'Duration of your freedom',
+    infoFreeTimerP1: 'This clock counts every second you have stayed away from your addiction.',
+    infoFreeTimerP2: 'Every second grows your savings and strengthens your new financial future.',
+    infoFreeTimerP3: 'Time is now on your side.',
+    infoAboutTitle: 'About the app',
+    infoAboutP1: ' was born from an attitude: addiction is a voluntary lifelong wealth tax.',
+    infoAboutP2: 'The human mind is unable to grasp the accumulating, decade-spanning opportunity cost of small daily expenses. The sole purpose of this application is to turn the invisible price ruthlessly visible and into concrete data.',
+    infoAboutP3: 'Our goal is to flip the psychological game setup around. We replace the chemical instant gratification with that long-term euphoria that hits when you realize in real time the amount of financial freedom you are building with your savings.',
+    // Input Info Modals
+    modalDailyCostTitle: 'Daily cost',
+    modalDailyCostDesc: 'Calculate here your average daily financial spending on the product. If you do not buy products every day, estimate weekly consumption and divide it by seven. This is the calculator\'s most important base number.',
+    modalAnnualIncreaseTitle: 'Price increase',
+    modalAnnualIncreaseDesc: 'The price of products does not stay still. Inflation and continuous tax hikes typically raise the price in the long term by about 5% per year. With this number, you wake yourself up to understand the future price of your consumption.',
+    modalExpectedReturnTitle: 'Expected return',
+    modalExpectedReturnDesc: 'If you invested the saved money broadly in the stock market, how much would you estimate it to yield? For example, the historical average return of the stock exchange has often hovered around the 7–10% level. If you are unsure, 7% is a realistic long-term estimate.',
+    modalInvestReminderTitle: 'Transfer reminder threshold',
+    modalInvestReminderDesc: 'The specified threshold determines when the application reminds you to transfer the accumulated cash sum physically or digitally to your real portfolio. When you mark the transfer as done, the pending cash balance resets.',
+    modalMaxForecastYearsTitle: 'Max forecast time',
+    modalMaxForecastYearsDesc: 'Determines how far into the future you can drag the main view\'s swipe slider at maximum. If you only want to view the nearest years, set a smaller value (e.g. 10 years). If you aim to see the opportunity cost over decades, set at least 50 years.',
+    modalMotivatorTitle: 'Motivator level',
+    modalMotivatorDesc: 'This determines how aggressively the coach reminds you of your financial realities. An intensive setting keeps the cold truth of the numbers in your mind regularly, while turning it off lets you check the numbers only from the screen.',
+    // Info Metric Descriptions
+    infoSavedNowDesc: 'Pure cash saving. This is the sum of money you would have spent on nicotine products from the moment of quitting to this very second.',
+    infoLostNowDesc: 'Money you have spent on nicotine since you started this calculator. The number is based on your set daily cost and updates in real time.',
+    infoTotalSavedDesc: 'Pure cash saving over the entire timeline. This is the total sum of money you do not spend on nicotine — considering your estimated annual price increase. The number does not include investment returns.',
+    infoDirectCostDesc: 'A forecast of the total money going into nicotine on your set timeline. The calculation takes into account your estimated annual price increase.',
+    infoValueInYearDesc: 'Compound interest forecast. Shows the value to which your savings accumulated so far would grow on the selected timeline and expected return — without new additional investments. The number is before taxes.',
+    infoLostInvestmentDesc: 'Indicates the value to which the money spent on nicotine so far would have grown on the selected timeline and expected return, if you had invested it in the market. The number is before taxes.',
+    infoIndirectLossDesc: 'The total wealth you lose by continuing. The number includes both the direct financial loss to nicotine and the lost investment return you could have earned by investing the same money in the market. The number is before taxes.',
+    infoPotentialDesc: 'The estimated final value of your investment portfolio at the end of the timeline. The sum includes both compiling cash savings and the compound interest return calculated for them. The number is before taxes.',
+    resetAllData: 'Reset all data',
+    resetAllDataDesc: 'Immediately deletes all local data and resets the application to factory settings. This action is final.',
+    viewSecured: 'Secured already',
+    viewLostAlready: 'Lost already',
+    viewPotential: 'Forecast {year}',
+    timeIsMoney: 'Time is money.',
+    totalSaved: 'Pure savings',
+    pendingTransfer: 'Pending transfer',
+    confirmInvestTitle: 'Confirm transfer',
+    confirmInvestDesc: 'Have you transferred the accumulated savings ({amount}) to your portfolio? This resets the pending counter.',
+    markAsInvested: 'Mark as invested',
+    investSuccess: 'Great! Savings secured in portfolio. 🚀',
+    privacyTitle: 'Privacy & Analytics',
+    privacyDesc: 'Addiction Ticker is designed with absolute privacy in mind. There are no external databases, cloud synchronization, or third-party tracking codes in the application. All the information you enter is saved only in the local memory of this device. Your financial freedom is your business alone.',
+    // Automaattiset tiedonannot
+    motivatorTitle: 'Notifications',
+    motivatorLevel: 'Motivation level',
+    motivatorDesc: 'How frequently do you want updates on your wealth development?',
+    motivatorLevel0: 'Off',
+    motivatorLevel1: 'Milestones only',
+    motivatorLevel2: 'Balanced',
+    motivatorLevel3: 'Intensive',
+    // Disclaimer
+    disclaimerTitle: 'Disclaimer',
+    disclaimerP1: 'Addiction Ticker is a purely mathematical visualization tool. The numbers presented by the application are hypothetical scenarios based exclusively on parameters inputted by the user and do not guarantee future performance.',
+    disclaimerP2: 'The application does not provide investment advice, nor is any data it presents a recommendation to buy or sell securities. Historical return or compound interest calculations are not a guarantee of the future. The user is solely responsible for their own financial decisions and the risks involved in investments.',
+    disclaimerP3: 'Furthermore, the application is intended only as motivational support and does not replace professional medical treatment in the care of addictions.',
+
+    // Notifications Background
+    notifFreeTitle: 'Free money accumulating',
+    notifFreeBody: 'Time passes and savings grow. Keep this up!',
+    notifHookedTitle: 'Time is wasting away',
+    notifHookedBody: 'Every second costs you more. Are you ready to quit?',
+    notifPortfolioUpdate: 'Portfolio update',
+    notifNewMilestone: 'New milestone reached: {amount}',
+    notifWeeklyCheckinText: 'You have saved {amount} this week. In a month, this means... See the forecast.',
+    notifGoalReminderText: 'Have you transferred the accumulated {amount} to your portfolio?',
+    notifDailyCostReminder: 'Your daily cost has been charged again.',
+
+    // Onboarding Cinematic
+    obAnimQ1L1: "What does your addiction",
+    obAnimQ1L2: "truly cost you?",
+    obAnimQ2L1: "Cigarettes.",
+    obAnimQ2L2: "Vapes.",
+    obAnimQ2L3: "Snus.",
+    obAnimQ2L4: "Pouches.",
+    obAnimQ2L5: "It doesn't matter.",
+    obAnimQ3L1: "There is a number most",
+    obAnimQ3L2: "users are not aware of.",
+    obAnimQ3L3: "Or one they choose to ignore.",
+    obAnimQ4L1: "Imagine a scenario",
+    obAnimQ4L2: "with an {amount} daily cost.",
+    obAnimQ5L1: "1 month: {v1}.",
+    obAnimQ5L2: "1 year: {v2}.",
+    obAnimQ5L3: "10 years: {v3}.",
+    obAnimQ5L4: "30 years: {v4}.",
+    obAnimQ5L5: "50 years: {v5}.",
+    obAnimQ6L1: "What if you invested it instead?",
+    obAnimQ6L2: "{amount}/month in a global index fund.",
+    obAnimQ6L3: "With a 7% expected annual return.",
+    obAnimQ7L1: "10 years: {v1}.",
+    obAnimQ7L2: "20 years: {v2}.",
+    obAnimQ7L3: "30 years: {v3}.",
+    obAnimQ7L4: "40 years: {v4}.",
+    obAnimQ7L5: "50 years: {v5}.",
+    obAnimLose: "LOSE.",
+    obAnimInvest: "INVEST.",
+    obAnimChoice: "Every second is a choice.",
+    obAnimYearSuffix: "years",
+    obAnimHooked: "Hooked",
+    obAnimFree: "Free",
+    obAnimTruth: "Your numbers reveal the truth."
   }
 };
 
-export function getCurrencySymbol(currency: Currency) {
-  switch (currency) {
-    case 'USD': return '$';
-    case 'GBP': return '£';
-    case 'EUR':
-    default: return '€';
-  }
+export function getTranslations(lang: Language): TranslationStrings {
+  return TRANSLATIONS[lang] || TRANSLATIONS.en;
 }
 
-export function formatCurrency(value: number, currency: Currency, fractionDigits: number = 2) {
-  return new Intl.NumberFormat('fi-FI', { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(value);
+export function formatCurrency(value: number, currency: Currency, lang: Language, fractionDigits: number = 2) {
+  const locale = lang === 'fi' ? 'fi-FI' : (currency === 'GBP' ? 'en-GB' : 'en-US');
+  return new Intl.NumberFormat(locale, { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(value);
 }
 
+// Deprecated: For compatibility during partial migration, though ideally remove this completely.
 export const t = TRANSLATIONS.fi;
-export type TranslationStrings = typeof t;
+export type TranslationStrings = typeof TRANSLATIONS.fi;

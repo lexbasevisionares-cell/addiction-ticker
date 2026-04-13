@@ -1,6 +1,6 @@
 import { X, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { TranslationStrings } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 import SlideToConfirm from './SlideToConfirm';
 
 interface Props {
@@ -8,10 +8,10 @@ interface Props {
   onClose: () => void;
   onConfirm: () => void;
   pendingAmount: string;
-  t: TranslationStrings;
 }
 
-export default function InvestConfirmBanner({ isOpen, onClose, onConfirm, pendingAmount, t }: Props) {
+export default function InvestConfirmBanner({ isOpen, onClose, onConfirm, pendingAmount }: Props) {
+  const { t } = useI18n();
   return (
     <AnimatePresence>
       {isOpen && (

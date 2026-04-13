@@ -5,16 +5,18 @@ import WheelPicker from './WheelPicker';
 import OnboardingWelcome from './OnboardingWelcome';
 import OnboardingStatusScreen from './OnboardingStatusScreen';
 import InfoModal, { InfoType } from './InfoModal';
-import { t, getCurrencySymbol } from '../utils/i18n';
+import { getCurrencySymbol, Language, Currency } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 
 export interface UserSettings {
+  language?: Language;
+  currency?: Currency;
   dailyCost: number;
   annualPriceIncrease: number;
   expectedReturn: number;
   investReminderThreshold?: number;
   maxForecastYears?: number;
   soundscapeEnabled?: boolean;
-
   notificationLevel: number;
 }
 
@@ -43,6 +45,8 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   const [bgNumbers, setBgNumbers] = useState<string[]>([]);
   const [showInfo, setShowInfo] = useState(false);
 
+  const { t, language, currency, setLanguage, setCurrency } = useI18n();
+
   useEffect(() => {
     setBgNumbers(Array.from({ length: 150 }).map(() => Math.random().toString().slice(2)));
   }, []);
@@ -63,8 +67,12 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
 
   const screens: { type: string; data: any }[] = [];
 
+  if (!initialSettings) {
+    screens.push({ type: 'preferences', data: null });
+  }
+
   const activeQuestions = [
-    { id: 'dailyCost', labelKey: 'dailyCostLabel', suffix: getCurrencySymbol('EUR'), min: 0, max: 100, decimals: 2 },
+    { id: 'dailyCost', labelKey: 'dailyCostLabel', suffix: getCurrencySymbol(currency), min: 0, max: 100, decimals: 2 },
     { id: 'annualPriceIncrease', labelKey: 'annualIncreaseLabel', suffix: '%', min: 0, max: 20, decimals: 1 },
     { id: 'expectedReturn', labelKey: 'expectedReturnLabel', suffix: '%', min: 0, max: 20, decimals: 1 },
   ];
@@ -72,7 +80,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
 
   if (!initialSettings) {
     screens.push({ type: 'status', data: null });
-    
+
     if (statusType === 'past') {
       screens.push({ type: 'past-date', data: null });
     }
@@ -91,6 +99,8 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         : undefined;
 
       onSave({
+        language,
+        currency,
         dailyCost: answers.dailyCost,
         annualPriceIncrease: answers.annualPriceIncrease,
         expectedReturn: answers.expectedReturn,
@@ -102,6 +112,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   };
 
   const getScreenTitle = (): string => {
+    if (currentScreen.type === 'preferences') return t.preferences;
     if (currentScreen.type === 'status') return t.statusTitle;
     if (currentScreen.type === 'past-date') return t.statusPastTitle;
     if (currentScreen.type === 'question') return (t as any)[currentScreen.data!.labelKey];
@@ -111,12 +122,43 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
   const isNextDisabled = currentScreen.type === 'status' && !statusType;
 
   const renderScreenContent = () => {
+    if (currentScreen.type === 'preferences') {
+      return (
+        <div className="flex flex-col items-center justify-center w-full relative px-4">
+          <div className="w-full max-w-sm space-y-2">
+            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5">
+              <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.languageLabel}</span>
+              <select 
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="bg-transparent text-white font-sans text-base lg:text-xl focus:outline-none appearance-none cursor-pointer text-right min-w-[100px]"
+              >
+                <option value="en" className="bg-zinc-900 text-white">English</option>
+                <option value="fi" className="bg-zinc-900 text-white">Suomi</option>
+              </select>
+            </div>
+            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5">
+              <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.currencyLabel}</span>
+              <select 
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+                className="bg-transparent text-white font-sans text-base lg:text-xl focus:outline-none appearance-none cursor-pointer text-right min-w-[100px]"
+              >
+                <option value="EUR" className="bg-zinc-900 text-white">€ EUR</option>
+                <option value="USD" className="bg-zinc-900 text-white">$ USD</option>
+                <option value="GBP" className="bg-zinc-900 text-white">£ GBP</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (currentScreen.type === 'status') {
       return (
         <OnboardingStatusScreen
           statusType={statusType}
           onStatusChange={setStatusType}
-          t={t}
           borderless={true}
         />
       );
@@ -149,7 +191,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
             max={currentScreen.data!.max}
             decimals={currentScreen.data!.decimals}
             suffix={currentScreen.data!.suffix}
-            locale="fi-FI"
+            locale={language === 'fi' ? 'fi-FI' : 'en-US'}
             onChange={(val) => setAnswers(prev => ({ ...prev, [currentScreen.data!.id]: val }))}
           />
         </div>
@@ -208,22 +250,29 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} 
             className="w-full flex flex-col items-center justify-center max-w-xl"
           >
-            <div className={`flex items-center justify-center gap-3 px-4 mb-6`}>
-              <h1 className={`font-sans font-light tracking-tighter text-white leading-[1.1] text-center text-balance ${
-                currentScreen.type === 'question' 
-                  ? 'text-3xl md:text-4xl lg:text-5xl' 
-                  : 'text-4xl md:text-5xl lg:text-7xl'
-              }`}>
-                {getScreenTitle()}
-              </h1>
-              {currentScreen.type === 'question' && (
-                <button
-                  onClick={() => setShowInfo(true)}
-                  className="text-zinc-500 hover:text-white transition-all active:scale-90 p-1 shrink-0"
-                  aria-label="Info"
-                >
-                  <Info size={28} strokeWidth={2} />
-                </button>
+            <div className={`flex flex-col items-center justify-center gap-3 px-4 mb-6`}>
+              <div className="flex items-center justify-center gap-3">
+                <h1 className={`font-sans font-light tracking-tighter text-white leading-[1.1] text-center text-balance ${
+                  currentScreen.type === 'question' 
+                    ? 'text-3xl md:text-4xl lg:text-5xl' 
+                    : 'text-4xl md:text-5xl lg:text-7xl'
+                }`}>
+                  {getScreenTitle()}
+                </h1>
+                {currentScreen.type === 'question' && (
+                  <button
+                    onClick={() => setShowInfo(true)}
+                    className="text-zinc-500 hover:text-white transition-all active:scale-90 p-1 shrink-0"
+                    aria-label="Info"
+                  >
+                    <Info size={28} strokeWidth={2} />
+                  </button>
+                )}
+              </div>
+              {currentScreen.type === 'preferences' && (
+                <p className="text-zinc-500 text-[10px] md:text-[11px] uppercase tracking-[0.4em] font-semibold text-center">
+                  {t.preferencesSubtitle}
+                </p>
               )}
             </div>
 
@@ -272,7 +321,6 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
         type={showInfo && currentScreen.type === 'question' ? `q${currentScreen.data.id.charAt(0).toUpperCase() + currentScreen.data.id.slice(1)}` as InfoType : null}
         onClose={() => setShowInfo(false)}
         isFree={true}
-        t={t}
       />
     </div>
   );

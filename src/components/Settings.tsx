@@ -5,7 +5,8 @@ import { AppState } from './Ticker';
 import WheelPicker, { SingleTextWheelPicker } from './WheelPicker';
 import InfoModal, { InfoType } from './InfoModal';
 import { Capacitor } from '@capacitor/core';
-import { t, getCurrencySymbol } from '../utils/i18n';
+import { getCurrencySymbol, Language, Currency } from '../utils/i18n';
+import { useI18n } from '../context/I18nContext';
 
 interface Props {
   initialSettings: UserSettings;
@@ -26,6 +27,7 @@ interface SettingConfig {
 }
 
 export default function Settings({ initialSettings, appState, onSave, onUpdateState, onCancel }: Props) {
+  const { t, formatCurrencyString, language, currency, setLanguage, setCurrency } = useI18n();
   const [dailyCost, setDailyCost] = useState(initialSettings.dailyCost);
   const [annualPriceIncrease, setAnnualPriceIncrease] = useState(initialSettings.annualPriceIncrease);
   const [expectedReturn, setExpectedReturn] = useState(
@@ -46,19 +48,20 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     return d.toISOString().slice(0, 16);
   });
 
-  const currencySymbol = getCurrencySymbol('EUR');
+  const currencySymbol = getCurrencySymbol(currency);
+  const currentLocale = language === 'fi' ? 'fi-FI' : 'en-US';
 
   const SLIDER_CONFIGS: Record<string, SettingConfig> = {
     dailyCost: { id: 'dailyCost', label: t.dailyCostLabel, desc: t.qDailyCost, min: 0, max: 100, decimals: 2, unit: currencySymbol },
     annualPriceIncrease: { id: 'annualPriceIncrease', label: t.annualIncreaseLabel, desc: t.annualIncreaseDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     expectedReturn: { id: 'expectedReturn', label: t.expectedReturnLabel, desc: t.expectedReturnDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     investReminderThreshold: { id: 'investReminderThreshold', label: t.investReminderTitle, desc: t.investReminderDesc, min: 0, max: 500, decimals: 2, unit: currencySymbol },
-    maxForecastYears: { id: 'maxForecastYears', label: (t as any).maxForecastYearsLabel, desc: (t as any).maxForecastYearsDesc, min: 10, max: 100, decimals: 0, unit: 'v' },
+    maxForecastYears: { id: 'maxForecastYears', label: (t as any).maxForecastYearsLabel, desc: (t as any).maxForecastYearsDesc, min: 10, max: 100, decimals: 0, unit: language === 'fi' ? 'v' : 'y' },
     notificationLevel: { id: 'notificationLevel', label: t.motivatorLevel || 'Tsempin taso', desc: t.motivatorDesc || '', min: 0, max: 3, decimals: 1, unit: '' },
   };
 
   const handleSave = () => {
-    onSave({ ...initialSettings, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled });
+    onSave({ ...initialSettings, language, currency, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled });
     if (appState.status !== 'riippuvainen') {
       const newTime = new Date(startTimeString).getTime();
       if (!isNaN(newTime) && newTime !== appState.startTime) {
@@ -70,7 +73,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
   useEffect(() => {
     if (editingId === null) handleSave();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled, startTimeString]);
+  }, [editingId, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled, startTimeString, language, currency]);
 
   const isHooked = appState.status === 'riippuvainen';
 
@@ -136,7 +139,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
                 max={config.max}
                 decimals={config.decimals}
                 suffix={config.unit}
-                locale="fi-FI"
+                locale={currentLocale}
                 onChange={setValue}
               />
             )}
@@ -154,7 +157,6 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
             type={showInfo ? `q${editingId.charAt(0).toUpperCase() + editingId.slice(1)}` as InfoType : null}
             onClose={() => setShowInfo(false)}
             isFree={!isHooked}
-            t={t}
           />
         </div>
       );
@@ -210,10 +212,38 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
       <div className="flex-1 overflow-y-auto px-8 md:px-14 pb-10 no-scrollbar">
         <div className="flex flex-col pt-4">
 
-          {/* SECTION 1: BASIC SETTINGS */}
+          {/* SECTION 1: PREFERENCES */}
+          <div className="flex flex-col mb-8">
+            <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.preferences}</span>
+            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5 group">
+              <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.languageLabel}</span>
+              <select 
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="bg-[#050505] text-white font-sans text-base lg:text-xl font-light focus:outline-none cursor-pointer text-right min-w-[100px]"
+              >
+                <option value="en">English</option>
+                <option value="fi">Suomi</option>
+              </select>
+            </div>
+            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5 group">
+              <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.currencyLabel}</span>
+              <select 
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+                className="bg-[#050505] text-white font-sans text-base lg:text-xl font-light focus:outline-none cursor-pointer text-right min-w-[100px]"
+              >
+                <option value="EUR">€ EUR</option>
+                <option value="USD">$ USD</option>
+                <option value="GBP">£ GBP</option>
+              </select>
+            </div>
+          </div>
+
+          {/* SECTION 2: BASIC SETTINGS */}
           <div className="flex flex-col">
             <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.basicSettings}</span>
-            <SettingRow id="dailyCost" label={t.dailyCostLabel} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(dailyCost)} ${currencySymbol}`} />
+            <SettingRow id="dailyCost" label={t.dailyCostLabel} displayValue={formatCurrencyString(dailyCost, 2)} />
             <SettingRow id="annualPriceIncrease" label={t.annualIncreaseLabel} displayValue={`${annualPriceIncrease.toFixed(1)}%`} />
             <SettingRow id="expectedReturn" label={t.expectedReturnLabel} displayValue={`${expectedReturn.toFixed(1)}%`} />
             
@@ -232,11 +262,11 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
 
           <div className="h-px w-full bg-white/5 my-8" />
 
-          {/* SECTION 2: OTHER SETTINGS */}
+          {/* SECTION 3: OTHER SETTINGS */}
           <div className="flex flex-col">
-            <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
-            <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={`${new Intl.NumberFormat('fi-FI', { minimumFractionDigits: 2 }).format(investReminderThreshold)} ${currencySymbol}`} />
-            <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} v`} />
+             <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
+            <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={formatCurrencyString(investReminderThreshold, 2)} />
+            <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} ${language === 'fi' ? 'v' : 'y'}`} />
             <ToggleRow 
               label={(t as any).settingsSoundLabel || 'Äänimaisema'} 
               checked={soundscapeEnabled} 

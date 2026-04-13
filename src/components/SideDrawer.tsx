@@ -1,7 +1,6 @@
 import { Settings as SettingsIcon, X, HelpCircle, Info, ShieldCheck, Scale, RotateCcw, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import type { TranslationStrings } from '../utils/i18n';
-
+import { useI18n } from '../context/I18nContext';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -9,10 +8,10 @@ interface Props {
   onShowInfo: (type: 'logic' | 'about' | 'privacy' | 'disclaimer') => void;
   onTriggerAction: (type: 'quit' | 'relapse' | 'reset') => void;
   isFree?: boolean;
-  t: TranslationStrings;
 }
 
-export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, onTriggerAction, isFree, t }: Props) {
+export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, onTriggerAction, isFree }: Props) {
+  const { t } = useI18n();
   return (
     <AnimatePresence>
       {isOpen && (
