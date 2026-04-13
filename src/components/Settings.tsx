@@ -62,11 +62,9 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
 
   const handleSave = () => {
     onSave({ ...initialSettings, language, currency, dailyCost, annualPriceIncrease, expectedReturn, investReminderThreshold, notificationLevel, maxForecastYears, soundscapeEnabled });
-    if (appState.status !== 'riippuvainen') {
-      const newTime = new Date(startTimeString).getTime();
-      if (!isNaN(newTime) && newTime !== appState.startTime) {
-        onUpdateState({ ...appState, startTime: newTime });
-      }
+    const newTime = new Date(startTimeString).getTime();
+    if (!isNaN(newTime) && newTime !== appState.startTime) {
+      onUpdateState({ ...appState, startTime: newTime });
     }
   };
 
@@ -247,17 +245,15 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
             <SettingRow id="annualPriceIncrease" label={t.annualIncreaseLabel} displayValue={`${annualPriceIncrease.toFixed(1)}%`} />
             <SettingRow id="expectedReturn" label={t.expectedReturnLabel} displayValue={`${expectedReturn.toFixed(1)}%`} />
             
-            {!isHooked && (
-              <div className="w-full flex items-center justify-between py-4 lg:py-5 border-t border-white/5">
-                 <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.startTime}</span>
-                 <input
-                   type="datetime-local"
-                   value={startTimeString}
-                   onChange={(e) => setStartTimeString(e.target.value)}
-                   className="bg-transparent p-0 text-white font-sans tabular-nums text-base lg:text-xl font-light focus:outline-none tracking-tighter cursor-pointer appearance-none text-right"
-                 />
-              </div>
-            )}
+            <div className="w-full flex items-center justify-between py-4 lg:py-5 border-t border-white/5">
+               <span className="text-zinc-200 font-medium text-base lg:text-xl tracking-tight">{t.startTime}</span>
+               <input
+                 type="datetime-local"
+                 value={startTimeString}
+                 onChange={(e) => setStartTimeString(e.target.value)}
+                 className="bg-transparent p-0 text-white font-sans tabular-nums text-base lg:text-xl font-light focus:outline-none tracking-tighter cursor-pointer appearance-none text-right"
+               />
+            </div>
           </div>
 
           <div className="h-px w-full bg-white/5 my-8" />
