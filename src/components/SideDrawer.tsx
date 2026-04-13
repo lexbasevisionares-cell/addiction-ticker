@@ -1,4 +1,4 @@
-import { Settings as SettingsIcon, X, HelpCircle, Info, ShieldCheck, Scale, RotateCcw, Trash2 } from 'lucide-react';
+import { Settings as SettingsIcon, X, HelpCircle, Info, ShieldCheck, Scale, RotateCcw, Trash2, Apple } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../context/I18nContext';
 interface Props {
@@ -12,6 +12,8 @@ interface Props {
 
 export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo, onTriggerAction, isFree }: Props) {
   const { t } = useI18n();
+  const isWebBrowser = !('Capacitor' in window);
+  const APP_STORE_URL = 'https://apps.apple.com/us/app/addiction-ticker/id6761534960';
   return (
     <AnimatePresence>
       {isOpen && (
@@ -65,6 +67,18 @@ export default function SideDrawer({ isOpen, onClose, onEditSettings, onShowInfo
                     <span className="tracking-tight">{item.label}</span>
                   </button>
                 ))}
+                {isWebBrowser && (
+                  <a
+                    href={APP_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={onClose}
+                    className="group flex items-center gap-5 lg:gap-8 py-3.5 lg:py-6 text-base lg:text-2xl font-medium text-white/80 hover:text-white transition-all transform hover:translate-x-1"
+                  >
+                    <Apple size={20} className="lg:w-8 lg:h-8 text-zinc-600 group-hover:text-emerald-500 transition-colors shrink-0" />
+                    <span className="tracking-tight">{t.menuDownloadApp}</span>
+                  </a>
+                )}
               </div>
 
               <div className="h-px bg-white/5 my-4 lg:my-8 shrink-0" />

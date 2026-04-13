@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useMemo, memo } from 'react';
-import { Menu, Share2 } from 'lucide-react';
+import { Menu, Share2, Apple } from 'lucide-react';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from '../utils/finance';
 import { useI18n } from '../context/I18nContext';
 import { UserSettings } from './Onboarding';
@@ -30,6 +30,9 @@ interface Props {
 
 export default function Ticker({ settings, appState, onUpdateState, onEditSettings, onResetAll }: Props) {
   const { t, formatCurrencyString: fmtCurStr } = useI18n();
+  // Detect if running in a browser (vs. native Capacitor app)
+  const isWebBrowser = !('Capacitor' in window);
+  const APP_STORE_URL = 'https://apps.apple.com/us/app/addiction-ticker/id6761534960';
   const [now, setNow] = useState(Date.now());
   const [stableNow, setStableNow] = useState(Date.now());
   const [forecastYears, setForecastYears] = useState(10);
@@ -316,8 +319,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         {/* Elastic Spacer 3: Space between Slider and Share button */}
         <div className="flex-[1] min-h-[clamp(8px,2dvh,24px)] shrink-0" />
 
-        {/* Content Section 3: Stealth Share Link */}
-        <div className="flex-none w-full pb-[clamp(16px,3dvh,32px)] flex justify-center shrink-0">
+        {/* Content Section 3: Action Buttons — Share + optional App Store */}
+        <div className="flex-none w-full pb-[clamp(16px,3dvh,32px)] flex justify-center items-center gap-6 shrink-0">
           <button
             onClick={handleShare}
             className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
@@ -325,6 +328,17 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             <Share2 size={13} className="stroke-[2.5]" />
             <span>{isFree ? t.shareAccomplishment : t.shareSituation}</span>
           </button>
+          {isWebBrowser && (
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center justify-center gap-2.5 text-zinc-500 hover:text-white transition-colors active:scale-95 text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.4em] py-3 px-6 drop-shadow-sm"
+            >
+              <Apple size={13} className="stroke-[2.5]" />
+              <span>{t.downloadApp}</span>
+            </a>
+          )}
         </div>
       </div>
 
