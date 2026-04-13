@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Addiction Ticker - Tuki ja Tietoa</title>
+    <title>Addiction Ticker – Support & Info</title>
+    <meta name="description" content="Addiction Ticker – A clinical financial tool that shows the real cost of nicotine addiction in real time.">
     <style>
         :root {
             --bg-color: #050505;
             --text-primary: #FAFAFA;
             --text-secondary: #A3A3A3;
             --accent: #E5E5E5;
+            --divider: #1A1A1A;
         }
-        
+
         body {
             background-color: var(--bg-color);
             color: var(--text-primary);
@@ -29,10 +31,33 @@
             width: 100%;
         }
 
+        .lang-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .lang-btn {
+            background: #141414;
+            border: 1px solid #262626;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .lang-btn:hover {
+            color: var(--text-primary);
+            border-color: #404040;
+        }
+
         .logo-container {
             text-align: center;
             margin-bottom: 40px;
-            margin-top: 20px;
+            margin-top: 8px;
         }
 
         .logo-container img {
@@ -65,7 +90,7 @@
             color: var(--text-secondary);
             margin-top: 32px;
             margin-bottom: 12px;
-            border-bottom: 1px solid #1A1A1A;
+            border-bottom: 1px solid var(--divider);
             padding-bottom: 8px;
         }
 
@@ -126,53 +151,115 @@
             font-size: 13px;
             color: var(--text-secondary);
         }
+
+        [data-lang] { display: none; }
     </style>
 </head>
 <body>
-
     <div class="container">
-        
+
+        <div class="lang-toggle">
+            <button class="lang-btn" id="langBtn" onclick="toggleLang()">English</button>
+        </div>
+
         <div class="logo-container">
             <img src="favicon.svg" alt="Addiction Ticker Logo">
             <h1 class="app-title">Addiction Ticker</h1>
-            <div class="subtitle">Taloudellisen riippuvuuden auditointityökalu</div>
+            <div class="subtitle">
+                <span data-lang="fi">Taloudellisen riippuvuuden auditointityökalu</span>
+                <span data-lang="en">Financial addiction auditing tool</span>
+            </div>
         </div>
 
         <div class="content">
-            <p><strong>Matka kohti vapautta alkaa sekunti kerrallaan.</strong></p>
-            
-            <p>Nikotiiniriippuvuus on enemmän kuin pelkkä riippuvuus – se on säälimätön varallisuusvero ja jatkuva tulonsiirto sinun taskustasi muiden hallintaan. Addiction Ticker on suunniteltu niille, jotka haluavat nähdä totuuden puhtaan matematiikan kautta – riippumatta siitä, oletko jo lopettanut vai vasta harkitsemassa matkasi aloittamista.</p>
-            
-            <p>Tämä ei ole tavallinen lopettamissovellus. Ticker ei jaa palkintoja tai tsemppiviestejä. Se on kliininen taloudellinen auditointityökalu, joka muuttaa jokaisen sekunnin reaaliaikaiseksi visioksi menetetystä tai kertyneestä pääomastasi.</p>
+            <!-- FI -->
+            <p data-lang="fi"><strong>Matka kohti vapautta alkaa sekunti kerrallaan.</strong></p>
+            <p data-lang="fi">Nikotiiniriippuvuus on enemmän kuin pelkkä riippuvuus – se on säälimätön varallisuusvero ja jatkuva tulonsiirto sinun taskustasi muiden hallintaan. Addiction Ticker on suunniteltu niille, jotka haluavat nähdä totuuden puhtaan matematiikan kautta – riippumatta siitä, oletko jo lopettanut vai vasta harkitsemassa matkasi aloittamista.</p>
+            <p data-lang="fi">Tämä ei ole tavallinen lopettamissovellus. Ticker ei jaa palkintoja tai tsemppiviestejä. Se on kliininen taloudellinen auditointityökalu, joka muuttaa jokaisen sekunnin reaaliaikaiseksi visioksi menetetystä tai kertyneestä pääomastasi.</p>
 
-            <h2>Täysin Faktapohjainen</h2>
-            <p>Sovelluksen matemaattinen malli tuottaa analyysin objektiivisesti omien asetustesi pohjalta:</p>
-            <ul>
+            <h2 data-lang="fi">Täysin Faktapohjainen</h2>
+            <p data-lang="fi">Sovelluksen matemaattinen malli tuottaa analyysin objektiivisesti omien asetustesi pohjalta:</p>
+            <ul data-lang="fi">
                 <li>Tarkka lopetus- tai aloitushetkesi</li>
                 <li>Päivittäinen kulutus ja arvioitu inflaatio</li>
                 <li>Odotuksesi sijoitusmarkkinoiden tuottoasteesta</li>
             </ul>
 
-            <h2>Ydinominaisuudet</h2>
-            <ul>
+            <h2 data-lang="fi">Ydinominaisuudet</h2>
+            <ul data-lang="fi">
                 <li><strong>Reaaliaikainen seuranta:</strong> Koe säästöjesi kasvu kineettisessä, sekunnin murto-osissa päivittyvässä käyttöliittymässä.</li>
                 <li><strong>Korkoa korolle -voima:</strong> Näe, kuinka säästetty summa kasvaisi potentiaalisina sijoituksina seuraavien vuosikymmenten aikana.</li>
-                <li><strong>Vaihtoehtoiskustannus:</strong> Visualisoi euroina se massiivinen summa, jonka menettäisit, jos jatkaisit kulutusta sijoittamisen sijaan.</li>
-                <li><strong>Täydellinen Yksityisyys:</strong> Ei pilvisynkronointia, ei tilejä, ei seurantaa. Kaikki prosessoidaan ainoastaan paikallisesti omalla laitteellasi.</li>
+                <li><strong>Vaihtoehtoiskustannus:</strong> Visualisoi se massiivinen summa, jonka menettäisit, jos jatkaisit kulutusta sijoittamisen sijaan.</li>
+                <li><strong>Täydellinen yksityisyys:</strong> Ei pilvisynkronointia, ei tilejä, ei seurantaa. Kaikki prosessoidaan ainoastaan paikallisesti omalla laitteellasi.</li>
+            </ul>
+
+            <!-- EN -->
+            <p data-lang="en"><strong>The journey to freedom starts one second at a time.</strong></p>
+            <p data-lang="en">Nicotine addiction is more than just a habit – it is a relentless wealth tax and a constant transfer of capital from your pocket to the control of others. Addiction Ticker is designed for those who want to see the truth through pure mathematics – whether you have already quit or are just considering starting your journey.</p>
+            <p data-lang="en">This is not your typical quitting app. Ticker does not provide badges or motivational quotes. It is a clinical financial auditing tool that transforms every second into a real-time vision of your lost or accumulated capital.</p>
+
+            <h2 data-lang="en">Entirely Fact-Based</h2>
+            <p data-lang="en">The application's mathematical model produces an objective analysis based on your own settings:</p>
+            <ul data-lang="en">
+                <li>The exact moment you quit or started</li>
+                <li>Daily consumption and estimated inflation</li>
+                <li>Your expected rate of return from the investment markets</li>
+            </ul>
+
+            <h2 data-lang="en">Core Features</h2>
+            <ul data-lang="en">
+                <li><strong>Real-time tracking:</strong> Experience the growth of your savings in a kinetic interface that updates in fractions of a second.</li>
+                <li><strong>The power of compound interest:</strong> See how your saved capital would grow as potential investments over the coming decades.</li>
+                <li><strong>Opportunity cost:</strong> Visualize the massive sum you would lose if you continued consumption instead of investing.</li>
+                <li><strong>Total privacy:</strong> No cloud sync, no accounts, no tracking. Everything is processed locally on your own device.</li>
             </ul>
         </div>
 
         <div class="buttons">
-            <a href="/" class="btn btn-primary">Avaa Selainversio</a>
-            <a href="privacy.html" class="btn btn-secondary">Tietosuojaseloste</a>
-            <a href="mailto:touko.aunio@icloud.com" class="btn btn-secondary">Ota Yhteyttä Tukeen</a>
+            <a href="/" class="btn btn-primary">
+                <span data-lang="fi">Avaa Selainversio</span>
+                <span data-lang="en">Open Web Version</span>
+            </a>
+            <a href="privacy.html" class="btn btn-secondary">
+                <span data-lang="fi">Tietosuojaseloste</span>
+                <span data-lang="en">Privacy Policy</span>
+            </a>
+            <a href="mailto:touko.aunio@icloud.com" class="btn btn-secondary">
+                <span data-lang="fi">Ota Yhteyttä Tukeen</span>
+                <span data-lang="en">Contact Support</span>
+            </a>
         </div>
 
         <div class="copyright">
-            &copy; 2026 Touko Aunio. Kaikki oikeudet pidätetään.
+            &copy; 2026 Touko Aunio.
+            <span data-lang="fi">Kaikki oikeudet pidätetään.</span>
+            <span data-lang="en">All rights reserved.</span>
         </div>
 
     </div>
 
+    <script>
+        let currentLang = 'fi';
+
+        function detectLang() {
+            const browserLang = (navigator.language || navigator.userLanguage || 'fi').toLowerCase();
+            return browserLang.startsWith('fi') ? 'fi' : 'en';
+        }
+
+        function applyLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.style.display = el.getAttribute('data-lang') === lang ? '' : 'none';
+            });
+            document.getElementById('langBtn').textContent = lang === 'fi' ? 'English' : 'Suomeksi';
+            document.documentElement.lang = lang;
+        }
+
+        function toggleLang() {
+            applyLang(currentLang === 'fi' ? 'en' : 'fi');
+        }
+
+        applyLang(detectLang());
+    </script>
 </body>
 </html>

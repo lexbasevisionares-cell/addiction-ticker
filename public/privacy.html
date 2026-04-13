@@ -3,63 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Addiction Ticker</title>
+    <title>Privacy Policy – Addiction Ticker</title>
+    <meta name="description" content="Addiction Ticker privacy policy. We do not collect, store or share any personal data.">
     <style>
+        :root {
+            --bg-color: #050505;
+            --text-primary: #FAFAFA;
+            --text-secondary: #A3A3A3;
+            --divider: #1A1A1A;
+        }
+
         body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
         }
-        h1, h2, h3 {
-            color: #111;
-        }
+
         .container {
-            background-color: #fff;
-            padding: 30px;
+            max-width: 600px;
+            padding: 40px 24px;
+            width: 100%;
+        }
+
+        .lang-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .lang-btn {
+            background: #141414;
+            border: 1px solid #262626;
+            color: var(--text-secondary);
+            padding: 6px 14px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
+
+        .lang-btn:hover {
+            color: var(--text-primary);
+            border-color: #404040;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 4px 0;
+        }
+
         .date {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 0.9em;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
         }
+
+        h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-top: 32px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--divider);
+            padding-bottom: 8px;
+        }
+
+        p {
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .highlight {
+            background: #141414;
+            border: 1px solid #262626;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 32px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        .back-link::before {
+            content: '←';
+            margin-right: 6px;
+        }
+
+        .copyright {
+            margin-top: 64px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        [data-lang] { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Tietosuojakäytäntö (Privacy Policy)</h1>
-        <div class="date">Viimeksi päivitetty: 8. huhtikuuta 2026</div>
 
-        <h2>1. Yleiskatsaus</h2>
-        <p>Kiitos, että valitsit <strong>Addiction Ticker</strong> -sovelluksen (jäljempänä "Sovellus"). Yksityisyytesi on meille ensiarvoisen tärkeää. Tämä tietosuojakäytäntö selittää, miten käsittelemme tietojasi.</p>
-        <p><strong>Lyhyt versio: Emme kerää, tallenna emmekä jaa henkilötietojasi. Sovellus toimii täysin "offline"-tilassa.</strong></p>
+        <div class="lang-toggle">
+            <button class="lang-btn" id="langBtn" onclick="toggleLang()">English</button>
+        </div>
 
-        <h2>2. Mitä tietoja keräämme?</h2>
-        <p>Sovellus ei kerää, lähetä tai tallenna minkäänlaisia henkilökohtaisia tietoja, analytiikkaa tai laitetietoja ulkoisille palvelimille. Emme käytä kolmannen osapuolen seurantakoodeja (kuten Google Analytics tai Facebook Pixel).</p>
+        <a href="info.html" class="back-link">
+            <span data-lang="fi">Takaisin</span>
+            <span data-lang="en">Back</span>
+        </a>
 
-        <h2>3. Missä tiedot säilytetään?</h2>
-        <p>Kaikki Sovellukseen syöttämäsi tiedot (kuten päivittäinen kulutus, aloituspäivämäärä ja motivaatioasetukset) tallennetaan yksinomaan laitteesi paikalliseen muistiin (localStorage). Nämä tiedot eivät koskaan poistu puhelimestasi, ellet itse päätä jakaa sovelluksen laskemia tuloksia "Jaa"-painikkeen kautta.</p>
-        <p>Koska emme tallenna tietojasi, emme myöskään voi palauttaa niitä, jos poistat sovelluksen tai vaihdat laitetta.</p>
+        <h1 class="page-title">
+            <span data-lang="fi">Tietosuojakäytäntö</span>
+            <span data-lang="en">Privacy Policy</span>
+        </h1>
+        <div class="date">
+            <span data-lang="fi">Viimeksi päivitetty: 13. huhtikuuta 2026</span>
+            <span data-lang="en">Last updated: April 13, 2026</span>
+        </div>
 
-        <h2>4. Kenelle jaamme tietojasi?</h2>
-        <p>Koska emme kerää tietojasi, meillä ei ole mitään jaettavaa tai myytävää kolmansille osapuolille.</p>
+        <!-- FINNISH -->
+        <div class="highlight" data-lang="fi">
+            <strong>Lyhyt versio:</strong> Emme kerää, tallenna emmekä jaa henkilötietojasi. Sovellus toimii täysin offline-tilassa.
+        </div>
 
-        <h2>5. Sovelluksen vaatimat luvat</h2>
-        <p>Sovellus saattaa pyytää lupaa lähettää paikallisia laitteen sisäisiä ilmoituksia (Local Notifications) tavoitteidesi tukemiseksi. Nämäkin ilmoitukset generoidaan ja ajastetaan täysin omalla laitteellasi, eikä niiden sisältöä lähetetä verkkoon.</p>
+        <h2 data-lang="fi">1. Yleiskatsaus</h2>
+        <p data-lang="fi">Kiitos, että valitsit <strong>Addiction Ticker</strong> -sovelluksen. Yksityisyytesi on meille ensiarvoisen tärkeää. Tämä tietosuojakäytäntö selittää, miten käsittelemme tietojasi.</p>
 
-        <h2>6. Lasten tietosuoja</h2>
-        <p>Sovellus ei kohdistu alle 13-vuotiaisiin lapsiin, emmekä kerää tietoisesti kenenkään, myöskään lasten, henkilötietoja.</p>
+        <h2 data-lang="fi">2. Mitä tietoja keräämme?</h2>
+        <p data-lang="fi">Sovellus ei kerää, lähetä tai tallenna minkäänlaisia henkilökohtaisia tietoja, analytiikkaa tai laitetietoja ulkoisille palvelimille. Emme käytä kolmannen osapuolen seurantakoodeja (kuten Google Analytics tai Facebook Pixel).</p>
 
-        <h2>7. Muutokset tietosuojakäytäntöön</h2>
-        <p>Saatamme päivittää tätä tietosuojakäytäntöä ajoittain. Suosittelemme tarkistamaan tämän sivun säännöllisesti mahdollisten muutosten varalta. Muutokset astuvat voimaan heti, kun ne julkaistaan tällä sivulla.</p>
+        <h2 data-lang="fi">3. Missä tiedot säilytetään?</h2>
+        <p data-lang="fi">Kaikki sovellukseen syöttämäsi tiedot (kuten päivittäinen kulutus, aloituspäivämäärä ja motivaatioasetukset) tallennetaan yksinomaan laitteesi paikalliseen muistiin. Nämä tiedot eivät koskaan poistu puhelimestasi, ellet itse päätä jakaa sovelluksen laskemia tuloksia.</p>
+        <p data-lang="fi">Koska emme tallenna tietojasi, emme myöskään voi palauttaa niitä, jos poistat sovelluksen tai vaihdat laitetta.</p>
 
-        <h2>8. Yhteystiedot</h2>
-        <p>Tätä sovellusta koskevissa kysymyksissä voit olla yhteydessä sähköpostitse osoitteeseen: <strong>touko.aunio@icloud.com</strong>.</p>
+        <h2 data-lang="fi">4. Kenelle jaamme tietojasi?</h2>
+        <p data-lang="fi">Koska emme kerää tietojasi, meillä ei ole mitään jaettavaa tai myytävää kolmansille osapuolille.</p>
+
+        <h2 data-lang="fi">5. Sovelluksen vaatimat luvat</h2>
+        <p data-lang="fi">Sovellus saattaa pyytää lupaa lähettää paikallisia ilmoituksia tavoitteidesi tukemiseksi. Nämä ilmoitukset generoidaan täysin omalla laitteellasi, eikä niiden sisältöä lähetetä verkkoon.</p>
+
+        <h2 data-lang="fi">6. Lasten tietosuoja</h2>
+        <p data-lang="fi">Sovellus ei kohdistu alle 13-vuotiaisiin lapsiin, emmekä kerää tietoisesti kenenkään henkilötietoja.</p>
+
+        <h2 data-lang="fi">7. Muutokset tietosuojakäytäntöön</h2>
+        <p data-lang="fi">Saatamme päivittää tätä tietosuojakäytäntöä ajoittain. Suosittelemme tarkistamaan tämän sivun säännöllisesti mahdollisten muutosten varalta.</p>
+
+        <h2 data-lang="fi">8. Yhteystiedot</h2>
+        <p data-lang="fi">Tätä sovellusta koskevissa kysymyksissä voit olla yhteydessä sähköpostitse: <strong>touko.aunio@icloud.com</strong></p>
+
+        <!-- ENGLISH -->
+        <div class="highlight" data-lang="en">
+            <strong>Short version:</strong> We do not collect, store or share any personal data. The app works fully offline.
+        </div>
+
+        <h2 data-lang="en">1. Overview</h2>
+        <p data-lang="en">Thank you for choosing <strong>Addiction Ticker</strong>. Your privacy is critically important to us. This privacy policy explains how we handle your data.</p>
+
+        <h2 data-lang="en">2. What data do we collect?</h2>
+        <p data-lang="en">The application does not collect, transmit, or store any personal data, analytics, or device information to external servers. We do not use any third-party tracking code (such as Google Analytics or Facebook Pixel).</p>
+
+        <h2 data-lang="en">3. Where is data stored?</h2>
+        <p data-lang="en">All data you enter into the application (such as daily consumption, start date, and motivation settings) is stored exclusively in your device's local memory. This data never leaves your phone, unless you choose to share the results calculated by the app.</p>
+        <p data-lang="en">Because we do not store your data, we are also unable to recover it if you delete the application or change devices.</p>
+
+        <h2 data-lang="en">4. Who do we share your data with?</h2>
+        <p data-lang="en">Since we do not collect your data, we have nothing to share or sell to third parties.</p>
+
+        <h2 data-lang="en">5. Permissions required by the app</h2>
+        <p data-lang="en">The application may request permission to send local notifications to support your goals. These notifications are generated entirely on your own device and their content is never transmitted to the network.</p>
+
+        <h2 data-lang="en">6. Children's privacy</h2>
+        <p data-lang="en">The application is not directed at children under the age of 13, and we do not knowingly collect personal data from anyone, including children.</p>
+
+        <h2 data-lang="en">7. Changes to this privacy policy</h2>
+        <p data-lang="en">We may update this privacy policy from time to time. We recommend checking this page regularly for any changes. Changes take effect immediately upon publication on this page.</p>
+
+        <h2 data-lang="en">8. Contact</h2>
+        <p data-lang="en">For any questions regarding this application, you can contact us by email: <strong>touko.aunio@icloud.com</strong></p>
+
+        <div class="copyright">
+            &copy; 2026 Touko Aunio.
+            <span data-lang="fi">Kaikki oikeudet pidätetään.</span>
+            <span data-lang="en">All rights reserved.</span>
+        </div>
+
     </div>
+
+    <script>
+        let currentLang = 'fi';
+
+        function detectLang() {
+            const browserLang = (navigator.language || navigator.userLanguage || 'fi').toLowerCase();
+            return browserLang.startsWith('fi') ? 'fi' : 'en';
+        }
+
+        function applyLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.style.display = el.getAttribute('data-lang') === lang ? '' : 'none';
+            });
+            document.getElementById('langBtn').textContent = lang === 'fi' ? 'English' : 'Suomeksi';
+            document.documentElement.lang = lang;
+        }
+
+        function toggleLang() {
+            applyLang(currentLang === 'fi' ? 'en' : 'fi');
+        }
+
+        applyLang(detectLang());
+    </script>
 </body>
 </html>
