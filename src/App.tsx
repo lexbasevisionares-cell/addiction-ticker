@@ -50,10 +50,6 @@ export default function App() {
           parsedState.lastTransferTime = parsedState.startTime;
         }
         
-        if (!parsedState.lastTransferTime) {
-          parsedState.lastTransferTime = parsedState.startTime;
-        }
-        
         if (!parsedState.lastDismissedAmount) {
           parsedState.lastDismissedAmount = 0;
         }
