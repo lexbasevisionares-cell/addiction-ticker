@@ -173,7 +173,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const formatCurrencyTicker = (val: number, fractionDigits: number = 2) => fmtCurStr(val, fractionDigits);
 
   const handleShare = async () => {
-    const url = 'https://addictionticker.netlify.app/';
+    const url = 'https://addictionticker.com/';
     const formattedTotal = formatCurrencyTicker(totalForecast);
     const formattedCurrent = formatCurrencyTicker(accumulated);
 

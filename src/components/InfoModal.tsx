@@ -106,14 +106,14 @@ export default function InfoModal({ type, onClose, isFree }: Props) {
                   <div className="space-y-10">
                     {(isFree ? [
                       { label: t.dashSaved, desc: t.infoLogicFreeDesc1 },
-                      { label: t.dashPureSavings.replace(' {years} vuodessa', ''), desc: t.infoLogicFreeDesc2 },
-                      { label: t.dashInvested.replace(' {years} vuodessa', ''), desc: t.infoLogicFreeDesc3 },
-                      { label: t.dashTotalWealth.replace(' {years} vuoden kuluttua', ''), desc: t.infoLogicFreeDesc4 }
+                      { label: t.dashPureSavings.split('{years}')[0].replace(/\s+(in|en)$/i, '').trim(), desc: t.infoLogicFreeDesc2 },
+                      { label: t.dashInvested.split('{years}')[0].replace(/\s+(in|en)$/i, '').trim(), desc: t.infoLogicFreeDesc3 },
+                      { label: t.dashTotalWealth.split('{years}')[0].replace(/\s+(in|en)$/i, '').trim(), desc: t.infoLogicFreeDesc4 }
                     ] : [
                       { label: t.dashLost, desc: t.infoLogicHookedDesc1 },
-                      { label: t.dashPureCosts.replace(' {years} vuodessa', ''), desc: t.infoLogicHookedDesc2 },
-                      { label: t.dashLostInvested.replace(' {years} vuodessa', ''), desc: t.infoLogicHookedDesc3 },
-                      { label: t.dashLostWealth.replace(' {years} vuodessa', ''), desc: t.infoLogicHookedDesc4 }
+                      { label: t.dashPureCosts.split('{years}')[0].replace(/\s+(in|en)$/i, '').trim(), desc: t.infoLogicHookedDesc2 },
+                      { label: t.dashLostInvested.split('{years}')[0].replace(/\s+(in|en)$/i, '').trim(), desc: t.infoLogicHookedDesc3 },
+                      { label: t.dashLostWealth.split('{years}')[0].replace(/\s+(in|en)$/i, '').trim(), desc: t.infoLogicHookedDesc4 }
                     ]).map((item, idx) => (
                       <div key={idx} className="space-y-3">
                          <h4 className="text-xl lg:text-2xl font-light tracking-tight text-white">
