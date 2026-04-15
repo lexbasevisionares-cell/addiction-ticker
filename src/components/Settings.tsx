@@ -221,6 +221,11 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
                 className="bg-[#050505] text-white font-sans text-base lg:text-xl font-light focus:outline-none cursor-pointer text-right min-w-[100px]"
               >
                 <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
                 <option value="fi">Suomi</option>
               </select>
             </div>
@@ -234,6 +239,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
                 <option value="EUR">€ EUR</option>
                 <option value="USD">$ USD</option>
                 <option value="GBP">£ GBP</option>
+                <option value="BRL">R$ BRL</option>
               </select>
             </div>
           </div>

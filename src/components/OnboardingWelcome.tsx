@@ -54,7 +54,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
 
   const renderLargeAmount = (value: number, colorClass: string) => {
     const symbol = getCurrencySymbol(currency);
-    const locale = language === 'fi' ? 'fi-FI' : (currency === 'GBP' ? 'en-GB' : 'en-US');
+    const locale = language === 'fi' ? 'fi-FI' : language === 'es' ? (currency === 'EUR' ? 'es-ES' : 'es-MX') : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'it' ? 'it-IT' : language === 'pt' ? 'pt-BR' : (currency === 'GBP' ? 'en-GB' : 'en-US');
     const formattedNumber = new Intl.NumberFormat(locale, {
       style: 'decimal',
       minimumFractionDigits: 0,
@@ -62,7 +62,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
     }).format(value);
     const numClasses = `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter tabular-nums leading-none ${colorClass}`;
     const symClasses = `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter leading-none ${colorClass}`;
-    if (language === 'fi') {
+    if (['fi', 'de', 'fr', 'it', 'pt'].includes(language)) {
       return (
         <div className="whitespace-nowrap flex items-baseline gap-3 font-sans">
           <span className={numClasses}>{formattedNumber}</span>

@@ -134,6 +134,11 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                 className="bg-transparent text-white font-sans text-base lg:text-xl focus:outline-none appearance-none cursor-pointer text-right min-w-[100px]"
               >
                 <option value="en" className="bg-zinc-900 text-white">English</option>
+                <option value="es" className="bg-zinc-900 text-white">Español</option>
+                <option value="fr" className="bg-zinc-900 text-white">Français</option>
+                <option value="de" className="bg-zinc-900 text-white">Deutsch</option>
+                <option value="it" className="bg-zinc-900 text-white">Italiano</option>
+                <option value="pt" className="bg-zinc-900 text-white">Português</option>
                 <option value="fi" className="bg-zinc-900 text-white">Suomi</option>
               </select>
             </div>
@@ -147,6 +152,7 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                 <option value="EUR" className="bg-zinc-900 text-white">€ EUR</option>
                 <option value="USD" className="bg-zinc-900 text-white">$ USD</option>
                 <option value="GBP" className="bg-zinc-900 text-white">£ GBP</option>
+                <option value="BRL" className="bg-zinc-900 text-white">R$ BRL</option>
               </select>
             </div>
           </div>

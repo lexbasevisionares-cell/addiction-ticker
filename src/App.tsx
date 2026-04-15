@@ -29,12 +29,40 @@ export default function App() {
           parsedSettings.investReminderThreshold = 0.01;
         }
         if (!parsedSettings.language) {
-          parsedSettings.language = navigator.language.startsWith('fi') ? 'fi' : 'en';
+          const navLang = navigator.language.toLowerCase();
+          if (navLang.startsWith('fi')) {
+            parsedSettings.language = 'fi';
+          } else if (navLang.startsWith('es')) {
+            parsedSettings.language = 'es';
+          } else if (navLang.startsWith('de')) {
+            parsedSettings.language = 'de';
+          } else if (navLang.startsWith('fr')) {
+            parsedSettings.language = 'fr';
+          } else if (navLang.startsWith('it')) {
+            parsedSettings.language = 'it';
+          } else if (navLang.startsWith('pt')) {
+            parsedSettings.language = 'pt';
+          } else {
+            parsedSettings.language = 'en';
+          }
         }
         if (!parsedSettings.currency) {
-          if (navigator.language.startsWith('fi')) {
+          const navLang = navigator.language.toLowerCase();
+          if (navLang.startsWith('fi')) {
             parsedSettings.currency = 'EUR';
-          } else if (navigator.language === 'en-GB' || navigator.language.startsWith('en-GB')) {
+          } else if (navLang === 'es-es') {
+            parsedSettings.currency = 'EUR';
+          } else if (navLang.startsWith('de')) {
+            parsedSettings.currency = 'EUR';
+          } else if (navLang.startsWith('fr')) {
+            parsedSettings.currency = 'EUR';
+          } else if (navLang.startsWith('it')) {
+            parsedSettings.currency = 'EUR';
+          } else if (navLang === 'pt-br' || navLang.startsWith('pt-br-')) {
+            parsedSettings.currency = 'BRL';
+          } else if (navLang.startsWith('pt')) {
+            parsedSettings.currency = 'EUR';
+          } else if (navLang === 'en-gb' || navLang.startsWith('en-gb-')) {
             parsedSettings.currency = 'GBP';
           } else {
             parsedSettings.currency = 'USD';
@@ -156,10 +184,26 @@ export default function App() {
     return null;
   };
 
-  const activeLang = settings?.language || (navigator.language.startsWith('fi') ? 'fi' : 'en');
+  const navLangForDefaults = navigator.language.toLowerCase();
+  let defaultLang = 'en';
+  if (navLangForDefaults.startsWith('fi')) defaultLang = 'fi';
+  else if (navLangForDefaults.startsWith('es')) defaultLang = 'es';
+  else if (navLangForDefaults.startsWith('de')) defaultLang = 'de';
+  else if (navLangForDefaults.startsWith('fr')) defaultLang = 'fr';
+  else if (navLangForDefaults.startsWith('it')) defaultLang = 'it';
+  else if (navLangForDefaults.startsWith('pt')) defaultLang = 'pt';
+  const activeLang = settings?.language || defaultLang;
+
   const getDefaultCurrency = () => {
-    if (navigator.language.startsWith('fi')) return 'EUR';
-    if (navigator.language.startsWith('en-GB')) return 'GBP';
+    const navLang = navigator.language.toLowerCase();
+    if (navLang.startsWith('fi')) return 'EUR';
+    if (navLang === 'es-es') return 'EUR';
+    if (navLang.startsWith('de')) return 'EUR';
+    if (navLang.startsWith('fr')) return 'EUR';
+    if (navLang.startsWith('it')) return 'EUR';
+    if (navLang === 'pt-br' || navLang.startsWith('pt-br-')) return 'BRL';
+    if (navLang.startsWith('pt')) return 'EUR';
+    if (navLang.startsWith('en-gb')) return 'GBP';
     return 'USD';
   };
   const activeCur = settings?.currency || getDefaultCurrency();
