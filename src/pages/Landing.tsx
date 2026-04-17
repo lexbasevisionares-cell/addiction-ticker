@@ -8,18 +8,18 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="h-screen overflow-y-auto overflow-x-hidden bg-[#050505] text-white selection:bg-rose-500/30 font-sans">
+    <div className="h-screen overflow-y-auto overflow-x-hidden bg-[#050505] text-white selection:bg-rose-500/30 font-sans flex flex-col">
       
       {/* Navbar - Glassmorphism matched to App */}
       <WebsiteNav />
 
       {/* Hero Section */}
-      <main className="relative pt-[120px] pb-20 lg:pt-[180px] lg:pb-32 px-6">
-        {/* APP-STYLE BACKGROUND GLOW: Replaced generic SaaS indigo/purple with app's rose and emerald */}
+      <main className="flex-1 relative flex flex-col justify-center pb-20 px-6 min-h-[600px] mt-16 md:mt-0">
+        {/* APP-STYLE BACKGROUND GLOW */}
         <div className="absolute top-10 right-1/4 w-[400px] h-[400px] bg-rose-500/10 blur-[150px] rounded-full pointer-events-none opacity-60" />
         <div className="absolute top-40 left-1/4 w-[350px] h-[350px] bg-emerald-400/5 blur-[120px] rounded-full pointer-events-none opacity-50" />
         
-        <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10 pt-10">
+        <div className="max-w-7xl mx-auto w-full flex flex-col items-center text-center relative z-10 pt-4 md:pt-10">
           
           {/* Centered Copy */}
           <motion.div 
@@ -69,37 +69,8 @@ export default function Landing() {
         </div>
       </main>
 
-      {/* Features Section */}
-      <section id="features" className="py-24 bg-[#050505] px-6 border-t border-white/[0.02]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-24 flex flex-col items-center">
-            <div className="text-[11px] font-semibold text-emerald-400 uppercase tracking-[0.6em] mb-6 drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">Freedom Focus</div>
-            <h2 className="text-3xl lg:text-4xl font-light tracking-tight mb-6">A tracker that actually helps.</h2>
-            <p className="text-zinc-500 max-w-xl mx-auto font-light leading-relaxed">It's easy to ignore small daily costs. We calculate compound interest to show you exactly what your habit is stealing from your future.</p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-            <FeatureCard 
-              icon={<TrendingUp size={24} className="text-white/60" />}
-              title="Investment Insights"
-              description="See how much your money could grow if you invested it in an index fund instead of nicotine."
-            />
-            <FeatureCard 
-              icon={<ShieldCheck size={24} className="text-white/60" />}
-              title="Everything On-Device"
-              description="No servers, no accounts, no tracking. Your addiction data is intensely personal and never leaves your phone."
-            />
-            <FeatureCard 
-              icon={<Globe2 size={24} className="text-white/60" />}
-              title="7 Languages"
-              description="Fully localized experience available in English, Finnish, Spanish, German, French, Italian, and Portuguese."
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-white/[0.02] text-center">
+      <footer className="py-12 px-6 text-center shrink-0">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
              <div className="flex items-end gap-[2px] h-[10px] opacity-20 grayscale">
@@ -114,18 +85,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
-  return (
-    <div className="bg-white/[0.02] border border-white/[0.05] p-8 lg:p-10 rounded-3xl hover:bg-white/[0.04] transition-colors relative overflow-hidden group">
-      <div className="bg-white/[0.03] w-14 h-14 rounded-2xl flex items-center justify-center mb-8 border border-white/5 shadow-inner">
-        {icon}
-      </div>
-      <h3 className="text-[17px] font-normal mb-4 tracking-wide">{title}</h3>
-      <p className="text-zinc-500 leading-relaxed font-light text-[15px]">{description}</p>
     </div>
   );
 }
