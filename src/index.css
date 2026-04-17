@@ -109,3 +109,21 @@ html, body {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
 }
 
+/* Portrait Lock / "Turn your device" Overlay */
+@keyframes rotate-phone {
+  0% { transform: rotate(-90deg); }
+  20% { transform: rotate(0deg); }
+  80% { transform: rotate(0deg); }
+  100% { transform: rotate(-90deg); }
+}
+
+.animate-rotate-phone {
+  animation: rotate-phone 3s infinite cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Only trigger on landscape when the physical height is extremely small (i.e. mobile phones) */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .portrait-lock-overlay {
+    display: flex !important;
+  }
+}
