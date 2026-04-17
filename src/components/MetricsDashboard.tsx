@@ -26,7 +26,7 @@ export default function MetricsDashboard({
   pendingAmount, isPendingOverdue, onTriggerInvest, onDismissReminder,
   children
 }: Props & { children: React.ReactNode }) {
-  const { t, formatCurrencyString: formatCurrency } = useI18n();
+  const { t, formatCurrencyHtml } = useI18n();
   const yrs = forecastYears.toString();
 
   return (
@@ -43,9 +43,8 @@ export default function MetricsDashboard({
         </div>
 
         {/* Pääluku */}
-        <span className={`font-sans tabular-nums font-light tracking-tight block text-[2.6rem] leading-none ${colorClass} transition-colors`}>
-          {formatCurrency(accumulated, 3)}
-        </span>
+        <span className={`font-sans tabular-nums font-light tracking-tight block text-[2.6rem] leading-none ${colorClass} transition-colors`}
+              dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(accumulated, 3) }} />
 
         {/* Sijoitusmuistutus — suoraan luvun alla */}
         <AnimatePresence>
@@ -84,7 +83,7 @@ export default function MetricsDashboard({
         >
           {(isFree ? t.dashPureSavings : t.dashPureCosts).replace('{years}', yrs)}
           {' '}
-          <span className="text-zinc-500">{formatCurrency(totalDirectSavings, 2)}</span>
+          <span className="text-zinc-500" dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(totalDirectSavings, 2) }} />
         </div>
       </div>
 
@@ -102,9 +101,8 @@ export default function MetricsDashboard({
         </div>
 
         {/* Pääluku */}
-        <span className={`font-sans tabular-nums font-light tracking-tight block text-[2.6rem] leading-none ${colorClass} transition-colors`}>
-          {formatCurrency(securedFV, 3)}
-        </span>
+        <span className={`font-sans tabular-nums font-light tracking-tight block text-[2.6rem] leading-none ${colorClass} transition-colors`}
+              dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(securedFV, 3) }} />
 
         {/* Sekundääriluku: yksi himmeä rivi */}
         <div
@@ -113,7 +111,7 @@ export default function MetricsDashboard({
         >
           {(isFree ? t.dashTotalWealth : t.dashLostWealth).replace('{years}', yrs)}
           {' '}
-          <span className="text-zinc-500">{formatCurrency(totalForecast, 2)}</span>
+          <span className="text-zinc-500" dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(totalForecast, 2) }} />
         </div>
       </div>
 

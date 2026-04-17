@@ -42,7 +42,7 @@ const impactVariants = {
 export default function OnboardingWelcome({ onStart }: Props) {
   const [phase, setPhase] = useState(0);
   const [tickerYear, setTickerYear] = useState(0);
-  const { t, formatCurrencyString, language, currency } = useI18n();
+  const { t, formatCurrencyHtml: fmtCurHtml, language, currency } = useI18n();
   
   const costPerDay = 8;
   const redValue = tickerYear * 365 * costPerDay;
@@ -94,18 +94,18 @@ export default function OnboardingWelcome({ onStart }: Props) {
       align: "center" 
     },
     { 
-      lines: [t.obAnimQ4L1, t.obAnimQ4L2.replace('{amount}', formatCurrencyString(costPerDay, 0))], 
+      lines: [t.obAnimQ4L1, t.obAnimQ4L2.replace('{amount}', fmtCurHtml(costPerDay, 0))], 
       stagger: 0.8, 
       duration: 5000, 
       align: "center" 
     },
     { 
       lines: [
-        t.obAnimQ5L1.replace('{v1}', formatCurrencyString(243, 0)), 
-        t.obAnimQ5L2.replace('{v2}', formatCurrencyString(2920, 0)), 
-        t.obAnimQ5L3.replace('{v3}', formatCurrencyString(29200, 0)), 
-        t.obAnimQ5L4.replace('{v4}', formatCurrencyString(87600, 0)),
-        { text: t.obAnimQ5L5.replace('{v5}', formatCurrencyString(146000, 0)), color: "text-red-500", impact: true }
+        t.obAnimQ5L1.replace('{v1}', fmtCurHtml(243, 0)), 
+        t.obAnimQ5L2.replace('{v2}', fmtCurHtml(2920, 0)), 
+        t.obAnimQ5L3.replace('{v3}', fmtCurHtml(29200, 0)), 
+        t.obAnimQ5L4.replace('{v4}', fmtCurHtml(87600, 0)),
+        { text: t.obAnimQ5L5.replace('{v5}', fmtCurHtml(146000, 0)), color: "text-red-500", impact: true }
       ], 
       stagger: 0.6, 
       duration: 10500,
@@ -114,7 +114,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
     { 
       lines: [
         t.obAnimQ6L1, 
-        t.obAnimQ6L2.replace('{amount}', formatCurrencyString(243, 0)), 
+        t.obAnimQ6L2.replace('{amount}', fmtCurHtml(243, 0)), 
         t.obAnimQ6L3
       ], 
       stagger: 1.0, 
@@ -123,18 +123,18 @@ export default function OnboardingWelcome({ onStart }: Props) {
     },
     { 
       lines: [
-        t.obAnimQ7L1.replace('{v1}', formatCurrencyString(42000, 0)), 
-        t.obAnimQ7L2.replace('{v2}', formatCurrencyString(126000, 0)),
-        t.obAnimQ7L3.replace('{v3}', formatCurrencyString(296000, 0)),
-        t.obAnimQ7L4.replace('{v4}', formatCurrencyString(637000, 0)),
-        { text: t.obAnimQ7L5.replace('{v5}', formatCurrencyString(1280000, 0)), color: "text-emerald-500", impact: true }
+        t.obAnimQ7L1.replace('{v1}', fmtCurHtml(42000, 0)), 
+        t.obAnimQ7L2.replace('{v2}', fmtCurHtml(126000, 0)),
+        t.obAnimQ7L3.replace('{v3}', fmtCurHtml(296000, 0)),
+        t.obAnimQ7L4.replace('{v4}', fmtCurHtml(637000, 0)),
+        { text: t.obAnimQ7L5.replace('{v5}', fmtCurHtml(1280000, 0)), color: "text-emerald-500", impact: true }
       ], 
       stagger: 0.6, 
       duration: 10500, 
       align: "center" 
     },
     { decision: true, duration: Infinity }
-  ], [t, formatCurrencyString, language, currency]);
+  ], [t, fmtCurHtml, language, currency]);
 
   const isFinalPhase = phase === PHASES.length - 1;
 
@@ -219,9 +219,8 @@ export default function OnboardingWelcome({ onStart }: Props) {
               key={idx}
               variants={variants}
               className={`font-sans font-medium tracking-tighter leading-[1.1] text-3xl md:text-6xl lg:text-8xl text-balance ${colorClass}`}
-            >
-              {text}
-            </motion.h2>
+              dangerouslySetInnerHTML={{ __html: text }}
+            />
            );
          })}
        </motion.div>

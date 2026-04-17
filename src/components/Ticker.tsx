@@ -30,7 +30,7 @@ interface Props {
 }
 
 export default function Ticker({ settings, appState, onUpdateState, onEditSettings, onResetAll }: Props) {
-  const { t, formatCurrencyString: fmtCurStr } = useI18n();
+  const { t, formatCurrencyString: fmtCurStr, formatCurrencyHtml: fmtCurHtml } = useI18n();
   // Show iOS promo only on Web AND not on Android devices
   const isWeb = Capacitor.getPlatform() === 'web';
   const isAndroid = /Android/i.test(navigator.userAgent);
@@ -171,6 +171,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   };
 
   const formatCurrencyTicker = (val: number, fractionDigits: number = 2) => fmtCurStr(val, fractionDigits);
+  const formatCurrencyTickerHtml = (val: number, fractionDigits: number = 2) => fmtCurHtml(val, fractionDigits);
 
   const handleShare = async () => {
     const url = 'https://addictionticker.com/';

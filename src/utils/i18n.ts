@@ -14,14 +14,14 @@ export const SUPPORTED_LANGUAGES = {
 
 export const SUPPORTED_CURRENCIES = {
   EUR: { symbol: '€',    label: '€ EUR',  detectPatterns: ['fi', 'de', 'fr', 'it', 'es-es', 'pt-pt', 'pt'] },
-  USD: { symbol: '$',    label: '$ USD',  detectPatterns: ['en-us', 'en'] },
+  USD: { symbol: 'USD',  label: 'USD',    detectPatterns: ['en-us', 'en'] },
   GBP: { symbol: '£',    label: '£ GBP',  detectPatterns: ['en-gb'] },
-  BRL: { symbol: 'R$',   label: 'R$ BRL', detectPatterns: ['pt-br'] },
-  CAD: { symbol: '$',    label: '$ CAD',  detectPatterns: ['en-ca', 'fr-ca'] },
-  AUD: { symbol: '$',    label: '$ AUD',  detectPatterns: ['en-au'] },
-  NZD: { symbol: '$',    label: '$ NZD',  detectPatterns: ['en-nz'] },
+  BRL: { symbol: 'BRL',  label: 'BRL',    detectPatterns: ['pt-br'] },
+  CAD: { symbol: 'CAD',  label: 'CAD',    detectPatterns: ['en-ca', 'fr-ca'] },
+  AUD: { symbol: 'AUD',  label: 'AUD',    detectPatterns: ['en-au'] },
+  NZD: { symbol: 'NZD',  label: 'NZD',    detectPatterns: ['en-nz'] },
   CHF: { symbol: 'CHF',  label: 'CHF',    detectPatterns: ['de-ch', 'fr-ch', 'it-ch'] },
-  MXN: { symbol: '$',    label: '$ MXN',  detectPatterns: ['es-mx'] },
+  MXN: { symbol: 'MXN',  label: 'MXN',    detectPatterns: ['es-mx'] },
 } as const;
 
 // Currency locale overrides per language (used by formatCurrency).
@@ -1719,7 +1719,30 @@ export function formatCurrency(value: number, currency: Currency, lang: Language
   const langMap = CURRENCY_LOCALE_MAP[lang];
   const locale = langMap?.[currency] ?? langMap?._default ?? 'en-US';
 
-  return new Intl.NumberFormat(locale, { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(value);
+  const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
+  const parts = formatter.formatToParts(value);
+  
+  const desiredSymbol = getCurrencySymbol(currency);
+  
+  return parts.map(p => p.type === 'currency' ? desiredSymbol : p.value).join('');
+}
+
+export function formatCurrencyHtml(value: number, currency: Currency, lang: Language, fractionDigits: number = 2) {
+  const langMap = CURRENCY_LOCALE_MAP[lang];
+  const locale = langMap?.[currency] ?? langMap?._default ?? 'en-US';
+
+  const formatter = new Intl.NumberFormat(locale, { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
+  const parts = formatter.formatToParts(value);
+  
+  const desiredSymbol = getCurrencySymbol(currency);
+  const isLong = desiredSymbol.length > 1;
+  
+  return parts.map(p => {
+    if (p.type === 'currency') {
+      return isLong ? `<span class="text-[0.65em] font-medium tracking-wide opacity-80 inline-block align-baseline translate-y-[-0.05em] ml-0.5">${desiredSymbol}</span>` : desiredSymbol;
+    }
+    return p.value;
+  }).join('');
 }
 
 // ─── AUTO-DETECTION HELPERS ──────────────────────────────────────────────────

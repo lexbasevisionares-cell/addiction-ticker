@@ -1,22 +1,36 @@
-# TILANNEKATSAUS - 17.4.2026 (Valuuttalaajennus)
+# TILANNEKATSAUS - 17.4.2026 (Valuuttalaajennus ja Pystysuunnan lukitus)
 
-## 🚀 Status: Addiction Ticker v1.3.0 - VALMIS
+## 🚀 Status: Addiction Ticker v1.3.0 - VALMIS JA PUSHATTU
 
-Viimeiset hienosäädöt asetteluun on tehty. Sovellus on nyt visuaalisesti tasapainossa ja valmis markkinoille.
+Tänään olemme toteuttaneet erittäin onnistuneen kokonaisuuden, joka valmistelee Addiction Tickerin laajempaan kansainväliseen levitykseen ja ratkoo tärkeän UI-bugin.
 
-### ✅ Tehdyt hienosäädöt:
-1. **Fonttikoko optimoitu** — Mobiilikoko laskettu `text-4xl` -> `text-3xl` (30px). Luvut mahtuvat paremmin ruudulle pysyen silti suurina.
-2. **Keskiväli korjattu** — Keskiviivan molemmin puolin lisätty enemmän tyhjää tilaa (`pr-4`/`pl-4`), mikä estää merkkien ja viivan törmäämisen.
-3. **Typografia** — Valuuttamerkki ja numerot ovat täsmälleen samaa fonttia ja kokoa.
-4. **Onboarding-flow** — "Mikä on tilanteesi" loppuhuipennuksena, automaattinen kielen tunnistus toimii.
+### ✅ Tehdyt toimenpiteet ja uudet ominaisuudet:
 
-### 📋 Tekninen tila:
-- **Build-status:** `npm run build` suoritettu ✓ (dist/ päivitetty)
-- **Kansainvälistäminen:** FI/EN tuki täydellinen.
-- **Valuuttatuki:** EUR, USD, GBP (oikeat paikat ja symbolit).
+1. **Uusien valuuttojen implementointi (Kohdennetut markkinat)**
+   - Lisättiin uudet tulovirtoja avaavat lokaalit `i18n.ts`-konfiguraatioon:
+     - 🇨🇦 CAD (Kanadan dollari)
+     - 🇦🇺 AUD (Australian dollari)
+     - 🇳🇿 NZD (Uuden-Seelannin dollari)
+     - 🇨🇭 CHF (Sveitsin frangi)
+     - 🇲🇽 MXN (Meksikon peso)
+   - Konfiguroitu `CURRENCY_LOCALE_MAP` tukemaan absoluuttisen täydellistä esitystapaa kullekin (`es-MX`, `en-CA`, `de-CH` jne.).
 
-### 👣 Seuraavat askeleet:
-Kaikki koodimuutokset on nyt tehty. Voit ladata uuden paketin Netlifyyn lopullista silmäilyä varten.
+2. **Natiivitason pystysuunnan lukitus (iOS App)**
+   - Muokattiin Applen natiivitiedostoa `ios/App/App/Info.plist`.
+   - Vaakasuuntien tuet (`LandscapeLeft`, `LandscapeRight`) poistettiin kokonaan, joka poistaa mahdollisuuden kääntää iOS-совellusta vahingossa vinoon (orientation lock).
+
+3. **Weppisovelluksen pystysuunnan pakotus (PWA/Web)**
+   - Luotiin tyylikäs Glassmorphism-peittokuva `PortraitLock.tsx`.
+   - Kohdennettiin CSS-älyllä (`max-height: 500px` & `landscape`) estämään lukituksella tablettien ja tietokoneiden virheelliset estot. Vain vaakatasossa selattavat matkapuhelimet näkevät "Please rotate your device" -animoidun lukituksen.
+
+4. **Kansio- ja lukituskorjaukset (GitHub Build Fix)**
+   - Versionumero nostettiin 1.3.0:aan.
+   - Puskettiin `package-lock.json` takaisin synkkaan komennolla `npm i`, mikä korjasi GitHub Actionsin `npm ci` -komennon kaatumisen.
+   - Build-putki (TestFlight Upload) rullaa vihreänä.
+
+### 📋 Miten jatketaan?
+- Versio 1.3.0 odottaa App Store Connectin valmistumista ja nousee pian TestFlightiin.
+- Jälleen uusi etappi ja valmiimpi ohjelmisto!
 
 ---
 *Projekti: Addiction Ticker | Sijainti: src/components/OnboardingWelcome.tsx*

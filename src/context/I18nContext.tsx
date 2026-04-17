@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Language, Currency, formatCurrency, getTranslations, TranslationStrings } from '../utils/i18n';
+import { Language, Currency, formatCurrency, formatCurrencyHtml, getTranslations, TranslationStrings } from '../utils/i18n';
 
 interface I18nContextType {
   language: Language;
   currency: Currency;
   t: TranslationStrings;
   formatCurrencyString: (value: number, fractionDigits?: number) => string;
+  formatCurrencyHtml: (value: number, fractionDigits?: number) => string;
   setLanguage: (lang: Language) => void;
   setCurrency: (cur: Currency) => void;
 }
@@ -36,10 +37,14 @@ export function I18nProvider({ children, initialLanguage, initialCurrency }: {
     return formatCurrency(value, currency, language, fractionDigits);
   };
 
+  const formatCurrencyHtmlFn = (value: number, fractionDigits: number = 2) => {
+    return formatCurrencyHtml(value, currency, language, fractionDigits);
+  };
+
   const t = getTranslations(language);
 
   return (
-    <I18nContext.Provider value={{ language, currency, t, setLanguage: setLanguageState, setCurrency: setCurrencyState, formatCurrencyString }}>
+    <I18nContext.Provider value={{ language, currency, t, setLanguage: setLanguageState, setCurrency: setCurrencyState, formatCurrencyString, formatCurrencyHtml: formatCurrencyHtmlFn }}>
       {children}
     </I18nContext.Provider>
   );
