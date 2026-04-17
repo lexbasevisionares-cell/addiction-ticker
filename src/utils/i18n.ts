@@ -1,12 +1,46 @@
-export type Language = 'fi' | 'en' | 'es' | 'de' | 'fr' | 'it' | 'pt';
-export type Currency = 'EUR' | 'USD' | 'GBP' | 'BRL';
+// ─── CENTRALIZED CONFIGURATION ───────────────────────────────────────────────
+// Single source of truth for all supported languages and currencies.
+// To add a new language or currency, update ONLY these objects.
+
+export const SUPPORTED_LANGUAGES = {
+  en: { label: 'English',    detectPatterns: ['en'] },
+  es: { label: 'Español',    detectPatterns: ['es'] },
+  fr: { label: 'Français',   detectPatterns: ['fr'] },
+  de: { label: 'Deutsch',    detectPatterns: ['de'] },
+  it: { label: 'Italiano',   detectPatterns: ['it'] },
+  pt: { label: 'Português',  detectPatterns: ['pt'] },
+  fi: { label: 'Suomi',      detectPatterns: ['fi'] },
+} as const;
+
+export const SUPPORTED_CURRENCIES = {
+  EUR: { symbol: '€',    label: '€ EUR',  detectPatterns: ['fi', 'de', 'fr', 'it', 'es-es', 'pt-pt', 'pt'] },
+  USD: { symbol: '$',    label: '$ USD',  detectPatterns: ['en-us', 'en'] },
+  GBP: { symbol: '£',    label: '£ GBP',  detectPatterns: ['en-gb'] },
+  BRL: { symbol: 'R$',   label: 'R$ BRL', detectPatterns: ['pt-br'] },
+  CAD: { symbol: '$',    label: '$ CAD',  detectPatterns: ['en-ca', 'fr-ca'] },
+  AUD: { symbol: '$',    label: '$ AUD',  detectPatterns: ['en-au'] },
+  NZD: { symbol: '$',    label: '$ NZD',  detectPatterns: ['en-nz'] },
+  CHF: { symbol: 'CHF',  label: 'CHF',    detectPatterns: ['de-ch', 'fr-ch', 'it-ch'] },
+  MXN: { symbol: '$',    label: '$ MXN',  detectPatterns: ['es-mx'] },
+} as const;
+
+// Currency locale overrides per language (used by formatCurrency).
+// If a language+currency combo isn't listed, falls back to the language's default locale.
+const CURRENCY_LOCALE_MAP: Record<string, Record<string, string>> = {
+  fi: { _default: 'fi-FI' },
+  es: { EUR: 'es-ES', _default: 'es-MX' },
+  de: { CHF: 'de-CH', _default: 'de-DE' },
+  fr: { CHF: 'fr-CH', CAD: 'fr-CA', _default: 'fr-FR' },
+  it: { CHF: 'it-CH', _default: 'it-IT' },
+  pt: { EUR: 'pt-PT', _default: 'pt-BR' },
+  en: { GBP: 'en-GB', CAD: 'en-CA', AUD: 'en-AU', NZD: 'en-NZ', _default: 'en-US' },
+};
+
+export type Language = keyof typeof SUPPORTED_LANGUAGES;
+export type Currency = keyof typeof SUPPORTED_CURRENCIES;
 
 export function getCurrencySymbol(currency: Currency): string {
-  if (currency === 'EUR') return '€';
-  if (currency === 'USD') return '$';
-  if (currency === 'GBP') return '£';
-  if (currency === 'BRL') return 'R$';
-  return '€';
+  return SUPPORTED_CURRENCIES[currency]?.symbol ?? '€';
 }
 
 export const TRANSLATIONS = {
@@ -1682,24 +1716,46 @@ export function getTranslations(lang: Language): TranslationStrings {
 }
 
 export function formatCurrency(value: number, currency: Currency, lang: Language, fractionDigits: number = 2) {
-  let locale = 'en-US';
-  if (lang === 'fi') {
-    locale = 'fi-FI';
-  } else if (lang === 'es') {
-    locale = currency === 'EUR' ? 'es-ES' : 'es-MX';
-  } else if (lang === 'de') {
-    locale = 'de-DE';
-  } else if (lang === 'fr') {
-    locale = 'fr-FR';
-  } else if (lang === 'it') {
-    locale = 'it-IT';
-  } else if (lang === 'pt') {
-    locale = 'pt-BR';
-  } else if (currency === 'GBP') {
-    locale = 'en-GB';
-  }
+  const langMap = CURRENCY_LOCALE_MAP[lang];
+  const locale = langMap?.[currency] ?? langMap?._default ?? 'en-US';
 
   return new Intl.NumberFormat(locale, { style: 'currency', currency: currency, minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits }).format(value);
+}
+
+// ─── AUTO-DETECTION HELPERS ──────────────────────────────────────────────────
+// Detect the best language/currency from navigator.language using the centralized
+// detectPatterns. More specific patterns (e.g. 'en-gb') are checked before
+// generic ones (e.g. 'en'), so ordering in detectPatterns matters.
+
+export function detectLanguage(navLang?: string): Language {
+  const lang = (navLang ?? navigator.language).toLowerCase();
+  // Sort by pattern length descending so more specific patterns match first
+  for (const [code, config] of Object.entries(SUPPORTED_LANGUAGES)) {
+    const sorted = [...config.detectPatterns].sort((a, b) => b.length - a.length);
+    for (const pattern of sorted) {
+      if (lang.startsWith(pattern)) return code as Language;
+    }
+  }
+  return 'en';
+}
+
+export function detectCurrency(navLang?: string): Currency {
+  const lang = (navLang ?? navigator.language).toLowerCase();
+
+  // Flatten all (pattern, currencyCode) pairs and sort by pattern length
+  // descending so specific patterns like 'en-gb' always win over 'en'.
+  const allPatterns: [string, Currency][] = [];
+  for (const [code, config] of Object.entries(SUPPORTED_CURRENCIES)) {
+    for (const pattern of config.detectPatterns) {
+      allPatterns.push([pattern, code as Currency]);
+    }
+  }
+  allPatterns.sort((a, b) => b[0].length - a[0].length);
+
+  for (const [pattern, currency] of allPatterns) {
+    if (lang === pattern || lang.startsWith(pattern + '-')) return currency;
+  }
+  return 'USD';
 }
 
 // Deprecated: For compatibility during partial migration, though ideally remove this completely.

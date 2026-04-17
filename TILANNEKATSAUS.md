@@ -1,6 +1,6 @@
-# TILANNEKATSAUS - 13.4.2026 (Iltapäivä - Hienosäätö)
+# TILANNEKATSAUS - 17.4.2026 (Valuuttalaajennus)
 
-## 🚀 Status: Addiction Ticker v1.2.1 (Layout Finalized) - VALMIS
+## 🚀 Status: Addiction Ticker v1.3.0 - VALMIS
 
 Viimeiset hienosäädöt asetteluun on tehty. Sovellus on nyt visuaalisesti tasapainossa ja valmis markkinoille.
 

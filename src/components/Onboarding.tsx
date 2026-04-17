@@ -5,7 +5,7 @@ import WheelPicker from './WheelPicker';
 import OnboardingWelcome from './OnboardingWelcome';
 import OnboardingStatusScreen from './OnboardingStatusScreen';
 import InfoModal, { InfoType } from './InfoModal';
-import { getCurrencySymbol, Language, Currency } from '../utils/i18n';
+import { getCurrencySymbol, Language, Currency, SUPPORTED_LANGUAGES, SUPPORTED_CURRENCIES } from '../utils/i18n';
 import { useI18n } from '../context/I18nContext';
 
 export interface UserSettings {
@@ -133,13 +133,9 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                 onChange={(e) => setLanguage(e.target.value as Language)}
                 className="bg-transparent text-white font-sans text-base lg:text-xl focus:outline-none appearance-none cursor-pointer text-right min-w-[100px]"
               >
-                <option value="en" className="bg-zinc-900 text-white">English</option>
-                <option value="es" className="bg-zinc-900 text-white">Español</option>
-                <option value="fr" className="bg-zinc-900 text-white">Français</option>
-                <option value="de" className="bg-zinc-900 text-white">Deutsch</option>
-                <option value="it" className="bg-zinc-900 text-white">Italiano</option>
-                <option value="pt" className="bg-zinc-900 text-white">Português</option>
-                <option value="fi" className="bg-zinc-900 text-white">Suomi</option>
+                {Object.entries(SUPPORTED_LANGUAGES).map(([code, config]) => (
+                  <option key={code} value={code} className="bg-zinc-900 text-white">{config.label}</option>
+                ))}
               </select>
             </div>
             <div className="w-full flex items-center justify-between py-6 lg:py-8 border-b border-white/20">
@@ -149,10 +145,9 @@ export default function Onboarding({ onSave, initialSettings }: Props) {
                 onChange={(e) => setCurrency(e.target.value as Currency)}
                 className="bg-transparent text-white font-sans text-base lg:text-xl focus:outline-none appearance-none cursor-pointer text-right min-w-[100px]"
               >
-                <option value="EUR" className="bg-zinc-900 text-white">€ EUR</option>
-                <option value="USD" className="bg-zinc-900 text-white">$ USD</option>
-                <option value="GBP" className="bg-zinc-900 text-white">£ GBP</option>
-                <option value="BRL" className="bg-zinc-900 text-white">R$ BRL</option>
+                {Object.entries(SUPPORTED_CURRENCIES).map(([code, config]) => (
+                  <option key={code} value={code} className="bg-zinc-900 text-white">{config.label}</option>
+                ))}
               </select>
             </div>
           </div>

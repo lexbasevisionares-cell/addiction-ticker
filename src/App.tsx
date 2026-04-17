@@ -1,221 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import Onboarding, { UserSettings, InitialStatus } from './components/Onboarding';
-import Ticker, { AppState } from './components/Ticker';
-import Settings from './components/Settings';
-import { requestNotificationPermission, scheduleMotivationPlan, clearAllNotifications } from './utils/notifications';
-import { I18nProvider } from './context/I18nContext';
-import { Language, Currency } from './utils/i18n';
-
-type ViewState = 'loading' | 'onboarding' | 'ticker' | 'settings';
+import React from 'react';
+import { Capacitor } from '@capacitor/core';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Landing from './pages/Landing';
+import TickerApp from './pages/TickerApp';
+import Info from './pages/Info';
+import Privacy from './pages/Privacy';
+import NotFound from './pages/NotFound';
 
 export default function App() {
-  const [view, setView] = useState<ViewState>('loading');
-  const [settings, setSettings] = useState<UserSettings | null>(null);
-  const [appState, setAppState] = useState<AppState | null>(null);
+  const isNative = Capacitor.isNativePlatform();
 
-  useEffect(() => {
-    requestNotificationPermission();
+  // iOS App skips the web landing page entirely
+  if (isNative) {
+    return <TickerApp />;
+  }
 
-    try {
-      const savedSettings = localStorage.getItem('addiction_settings');
-      const savedState = localStorage.getItem('addiction_state');
-      
-      if (savedSettings && savedState) {
-        const parsedSettings = JSON.parse(savedSettings);
-        if (parsedSettings.expectedReturn === undefined) {
-          parsedSettings.expectedReturn = 7.0;
-        }
-        if (parsedSettings.investReminderThreshold === undefined) {
-          parsedSettings.investReminderThreshold = 0.01;
-        }
-        if (!parsedSettings.language) {
-          const navLang = navigator.language.toLowerCase();
-          if (navLang.startsWith('fi')) {
-            parsedSettings.language = 'fi';
-          } else if (navLang.startsWith('es')) {
-            parsedSettings.language = 'es';
-          } else if (navLang.startsWith('de')) {
-            parsedSettings.language = 'de';
-          } else if (navLang.startsWith('fr')) {
-            parsedSettings.language = 'fr';
-          } else if (navLang.startsWith('it')) {
-            parsedSettings.language = 'it';
-          } else if (navLang.startsWith('pt')) {
-            parsedSettings.language = 'pt';
-          } else {
-            parsedSettings.language = 'en';
-          }
-        }
-        if (!parsedSettings.currency) {
-          const navLang = navigator.language.toLowerCase();
-          if (navLang.startsWith('fi')) {
-            parsedSettings.currency = 'EUR';
-          } else if (navLang === 'es-es') {
-            parsedSettings.currency = 'EUR';
-          } else if (navLang.startsWith('de')) {
-            parsedSettings.currency = 'EUR';
-          } else if (navLang.startsWith('fr')) {
-            parsedSettings.currency = 'EUR';
-          } else if (navLang.startsWith('it')) {
-            parsedSettings.currency = 'EUR';
-          } else if (navLang === 'pt-br' || navLang.startsWith('pt-br-')) {
-            parsedSettings.currency = 'BRL';
-          } else if (navLang.startsWith('pt')) {
-            parsedSettings.currency = 'EUR';
-          } else if (navLang === 'en-gb' || navLang.startsWith('en-gb-')) {
-            parsedSettings.currency = 'GBP';
-          } else {
-            parsedSettings.currency = 'USD';
-          }
-        }
-        if (parsedSettings.timeFormat !== undefined) {
-          delete parsedSettings.timeFormat;
-        }
-        setSettings(parsedSettings);
-        
-        const parsedState = JSON.parse(savedState);
-        // Clean up legacy periods if they exist
-        if (parsedState.periods) {
-          delete parsedState.periods;
-          localStorage.setItem('addiction_state', JSON.stringify(parsedState));
-        }
-        
-        if (!parsedState.lastTransferTime) {
-          parsedState.lastTransferTime = parsedState.startTime;
-        }
-        
-        if (!parsedState.lastDismissedAmount) {
-          parsedState.lastDismissedAmount = 0;
-        }
-        
-        setAppState(parsedState);
-        scheduleMotivationPlan(parsedSettings, parsedState);
-        setView('ticker');
-      }
-    } catch (e) {
-      console.error('Failed to load saved data, resetting:', e);
-      localStorage.removeItem('addiction_settings');
-      localStorage.removeItem('addiction_state');
-    }
-    // If no saved data (or error), go to onboarding
-    setView(prev => prev === 'loading' ? 'onboarding' : prev);
-  }, []);
-
-  const handleSaveSettings = (newSettings: UserSettings, initialStatus?: InitialStatus) => {
-    setSettings(newSettings);
-    localStorage.setItem('addiction_settings', JSON.stringify(newSettings));
-    
-    if (!appState) {
-      const now = initialStatus ? initialStatus.startTime : Date.now();
-      const status = initialStatus && initialStatus.type === 'hooked' ? 'riippuvainen' : 'vapaa';
-      
-      const initialState: AppState = { 
-        status: status, 
-        startTime: now,
-        lastTransferTime: now,
-        lastDismissedAmount: 0
-      };
-      setAppState(initialState);
-      localStorage.setItem('addiction_state', JSON.stringify(initialState));
-      scheduleMotivationPlan(newSettings, initialState);
-    } else {
-      scheduleMotivationPlan(newSettings, appState);
-    }
-    setView('ticker');
-  };
-
-  const handleUpdateState = (newState: AppState) => {
-    setAppState(newState);
-    localStorage.setItem('addiction_state', JSON.stringify(newState));
-    if (settings) {
-      scheduleMotivationPlan(settings, newState);
-    }
-  };
-
-  const handleEditSettings = () => {
-    setView('settings');
-  };
-
-  const handleSaveEditedSettings = (newSettings: UserSettings) => {
-    setSettings(newSettings);
-    localStorage.setItem('addiction_settings', JSON.stringify(newSettings));
-    if (appState) {
-      scheduleMotivationPlan(newSettings, appState);
-    }
-  };
-
-  const handleResetAll = () => {
-    clearAllNotifications();
-    localStorage.removeItem('addiction_settings');
-    localStorage.removeItem('addiction_state');
-    setSettings(null);
-    setAppState(null);
-    setView('onboarding');
-  };
-
-  const renderContent = () => {
-    if (view === 'loading') {
-      return null;
-    }
-
-    if (view === 'onboarding') {
-      return <Onboarding onSave={handleSaveSettings} initialSettings={settings} />;
-    }
-
-    if (settings && appState) {
-      return (
-        <>
-          <Ticker settings={settings} appState={appState} onUpdateState={handleUpdateState} onEditSettings={handleEditSettings} onResetAll={handleResetAll} />
-          {view === 'settings' && (
-            <div className="fixed inset-0 z-50 bg-[#050505] overflow-y-auto no-scrollbar">
-              <Settings 
-                initialSettings={settings} 
-                appState={appState} 
-                onSave={handleSaveEditedSettings} 
-                onUpdateState={handleUpdateState} 
-                onCancel={() => setView('ticker')} 
-              />
-            </div>
-          )}
-        </>
-      );
-    }
-
-    return null;
-  };
-
-  const navLangForDefaults = navigator.language.toLowerCase();
-  let defaultLang = 'en';
-  if (navLangForDefaults.startsWith('fi')) defaultLang = 'fi';
-  else if (navLangForDefaults.startsWith('es')) defaultLang = 'es';
-  else if (navLangForDefaults.startsWith('de')) defaultLang = 'de';
-  else if (navLangForDefaults.startsWith('fr')) defaultLang = 'fr';
-  else if (navLangForDefaults.startsWith('it')) defaultLang = 'it';
-  else if (navLangForDefaults.startsWith('pt')) defaultLang = 'pt';
-  const activeLang = settings?.language || defaultLang;
-
-  const getDefaultCurrency = () => {
-    const navLang = navigator.language.toLowerCase();
-    if (navLang.startsWith('fi')) return 'EUR';
-    if (navLang === 'es-es') return 'EUR';
-    if (navLang.startsWith('de')) return 'EUR';
-    if (navLang.startsWith('fr')) return 'EUR';
-    if (navLang.startsWith('it')) return 'EUR';
-    if (navLang === 'pt-br' || navLang.startsWith('pt-br-')) return 'BRL';
-    if (navLang.startsWith('pt')) return 'EUR';
-    if (navLang.startsWith('en-gb')) return 'GBP';
-    return 'USD';
-  };
-  const activeCur = settings?.currency || getDefaultCurrency();
+  // Smart routing logic
+  const hasData = localStorage.getItem('addiction_settings') !== null;
 
   return (
-    <I18nProvider initialLanguage={activeLang as Language} initialCurrency={activeCur as Currency}>
-      <div className="w-full h-full bg-[#050505] overflow-hidden">
-        {/* App Content */}
-        <div className="w-full h-full bg-[#050505] overflow-hidden">
-          {renderContent()}
-        </div>
-      </div>
-    </I18nProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={hasData ? <Navigate to="/app" replace /> : <Landing />} />
+        <Route path="/app" element={<TickerApp />} />
+        <Route path="/info" element={<Info />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

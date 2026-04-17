@@ -5,7 +5,7 @@ import { AppState } from './Ticker';
 import WheelPicker, { SingleTextWheelPicker } from './WheelPicker';
 import InfoModal, { InfoType } from './InfoModal';
 import { Capacitor } from '@capacitor/core';
-import { getCurrencySymbol, Language, Currency } from '../utils/i18n';
+import { getCurrencySymbol, Language, Currency, SUPPORTED_LANGUAGES, SUPPORTED_CURRENCIES } from '../utils/i18n';
 import { useI18n } from '../context/I18nContext';
 
 interface Props {
@@ -220,13 +220,9 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
                 onChange={(e) => setLanguage(e.target.value as Language)}
                 className="bg-[#050505] text-white font-sans text-base lg:text-xl font-light focus:outline-none cursor-pointer text-right min-w-[100px]"
               >
-                <option value="en">English</option>
-                <option value="es">Español</option>
-                <option value="fr">Français</option>
-                <option value="de">Deutsch</option>
-                <option value="it">Italiano</option>
-                <option value="pt">Português</option>
-                <option value="fi">Suomi</option>
+                {Object.entries(SUPPORTED_LANGUAGES).map(([code, config]) => (
+                  <option key={code} value={code}>{config.label}</option>
+                ))}
               </select>
             </div>
             <div className="w-full flex items-center justify-between py-4 lg:py-5 border-b border-white/5 group">
@@ -236,10 +232,9 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
                 onChange={(e) => setCurrency(e.target.value as Currency)}
                 className="bg-[#050505] text-white font-sans text-base lg:text-xl font-light focus:outline-none cursor-pointer text-right min-w-[100px]"
               >
-                <option value="EUR">€ EUR</option>
-                <option value="USD">$ USD</option>
-                <option value="GBP">£ GBP</option>
-                <option value="BRL">R$ BRL</option>
+                {Object.entries(SUPPORTED_CURRENCIES).map(([code, config]) => (
+                  <option key={code} value={code}>{config.label}</option>
+                ))}
               </select>
             </div>
           </div>
