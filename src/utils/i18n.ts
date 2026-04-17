@@ -1739,7 +1739,10 @@ export function formatCurrencyHtml(value: number, currency: Currency, lang: Lang
   
   return parts.map(p => {
     if (p.type === 'currency') {
-      return isLong ? `<span class="text-[0.65em] font-medium tracking-wide opacity-80 inline-block align-baseline translate-y-[-0.05em] ml-0.5">${desiredSymbol}</span>` : desiredSymbol;
+      return isLong ? `<span class="text-[0.3em] font-medium tracking-wide opacity-80 inline-block align-baseline translate-y-[-0.05em] ml-0.5">${desiredSymbol}</span>` : desiredSymbol;
+    }
+    if (p.type === 'literal' && p.value.includes(' ')) {
+      return p.value.replace(/ /g, '\u00A0');
     }
     return p.value;
   }).join('');

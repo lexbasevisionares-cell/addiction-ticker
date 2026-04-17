@@ -61,7 +61,11 @@ export default function OnboardingWelcome({ onStart }: Props) {
       maximumFractionDigits: 0,
     }).format(value);
     const numClasses = `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter tabular-nums leading-none ${colorClass}`;
-    const symClasses = `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter leading-none ${colorClass}`;
+    const isLong = symbol.length > 1;
+    const symClasses = isLong 
+      ? `text-xl sm:text-3xl md:text-5xl lg:text-7xl font-medium tracking-wide opacity-80 ${colorClass}` 
+      : `text-3xl sm:text-6xl md:text-8xl lg:text-[9rem] font-light tracking-tighter leading-none ${colorClass}`;
+
     if (['fi', 'de', 'fr', 'it', 'pt'].includes(language)) {
       return (
         <div className="whitespace-nowrap flex items-baseline gap-3 font-sans">
@@ -71,7 +75,7 @@ export default function OnboardingWelcome({ onStart }: Props) {
       );
     } else {
       return (
-        <div className="whitespace-nowrap flex items-baseline font-sans">
+        <div className="whitespace-nowrap flex items-baseline gap-2 font-sans">
           <span className={symClasses}>{symbol}</span>
           <span className={numClasses}>{formattedNumber}</span>
         </div>

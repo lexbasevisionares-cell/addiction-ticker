@@ -131,7 +131,7 @@ export default function FinancialChart({
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className={`font-sans tabular-nums ${fontSizeClass} font-light text-white tracking-tighter leading-none block`}
+                  className={`font-sans tabular-nums ${fontSizeClass} font-light text-white tracking-tighter leading-none block whitespace-nowrap`}
                   dangerouslySetInnerHTML={{ __html: leftValueString }}
                 />
               </AnimatePresence>
@@ -156,7 +156,7 @@ export default function FinancialChart({
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className={`font-sans tabular-nums ${fontSizeClass} font-light ${colorClass} tracking-tighter leading-none block`}
+                  className={`font-sans tabular-nums ${fontSizeClass} font-light ${colorClass} tracking-tighter leading-none block whitespace-nowrap`}
                   dangerouslySetInnerHTML={{ __html: rightValueString }}
                 />
               </AnimatePresence>
@@ -255,7 +255,7 @@ export default function FinancialChart({
                   return (
                     <div className="bg-black/90 backdrop-blur-3xl border border-white/10 px-6 py-4 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.8)] pointer-events-none">
                       <div className="text-[10px] lg:text-xs uppercase tracking-[0.4em] text-zinc-500 font-medium mb-2">{t.year} {data.year}</div>
-                      <div className={`font-sans tabular-nums text-4xl lg:text-5xl 2xl:text-6xl font-light ${colorClass} tracking-tighter`}
+                      <div className={`font-sans tabular-nums text-4xl lg:text-5xl 2xl:text-6xl font-light ${colorClass} tracking-tighter whitespace-nowrap`}
                            dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(data.investedValue, showDecimals ? 2 : 0) }} />
                       {viewType === 'potential' && (
                         <div className="font-sans tabular-nums text-sm lg:text-base font-medium text-zinc-400 mt-2"
