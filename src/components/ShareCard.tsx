@@ -198,6 +198,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
           background: accent,
           boxShadow: `0 0 8px ${accent}`,
           flexShrink: 0,
+          alignSelf: 'center',
         }} />
         {/* Status text */}
         <span style={{
@@ -207,6 +208,8 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
           textTransform: 'uppercase',
           color: '#fff',
           whiteSpace: 'nowrap',
+          lineHeight: '28px',
+          alignSelf: 'center',
         }}>
           {isFree ? t.freeFor : t.hookedStatus}
         </span>
