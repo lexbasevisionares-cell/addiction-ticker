@@ -1,36 +1,21 @@
-# TILANNEKATSAUS - 17.4.2026 (Valuuttalaajennus ja Pystysuunnan lukitus)
+# TILANNEKATSAUS - 20.4.2026 (v1.4.0 — Share Cards Release)
 
-## 🚀 Status: Addiction Ticker v1.3.0 - VALMIS JA PUSHATTU
+## 🚀 Status: v1.4.0 VIETY TESTFLIGHTIIN
 
-Tänään olemme toteuttaneet erittäin onnistuneen kokonaisuuden, joka valmistelee Addiction Tickerin laajempaan kansainväliseen levitykseen ja ratkoo tärkeän UI-bugin.
+### ✅ Uudet ominaisuudet (v1.4.0):
+- **Share Cards:** 8 uniikkia jakokorttia (4 Vapaa / 4 Koukussa), 4:5 pystyformaatti (480x600)
+- **Atominen SVG-renderöinti:** Kaikki kriittiset UI-osat (kellotaulu, status-rivi, tulospaneeli) piirretään SVG-vektoreina, mikä takaa pikselintarkan laadun html2canvas-vienneissä
+- **Esikatselunäkymä:** Pyyhkäistävä karuselli, jatkuva aikaikkuna-säädin, täysin opaakki tausta
+- **UX-parannukset:** Ei layout-shiftejä, ei läpikuultavia taustoja, ei renderöintivirheitä
 
-### ✅ Tehdyt toimenpiteet ja uudet ominaisuudet:
-
-1. **Uusien valuuttojen implementointi (Kohdennetut markkinat)**
-   - Lisättiin uudet tulovirtoja avaavat lokaalit `i18n.ts`-konfiguraatioon:
-     - 🇨🇦 CAD (Kanadan dollari)
-     - 🇦🇺 AUD (Australian dollari)
-     - 🇳🇿 NZD (Uuden-Seelannin dollari)
-     - 🇨🇭 CHF (Sveitsin frangi)
-     - 🇲🇽 MXN (Meksikon peso)
-   - Konfiguroitu `CURRENCY_LOCALE_MAP` tukemaan absoluuttisen täydellistä esitystapaa kullekin (`es-MX`, `en-CA`, `de-CH` jne.).
-
-2. **Natiivitason pystysuunnan lukitus (iOS App)**
-   - Muokattiin Applen natiivitiedostoa `ios/App/App/Info.plist`.
-   - Vaakasuuntien tuet (`LandscapeLeft`, `LandscapeRight`) poistettiin kokonaan, joka poistaa mahdollisuuden kääntää iOS-совellusta vahingossa vinoon (orientation lock).
-
-3. **Weppisovelluksen pystysuunnan pakotus (PWA/Web)**
-   - Luotiin tyylikäs Glassmorphism-peittokuva `PortraitLock.tsx`.
-   - Kohdennettiin CSS-älyllä (`max-height: 500px` & `landscape`) estämään lukituksella tablettien ja tietokoneiden virheelliset estot. Vain vaakatasossa selattavat matkapuhelimet näkevät "Please rotate your device" -animoidun lukituksen.
-
-4. **Kansio- ja lukituskorjaukset (GitHub Build Fix)**
-   - Versionumero nostettiin 1.3.0:aan.
-   - Puskettiin `package-lock.json` takaisin synkkaan komennolla `npm i`, mikä korjasi GitHub Actionsin `npm ci` -komennon kaatumisen.
-   - Build-putki (TestFlight Upload) rullaa vihreänä.
-
-### 📋 Miten jatketaan?
-- Versio 1.3.0 odottaa App Store Connectin valmistumista ja nousee pian TestFlightiin.
-- Jälleen uusi etappi ja valmiimpi ohjelmisto!
+### 📋 Nykytila:
+- [x] Share Cards: Formaatti 4:5 ✅
+- [x] Share Cards: Yksi luku + kontekstitarina ✅
+- [x] Share Cards: SVG-pohjainen renderöinti ✅
+- [x] Share Cards: Esikatselunäkymän hienosäätö ✅
+- [x] v1.4.0 TestFlight-julkaisu ✅
+- [ ] Widgetit (Seuraava isompi kokonaisuus)
+- [ ] Investointitransaktiot (Parempi historian seuranta)
 
 ---
-*Projekti: Addiction Ticker | Sijainti: src/components/OnboardingWelcome.tsx*
+*Projekti: Addiction Ticker | Sijainti: src/components/ShareCard.tsx, ShareCardModal.tsx*

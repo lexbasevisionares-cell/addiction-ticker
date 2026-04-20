@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Menu } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 
 export default function WebsiteNav() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Prevent scrolling when menu is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -28,30 +26,29 @@ export default function WebsiteNav() {
     }
   };
 
-  const navLinks: { label: string; to?: string; action?: () => void; highlight?: boolean }[] = [
+  const navLinks: { label: string; to?: string; action?: () => void }[] = [
     { label: 'Features', action: handleFeaturesClick },
     { label: 'Privacy', to: '/privacy' },
     { label: 'Support', to: '/info' },
-    { label: 'Open Web App', action: () => navigate('/app'), highlight: true },
+    { label: 'Web App', action: () => navigate('/app') },
   ];
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-40 bg-[#050505]/60 backdrop-blur-3xl border-b border-white/5 font-sans">
+      <nav className="fixed top-0 left-0 w-full z-40 bg-[#0D0D0D]/70 backdrop-blur-3xl border-b border-white/[0.06] font-sans">
         <div className="max-w-7xl mx-auto px-6 h-[clamp(60px,8dvh,80px)] flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group active:scale-95 transition-transform z-50">
-            <div className="w-8 h-8 rounded-[22%] shrink-0 shadow-[0_0_12px_rgba(255,255,255,0.05)] group-hover:shadow-[0_0_16px_rgba(255,255,255,0.1)] transition-all overflow-hidden border border-white/10">
-              <img src="/icon-512x512.png" alt="Addiction Ticker Logo" className="w-full h-full object-cover" />
+            <div className="w-7 h-7 rounded-[22%] shrink-0 overflow-hidden">
+              <img src="/icon-512x512.png" alt="Addiction Ticker" className="w-full h-full object-cover" />
             </div>
-            <span className="font-semibold text-[12px] uppercase tracking-[0.4em] text-white/90">Addiction Ticker</span>
+            <span className="font-medium text-[11px] uppercase tracking-[0.45em] text-white/80 group-hover:text-white transition-colors">Addiction Ticker</span>
           </Link>
 
-          <button 
+          <button
             onClick={() => setIsOpen(true)}
-            className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] font-medium text-white/70 hover:text-white transition-colors py-2 active:scale-95 z-50"
+            className="text-[10px] uppercase tracking-[0.4em] font-medium text-white/50 hover:text-white transition-colors py-2 active:scale-95 z-50"
           >
-            <span>Menu</span>
-            <Menu size={16} />
+            Menu
           </button>
         </div>
       </nav>
@@ -59,19 +56,19 @@ export default function WebsiteNav() {
       {/* Full-screen Overlay Menu */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-50 bg-[#050505]/95 backdrop-blur-3xl flex flex-col items-center justify-center"
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-0 z-50 bg-[#0D0D0D]/98 backdrop-blur-3xl flex flex-col items-center justify-center"
           >
             {/* Close Button */}
-            <button 
+            <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-6 right-6 p-4 text-white/50 hover:text-white transition-colors hover:rotate-90 duration-500"
+              className="absolute top-6 right-6 px-4 py-2 text-[10px] uppercase tracking-[0.4em] font-medium text-white/40 hover:text-white transition-colors"
             >
-              <X size={32} strokeWidth={1} />
+              Close
             </button>
 
             {/* Menu Items */}
@@ -79,15 +76,15 @@ export default function WebsiteNav() {
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.label}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + index * 0.1, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 0.08 + index * 0.08, duration: 0.5, ease: 'easeOut' }}
                 >
                   {link.to ? (
-                    <Link 
+                    <Link
                       to={link.to}
                       onClick={() => setIsOpen(false)}
-                      className="text-4xl md:text-5xl lg:text-6xl font-light text-white/70 hover:text-white transition-colors tracking-tight"
+                      className="text-4xl md:text-5xl lg:text-6xl font-light text-white/50 hover:text-white transition-colors tracking-tight"
                     >
                       {link.label}
                     </Link>
@@ -100,10 +97,9 @@ export default function WebsiteNav() {
                           setTimeout(() => action(), 300);
                         }
                       }}
-                      className={`text-4xl md:text-5xl lg:text-6xl font-light text-white/70 transition-colors tracking-tight ${link.highlight ? 'hover:text-emerald-400 relative group' : 'hover:text-white'}`}
+                      className="text-4xl md:text-5xl lg:text-6xl font-light text-white/50 hover:text-white transition-colors tracking-tight"
                     >
                       {link.label}
-                      {link.highlight && <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-emerald-400 group-hover:w-full transition-all duration-300"></span>}
                     </button>
                   )}
                 </motion.div>

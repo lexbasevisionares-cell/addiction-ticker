@@ -11,6 +11,7 @@ import SideDrawer from './SideDrawer';
 import InfoModal, { InfoType } from './InfoModal';
 import ConfirmActionModal from './ConfirmActionModal';
 import InvestConfirmBanner from './InvestConfirmBanner';
+import ShareCardModal from './ShareCardModal';
 import { playCentDrop, startTickLoop, stopTickLoop, initAudio } from '../utils/audio';
 import { useRef } from 'react';
 
@@ -44,6 +45,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [infoModal, setInfoModal] = useState<InfoType | null>(null);
   const [isInvestBannerOpen, setIsInvestBannerOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const lastCentRef = useRef<number>(-1);
   const lastSecondRef = useRef<number>(-1);
 
@@ -173,34 +175,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const formatCurrencyTicker = (val: number, fractionDigits: number = 2) => fmtCurStr(val, fractionDigits);
   const formatCurrencyTickerHtml = (val: number, fractionDigits: number = 2) => fmtCurHtml(val, fractionDigits);
 
-  const handleShare = async () => {
-    const url = 'https://addictionticker.com/';
-    const formattedTotal = formatCurrencyTicker(totalForecast);
-    const formattedCurrent = formatCurrencyTicker(accumulated);
-
-    let text = '';
-    if (isFree) {
-      text = t.shareTextFree
-        .replace('{B}', formattedCurrent)
-        .replace('{D}', formatCurrencyTicker(securedFV))
-        .replace(/{E}/g, forecastYears.toString());
-    } else {
-      const forecastDirectCosts = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, forecastYears * 365.25);
-      text = t.shareTextHooked
-        .replace('{A}', forecastYears.toString())
-        .replace('{G}', formatCurrencyTicker(forecastDirectCosts));
-    }
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: t.tickerHeader, text, url });
-      } catch (err) {
-        console.log('Error sharing', err);
-      }
-    } else {
-      navigator.clipboard.writeText(`${text} ${url}`);
-      alert(t.linkCopied);
-    }
+  const handleShare = () => {
+    setIsShareModalOpen(true);
   };
 
   return (
@@ -381,6 +357,20 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         onClose={() => setIsInvestBannerOpen(false)}
         onConfirm={handleMarkAsInvested}
         pendingAmount={formatCurrencyTicker(pendingAmount)}
+      />
+
+      <ShareCardModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        settings={settings}
+        isFree={isFree}
+        days={days}
+        hours={hours}
+        minutes={minutes}
+        seconds={seconds}
+        accumulated={accumulated}
+        elapsedDays={elapsedDays}
+        currentYear={currentYear}
       />
     </div>
   );
