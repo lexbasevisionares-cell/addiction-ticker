@@ -286,7 +286,7 @@ export const TRANSLATIONS = {
     shareCardTitle2: 'Sijoitusarvo',
     shareCardTitle3: 'Puhdas säästö',
     shareCardTitle4: 'Kokonaisarvo',
-    shareCardContext1Free: 'Olen säästänyt tämän {days} päivässä ilman riippuvuutta.',
+    shareCardContext1Free: 'Olen säästänyt tämän summan {days} päivän aikana lopetettuani.',
     shareCardContext2Free: 'Jo säästämäni raha on sijoitettuna tämän arvoinen vuonna {year}.',
     shareCardContext3Free: 'Puhdas käteissäästöni vuoteen {year} mennessä — ilman sijoitustuottoja.',
     shareCardContext4Free: 'Säästöjeni ja sijoitustuottojeni yhteisarvo vuonna {year}.',

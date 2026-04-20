@@ -1,0 +1,66 @@
+# Release Notes - v1.4.0 (20.4.2026) - All Languages
+
+Tässä on lyhyet ja ytimekkäät julkaisutekstit kaikille sovelluksen tukemille kielille.
+
+---
+
+### Finnish (Finnish)
+UUTTA: Jaa saavutuksesi!
+Jaa taloudelliset virstanpylvääsi upeina, korkealaatuisina kuvakortteina suoraan sosiaaliseen mediaan.
+- 8 uniikkia korttivariaatiota.
+- Korkealaatuinen kuvavienti.
+- Parannettu ja vakaampi käyttöliittymä.
+
+---
+
+### English (U.S. & U.K.)
+NEW: Share Your Success!
+Share your financial milestones as beautiful, high-resolution image cards directly to social media.
+- 8 unique card variants.
+- High-fidelity image exports.
+- Improved UI stability and refinements.
+
+---
+
+### French (French)
+NOUVEAUTÉ : Partagez votre succès !
+Partagez vos étapes financières sous forme de magnifiques cartes d'images haute résolution sur les réseaux sociaux.
+- 8 variantes de cartes uniques.
+- Exportation d'images haute fidélité.
+- Améliorations de la stabilité de l'interface.
+
+---
+
+### German (German)
+NEU: Teile deinen Erfolg!
+Teile deine finanziellen Meilensteine als wunderschöne, hochauflösende Bildkarten in den sozialen Medien.
+- 8 einzigartige Kartenvarianten.
+- Hochauflösende Bildexporte.
+- Verbesserte UI-Stabilität und Optimierungen.
+
+---
+
+### Italian (Italian)
+NOVITÀ: Condividi il tuo successo!
+Condividi i tuoi traguardi finanziari come bellissime schede immagini ad alta risoluzione sui social media.
+- 8 varianti di schede uniche.
+- Esportazione di immagini ad alta fedeltà.
+- Miglioramenti della stabilità dell'interfaccia utente.
+
+---
+
+### Portuguese (Brazil & Portugal)
+NOVIDADE: Compartilhe seu sucesso!
+Compartilhe seus marcos financeiros como lindos cartões de imagem de alta resolução nas redes sociais.
+- 8 variantes de cartões exclusivos.
+- Exportação de imagem de alta fidelidade.
+- Melhorias na estabilidade da interface do usuário.
+
+---
+
+### Spanish (Spain)
+NOVEDAD: ¡Comparte tu éxito!
+Comparte tus logros financieros como hermosas tarjetas de imagen de alta resolución en las redes sociales.
+- 8 variantes de tarjetas únicas.
+- Exportación de imágenes de alta fidelidad.
+- Mejoras en la estabilidad de la interfaz de usuario.

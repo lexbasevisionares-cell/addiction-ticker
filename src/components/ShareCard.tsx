@@ -108,7 +108,6 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
   const accent = isFree ? '#34d399' : '#f43f5e';
   const accentDim = isFree ? 'rgba(52,211,153,0.3)' : 'rgba(244,63,94,0.3)';
   const bgMain = '#050505';
-  const bgInner = '#000000';
 
   // Determine the single hero value and context text
   const getCardData = () => {
@@ -272,11 +271,10 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
           style={{
             fontSize: '9px',
             fontWeight: 800,
-            textTransform: 'uppercase',
             letterSpacing: '0.4em'
           }}
         >
-          {data.title}
+          {data.title.toUpperCase()}
         </text>
 
         {/* Main Value Number */}
@@ -296,9 +294,9 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
           {data.value}
         </text>
 
-        {/* Status Icon — Positioned relative to text length */}
-        <g transform={`translate(${212 + (data.value.length * 16) + 12}, 115)`}>
-          <g transform="translate(-16, -16) scale(1)">
+        {/* Status Icon — Positioned relative to text length, clamped to SVG bounds */}
+        <g transform={`translate(${Math.min(212 + (data.value.length * 14) + 12, 400)}, 115)`}>
+          <g transform="translate(-16, -16)">
             {isFree ? (
               <>
                 <path d="M23 6l-9.5 9.5-5-5L1 18" fill="none" stroke={accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -322,11 +320,21 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
             fontWeight: 400
           }}
         >
-          {/* Rough split into two lines for SVG display */}
-          <tspan x="50%" dy="0">{data.context.length > 35 ? data.context.substring(0, data.context.lastIndexOf(' ', 35)) : data.context}</tspan>
-          {data.context.length > 35 && (
-            <tspan x="50%" dy="22">{data.context.substring(data.context.lastIndexOf(' ', 35))}</tspan>
-          )}
+          {(() => {
+            const ctx = data.context;
+            if (ctx.length <= 38) return <tspan x="50%" dy="0">{ctx}</tspan>;
+            // Find the split point closest to the middle for balanced lines
+            const mid = Math.floor(ctx.length / 2);
+            let splitAt = ctx.lastIndexOf(' ', mid);
+            if (splitAt <= 0) splitAt = ctx.indexOf(' ', mid);
+            if (splitAt <= 0) return <tspan x="50%" dy="0">{ctx}</tspan>;
+            return (
+              <>
+                <tspan x="50%" dy="0">{ctx.substring(0, splitAt)}</tspan>
+                <tspan x="50%" dy="22">{ctx.substring(splitAt + 1)}</tspan>
+              </>
+            );
+          })()}
         </text>
       </svg>
 
