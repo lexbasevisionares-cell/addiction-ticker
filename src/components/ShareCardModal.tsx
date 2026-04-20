@@ -179,7 +179,7 @@ export default function ShareCardModal({
       </div>
 
       {/* Header */}
-      <div className="w-full flex items-center justify-between px-6 pt-[clamp(12px,2dvh,24px)] pb-2">
+      <div className="w-full flex items-center justify-between px-6 pt-[calc(14px+env(safe-area-inset-top,44px))] pb-2">
         <div className="w-10" />
         <div className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.5em]">
           {T.shareCardPreview || 'Esikatselu'}
