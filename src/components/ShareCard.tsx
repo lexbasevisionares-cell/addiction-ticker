@@ -180,42 +180,36 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
       <div style={{
         marginBottom: 24,
         background: 'rgba(255,255,255,0.03)',
-        padding: '0 16px',
+        padding: '0 20px',
         height: 28,
         borderRadius: 20,
         border: '1px solid rgba(255,255,255,0.05)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        maxWidth: 424, // Never wider than card interior
+        gap: 8,
+        maxWidth: 424,
       }}>
-        <svg width="380" height="28" viewBox="0 0 380 28">
-          <circle 
-            cx="14" 
-            cy="14" 
-            r="4" 
-            fill={accent} 
-          />
-          {/* Subtle glow for the circle — SVG based for clean render */}
-          <circle cx="14" cy="14" r="8" fill={accent} opacity="0.3" />
-
-          <text
-            x="32"
-            y="14.5"
-            dominantBaseline="central"
-            textAnchor="start"
-            fill="#fff"
-            style={{
-              fontSize: '12px',
-              fontWeight: 700,
-              fontFamily: "'Outfit', sans-serif",
-              textTransform: 'uppercase',
-              letterSpacing: '0.15em'
-            }}
-          >
-            {isFree ? t.freeFor : t.hookedStatus}
-          </text>
-        </svg>
+        {/* Dot indicator */}
+        <div style={{
+          width: 8,
+          height: 8,
+          borderRadius: '50%',
+          background: accent,
+          boxShadow: `0 0 8px ${accent}`,
+          flexShrink: 0,
+        }} />
+        {/* Status text */}
+        <span style={{
+          fontSize: '11px',
+          fontWeight: 700,
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          color: '#fff',
+          whiteSpace: 'nowrap',
+        }}>
+          {isFree ? t.freeFor : t.hookedStatus}
+        </span>
       </div>
 
       {/* ═══ FLIP TIMER ═══ */}
