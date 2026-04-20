@@ -187,9 +187,9 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minWidth: 180, // Ensure enough width for status strings
+        maxWidth: 424, // Never wider than card interior
       }}>
-        <svg width="240" height="28" viewBox="0 0 240 28">
+        <svg width="380" height="28" viewBox="0 0 380 28">
           <circle 
             cx="14" 
             cy="14" 
@@ -294,19 +294,7 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
           {data.value}
         </text>
 
-        {/* Status Icon — Positioned relative to text length, clamped to SVG bounds */}
-        <g transform={`translate(${Math.min(212 + (data.value.length * 14) + 12, 400)}, 115)`}>
-          <g transform="translate(-16, -16)">
-            {isFree ? (
-              <>
-                <path d="M23 6l-9.5 9.5-5-5L1 18" fill="none" stroke={accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M17 6h6v6" fill="none" stroke={accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              </>
-            ) : (
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z M12 9v4 M12 17h.01" fill="none" stroke={accent} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            )}
-          </g>
-        </g>
+
 
         {/* Context Text — Handle as dual lines for better fit in SVG */}
         <text
