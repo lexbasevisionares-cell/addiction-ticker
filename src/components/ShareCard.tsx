@@ -187,32 +187,50 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 8,
         maxWidth: 424,
       }}>
-        {/* Dot indicator */}
-        <div style={{
-          width: 8,
-          height: 8,
-          borderRadius: '50%',
-          background: accent,
-          boxShadow: `0 0 8px ${accent}`,
-          flexShrink: 0,
-          alignSelf: 'center',
-        }} />
-        {/* Status text */}
-        <span style={{
-          fontSize: '11px',
-          fontWeight: 700,
-          letterSpacing: '0.15em',
-          textTransform: 'uppercase',
-          color: '#fff',
-          whiteSpace: 'nowrap',
-          lineHeight: '28px',
-          alignSelf: 'center',
-        }}>
-          {isFree ? t.freeFor : t.hookedStatus}
-        </span>
+        {(() => {
+          const statusText = isFree ? t.freeFor : t.hookedStatus;
+          // Approx width calculation: 11px font + 0.15em letter-spacing
+          // Average char width (Outfit font) is ~7px.
+          const approxTextWidth = statusText.length * 8.2; 
+          const dotOffset = (approxTextWidth / 2) + 14; // Center to dot center
+
+          return (
+            <svg width="400" height="28" viewBox="0 0 400 28">
+              {/* Dot - centered X (200) minus half text width and padding */}
+              <circle 
+                cx={200 - dotOffset} 
+                cy="14" 
+                r="4" 
+                fill={accent} 
+              />
+              <circle 
+                cx={200 - dotOffset} 
+                cy="14" 
+                r="8" 
+                fill={accent} 
+                opacity="0.3" 
+              />
+              <text
+                x="200"
+                y="14.5"
+                dominantBaseline="central"
+                textAnchor="middle"
+                fill="#fff"
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  fontFamily: "'Outfit', sans-serif",
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.15em'
+                }}
+              >
+                {statusText}
+              </text>
+            </svg>
+          );
+        })()}
       </div>
 
       {/* ═══ FLIP TIMER ═══ */}
