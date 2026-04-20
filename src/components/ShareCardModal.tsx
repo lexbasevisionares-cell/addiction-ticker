@@ -207,18 +207,19 @@ export default function ShareCardModal({
 
           {/* Animated card container */}
           <div className="relative overflow-hidden rounded-2xl" style={{ width: previewWidth, height: previewHeight }}>
-            <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+          <AnimatePresence mode="sync" initial={false} custom={direction}>
               <motion.div
                 key={activeIndex}
                 custom={direction}
-                initial={{ x: direction > 0 ? 300 : -300, opacity: 0, scale: 0.9 }}
-                animate={{ x: 0, opacity: 1, scale: 1 }}
-                exit={{ x: direction > 0 ? -300 : 300, opacity: 0, scale: 0.9 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                initial={{ x: direction > 0 ? '100%' : '-100%', opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: direction > 0 ? '-100%' : '100%', opacity: 0 }}
+                transition={{ type: 'tween', ease: [0.32, 0.72, 0, 1], duration: 0.3 }}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.2}
+                dragElastic={0.15}
                 onDragEnd={handleSwipe}
+                style={{ position: 'absolute', width: '100%' }}
               >
                 {/* Scale 480×600 down to 300×375 */}
                 <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: 480, height: 600 }}>

@@ -14,14 +14,14 @@ export const SUPPORTED_LANGUAGES = {
 
 export const SUPPORTED_CURRENCIES = {
   EUR: { symbol: '€',    label: '€ EUR',  detectPatterns: ['fi', 'de', 'fr', 'it', 'es-es', 'pt-pt', 'pt'] },
-  USD: { symbol: 'USD',  label: 'USD',    detectPatterns: ['en-us', 'en'] },
+  USD: { symbol: '$',    label: '$ USD',  detectPatterns: ['en-us', 'en'] },
   GBP: { symbol: '£',    label: '£ GBP',  detectPatterns: ['en-gb'] },
-  BRL: { symbol: 'BRL',  label: 'BRL',    detectPatterns: ['pt-br'] },
-  CAD: { symbol: 'CAD',  label: 'CAD',    detectPatterns: ['en-ca', 'fr-ca'] },
-  AUD: { symbol: 'AUD',  label: 'AUD',    detectPatterns: ['en-au'] },
-  NZD: { symbol: 'NZD',  label: 'NZD',    detectPatterns: ['en-nz'] },
+  BRL: { symbol: 'R$',   label: 'R$ BRL', detectPatterns: ['pt-br'] },
+  CAD: { symbol: '$',    label: '$ CAD',  detectPatterns: ['en-ca', 'fr-ca'] },
+  AUD: { symbol: '$',    label: '$ AUD',  detectPatterns: ['en-au'] },
+  NZD: { symbol: '$',    label: '$ NZD',  detectPatterns: ['en-nz'] },
   CHF: { symbol: 'CHF',  label: 'CHF',    detectPatterns: ['de-ch', 'fr-ch', 'it-ch'] },
-  MXN: { symbol: 'MXN',  label: 'MXN',    detectPatterns: ['es-mx'] },
+  MXN: { symbol: '$',    label: '$ MXN',  detectPatterns: ['es-mx'] },
 } as const;
 
 // Currency locale overrides per language (used by formatCurrency).
@@ -1891,11 +1891,16 @@ export function formatCurrencyHtml(value: number, currency: Currency, lang: Lang
   const parts = formatter.formatToParts(value);
   
   const desiredSymbol = getCurrencySymbol(currency);
-  const isLong = desiredSymbol.length > 1;
+  const symLen = desiredSymbol.length;
   
   return parts.map(p => {
     if (p.type === 'currency') {
-      return isLong ? `<span class="text-[0.3em] font-medium tracking-wide opacity-80 inline-block align-baseline translate-y-[-0.05em] ml-0.5">${desiredSymbol}</span>` : desiredSymbol;
+      // 1 char (€, $, £): full size, no wrapper
+      if (symLen <= 1) return desiredSymbol;
+      // 2 chars (R$): slightly reduced
+      if (symLen <= 2) return `<span class="text-[0.6em] font-semibold tracking-tight opacity-90 inline-block align-baseline ml-0.5">${desiredSymbol}</span>`;
+      // 3+ chars (CHF): moderately reduced
+      return `<span class="text-[0.45em] font-medium tracking-wide opacity-80 inline-block align-baseline translate-y-[-0.05em] ml-0.5">${desiredSymbol}</span>`;
     }
     if (p.type === 'literal' && p.value.includes(' ')) {
       return p.value.replace(/ /g, '\u00A0');
