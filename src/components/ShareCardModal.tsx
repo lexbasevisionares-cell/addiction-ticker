@@ -1,8 +1,9 @@
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'motion/react';
-import { X, Share2, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { X, Share2, ChevronLeft, ChevronRight, Download, CheckSquare, Square } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import ShareCard, { ShareCardVariant } from './ShareCard';
+import ForecastSlider from './ForecastSlider';
 import { useI18n } from '../context/I18nContext';
 import { calculateAccumulated, calculateSecuredFutureValue, calculateTotalForecast } from '../utils/finance';
 import { UserSettings } from './Onboarding';
@@ -42,7 +43,21 @@ export default function ShareCardModal({
   const [forecastYears, setForecastYears] = useState(25);
   const [isGenerating, setIsGenerating] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [showMath, setShowMath] = useState(false);
   const maxYears = settings.maxForecastYears ?? 75;
+
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 375,
+    height: typeof window !== 'undefined' ? window.innerHeight : 800
+  });
+  useEffect(() => {
+    const handleResize = () => setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const captureRef = useRef<HTMLDivElement>(null);
 
@@ -149,6 +164,10 @@ export default function ShareCardModal({
     forecastYears,
     currentYear,
     formatCurrency: formatCurrencyString,
+    showMath,
+    dailyCost: settings.dailyCost,
+    annualPriceIncrease: settings.annualPriceIncrease,
+    expectedReturn: settings.expectedReturn,
   };
 
   // Get variant title for dot labels
@@ -159,10 +178,19 @@ export default function ShareCardModal({
     return titles[index] || '';
   };
 
-  // Preview dimensions: 480×600 card scaled to fit ~300px wide
-  const previewScale = 300 / 480;
-  const previewWidth = 300;
-  const previewHeight = 600 * previewScale; // 375
+  // Preview dimensions: dynamic scale based on both width and height
+  // Max width is 82% of screen width, bounded by 480px.
+  const maxWidth = Math.min(windowSize.width * 0.82, 480);
+  const scaleX = maxWidth / 480;
+  
+  // Max height is ~52% of screen height to leave room for UI. Bounded by 600px.
+  const maxHeight = Math.min(windowSize.height * 0.52, 600);
+  const scaleY = maxHeight / 600;
+  
+  // Use the smaller scale to ensure it fits both constraints
+  const previewScale = Math.min(scaleX, scaleY, 1);
+  const previewWidth = 480 * previewScale;
+  const previewHeight = 600 * previewScale;
 
   return (
     <motion.div
@@ -179,9 +207,9 @@ export default function ShareCardModal({
       </div>
 
       {/* Header */}
-      <div className="w-full flex items-center justify-between px-6 pt-[calc(36px+env(safe-area-inset-top,44px))] pb-2">
+      <div className="w-full flex items-center justify-between px-6 pt-[calc(24px+env(safe-area-inset-top,44px))] pb-4 shrink-0">
         <div className="w-10" />
-        <div className="text-[10px] font-semibold text-white/40 uppercase tracking-[0.5em]">
+        <div className="text-[12px] md:text-[13px] font-semibold text-white/90 uppercase tracking-[0.6em] pointer-events-none">
           {T.shareCardPreview || 'Esikatselu'}
         </div>
         <button
@@ -192,22 +220,30 @@ export default function ShareCardModal({
         </button>
       </div>
 
-      {/* Card area with swipe */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full overflow-hidden px-4">
-        <div className="relative flex items-center justify-center w-full" style={{ maxWidth: previewWidth + 80 }}>
+      {/* Carousel Wrapper */}
+      <div className="flex-1 w-full flex flex-col items-center justify-center min-h-0 relative z-0 py-2">
+        {/* Title above card */}
+        <div className="flex-none w-full flex justify-center pb-4 z-20">
+          <span className={`text-[11px] font-bold tracking-[0.4em] uppercase ${isFree ? 'text-emerald-400' : 'text-rose-500'}`}>
+            {getVariantTitle(activeIndex)}
+          </span>
+        </div>
+
+        {/* Card Container */}
+        <div className="flex-none relative flex items-center justify-center" style={{ width: previewWidth, height: previewHeight }}>
           {/* Left arrow */}
           <button
             onClick={() => goToCard(-1)}
-            className={`absolute -left-1 z-10 p-2 rounded-full transition-all ${
+            className={`absolute -left-[clamp(24px,8vw,40px)] z-10 p-3 rounded-full transition-all ${
               activeIndex > 0 ? 'text-white/50 hover:text-white' : 'text-white/10 pointer-events-none'
             }`}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={36} strokeWidth={1.5} />
           </button>
 
           {/* Animated card container */}
           <div className="relative overflow-hidden rounded-2xl" style={{ width: previewWidth, height: previewHeight }}>
-          <AnimatePresence mode="sync" initial={false} custom={direction}>
+            <AnimatePresence mode="sync" initial={false} custom={direction}>
               <motion.div
                 key={activeIndex}
                 custom={direction}
@@ -221,7 +257,7 @@ export default function ShareCardModal({
                 onDragEnd={handleSwipe}
                 style={{ position: 'absolute', width: '100%' }}
               >
-                {/* Scale 480×600 down to 300×375 */}
+                {/* Scale 480×600 down to previewWidth×previewHeight */}
                 <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: 480, height: 600 }}>
                   <ShareCard {...cardProps} />
                 </div>
@@ -232,59 +268,66 @@ export default function ShareCardModal({
           {/* Right arrow */}
           <button
             onClick={() => goToCard(1)}
-            className={`absolute -right-1 z-10 p-2 rounded-full transition-all ${
+            className={`absolute -right-[clamp(24px,8vw,40px)] z-10 p-3 rounded-full transition-all ${
               activeIndex < VARIANTS.length - 1 ? 'text-white/50 hover:text-white' : 'text-white/10 pointer-events-none'
             }`}
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={36} strokeWidth={1.5} />
           </button>
         </div>
 
-        {/* Variant label + dot indicators */}
-        <div className="flex flex-col items-center mt-4 gap-2">
-          <div className={`text-[10px] font-semibold uppercase tracking-[0.3em] ${isFree ? 'text-emerald-400/60' : 'text-rose-400/60'}`}>
-            {getVariantTitle(activeIndex)}
-          </div>
-          <div className="flex items-center gap-2">
-            {VARIANTS.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => { setDirection(i > activeIndex ? 1 : -1); setActiveIndex(i); }}
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                  i === activeIndex
-                    ? (isFree ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]')
-                    : 'bg-white/15 hover:bg-white/30'
-                }`}
-              />
-            ))}
-          </div>
+        {/* Pagination dots below card */}
+        <div className="flex-none w-full flex justify-center gap-3 pt-6 pb-2 z-20">
+          {VARIANTS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setDirection(i > activeIndex ? 1 : -1); setActiveIndex(i); }}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                i === activeIndex
+                  ? (isFree ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]')
+                  : 'bg-white/15 hover:bg-white/30'
+              }`}
+            />
+          ))}
         </div>
       </div>
 
       {/* Bottom controls */}
-      <div className="w-full max-w-sm px-8 pb-[clamp(16px,4dvh,40px)] flex flex-col items-center gap-5">
-        {/* Forecast slider — now shown for all cards to prevent layout shifts */}
+      <div className="w-full max-w-sm px-8 pb-[clamp(16px,4dvh,40px)] flex flex-col items-center gap-[clamp(20px,3dvh,32px)] min-h-0 shrink-0">
+        {/* Forecast slider — using the main app's premium slider */}
         <div className="w-full">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[9px] font-semibold text-white/30 uppercase tracking-[0.3em]">
+            <div className="flex items-center justify-between mb-3 px-1">
+              <span className="text-[10px] uppercase tracking-[0.1em] font-medium text-zinc-400">
                 {T.shareCardTimeWindow || 'Aikaikkuna'}
               </span>
-              <span className={`text-[11px] font-semibold tabular-nums ${isFree ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <span className={`text-[10px] uppercase tracking-[0.1em] font-medium ${isFree ? 'text-emerald-400' : 'text-rose-500'}`}>
                 {forecastYears} {T.shareCardYearsLabel || 'v'}
               </span>
             </div>
-            <input
-              type="range"
-              min={1}
-              max={maxYears}
-              value={forecastYears}
-              onChange={(e) => setForecastYears(Number(e.target.value))}
-              className="w-full h-1 rounded-full appearance-none cursor-pointer"
-              style={{
-                background: `linear-gradient(to right, ${isFree ? '#10b981' : '#f43f5e'} ${(forecastYears / maxYears) * 100}%, rgba(255,255,255,0.1) ${(forecastYears / maxYears) * 100}%)`,
-              }}
-            />
+            <div className="w-full">
+              <ForecastSlider
+                forecastYears={forecastYears}
+                maxYears={maxYears}
+                onForecastChange={setForecastYears}
+                gradientColor={isFree ? '#10b981' : '#f43f5e'}
+              />
+            </div>
         </div>
+
+        {/* Math Toggle */}
+        <button
+          onClick={() => setShowMath(!showMath)}
+          className="flex items-center gap-2 group transition-opacity opacity-70 hover:opacity-100"
+        >
+          {showMath ? (
+            <CheckSquare size={14} className={isFree ? 'text-emerald-400' : 'text-rose-500'} />
+          ) : (
+            <Square size={14} className="text-white/30" />
+          )}
+          <span className={`text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${showMath ? 'text-white' : 'text-white/40'}`}>
+            Näytä parametrit
+          </span>
+        </button>
 
         {/* Share button */}
         <button
@@ -293,7 +336,7 @@ export default function ShareCardModal({
           className={`w-full flex items-center justify-center gap-3 py-4 rounded-full font-semibold text-[11px] uppercase tracking-[0.4em] transition-all active:scale-[0.97] ${
             isGenerating
               ? 'bg-white/5 text-white/20'
-              : 'bg-white text-black hover:scale-[1.02] shadow-[0_10px_40px_rgba(0,0,0,0.3)]'
+              : 'bg-[#111] border border-white/10 text-white hover:bg-white/5 hover:scale-[1.02] drop-shadow-lg'
           }`}
         >
           {isGenerating ? (

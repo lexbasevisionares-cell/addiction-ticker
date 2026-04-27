@@ -1,6 +1,5 @@
 import { forwardRef } from 'react';
 import { useI18n } from '../context/I18nContext';
-import { TrendingUp, AlertTriangle } from 'lucide-react';
 
 export type ShareCardVariant = 'saved' | 'investmentValue' | 'cashSavings' | 'totalValue';
 
@@ -18,72 +17,11 @@ interface ShareCardProps {
   forecastYears: number;
   currentYear: number;
   formatCurrency: (value: number, fractionDigits?: number) => string;
+  showMath?: boolean;
+  dailyCost?: number;
+  annualPriceIncrease?: number;
+  expectedReturn?: number;
 }
-
-/**
- * Helper component for the Flip Clock style digits
- */
-const FlipDigit = ({ val, label, accent }: { val: string, label: string, accent: string }) => (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-    <div style={{ display: 'flex', gap: 2 }}>
-      {val.split('').map((digit, i) => (
-        <div key={i} style={{
-          width: 38,
-          height: 54,
-          background: 'linear-gradient(180deg, #1d1d21 0%, #09090b 100%)',
-          borderRadius: 6,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
-          {/* Digit — Using SVG for absolute coordinate-based stability in exports */}
-          <svg 
-            width="38" 
-            height="54" 
-            viewBox="0 0 38 54" 
-            style={{ position: 'absolute', inset: 0, zIndex: 2 }}
-          >
-            <text
-              x="50%"
-              y="56%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill={accent}
-              style={{
-                fontSize: '32px',
-                fontWeight: 800,
-                fontFamily: "'Outfit', sans-serif",
-                fontVariantNumeric: 'tabular-nums',
-              }}
-            >
-              {digit}
-            </text>
-          </svg>
-          
-          {/* Horizontal split line — visual only */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: 0,
-            right: 0,
-            height: 1.5,
-            background: 'rgba(0,0,0,0.5)',
-            zIndex: 1,
-          }} />
-        </div>
-      ))}
-    </div>
-    <span style={{
-      fontSize: 8,
-      fontWeight: 700,
-      letterSpacing: '0.25em',
-      textTransform: 'uppercase',
-      color: 'rgba(255,255,255,0.4)',
-      marginTop: 10,
-    }}>{label}</span>
-  </div>
-);
 
 const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
   variant,
@@ -99,6 +37,10 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
   forecastYears,
   currentYear,
   formatCurrency,
+  showMath,
+  dailyCost,
+  annualPriceIncrease,
+  expectedReturn,
 }, ref) => {
   const { t } = useI18n();
   const targetYear = currentYear + forecastYears;
@@ -106,38 +48,37 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
 
   // Colors — using the app's official palette
   const accent = isFree ? '#34d399' : '#f43f5e';
-  const accentDim = isFree ? 'rgba(52,211,153,0.3)' : 'rgba(244,63,94,0.3)';
   const bgMain = '#050505';
 
-  // Determine the single hero value and context text
+  // Determine the hero value, headline (sentence opener) and punchline (sentence closer)
   const getCardData = () => {
     switch (variant) {
       case 'saved':
         return {
           value: formatCurrency(accumulated, 2),
-          title: isFree ? T.shareCardTitle1 : T.shareCardTitleHooked1,
-          context: (isFree ? T.shareCardContext1Free : T.shareCardContext1Hooked)
+          headline: isFree ? T.shareCardHeadline1Free : T.shareCardHeadline1Hooked,
+          punchline: (T.shareCardPunchline1 || '{days} päivässä')
             .replace('{days}', days.toString()),
         };
       case 'investmentValue':
         return {
           value: formatCurrency(securedFV, 0),
-          title: isFree ? T.shareCardTitle2 : T.shareCardTitleHooked2,
-          context: (isFree ? T.shareCardContext2Free : T.shareCardContext2Hooked)
+          headline: isFree ? T.shareCardHeadline2Free : T.shareCardHeadline2Hooked,
+          punchline: (T.shareCardPunchline2 || 'vuoteen {year} mennessä')
             .replace('{year}', targetYear.toString()),
         };
       case 'cashSavings':
         return {
           value: formatCurrency(totalDirectSavings, 0),
-          title: isFree ? T.shareCardTitle3 : T.shareCardTitleHooked3,
-          context: (isFree ? T.shareCardContext3Free : T.shareCardContext3Hooked)
+          headline: isFree ? T.shareCardHeadline3Free : T.shareCardHeadline3Hooked,
+          punchline: (T.shareCardPunchline3 || 'vuoteen {year} mennessä')
             .replace('{year}', targetYear.toString()),
         };
       case 'totalValue':
         return {
           value: formatCurrency(totalForecast, 0),
-          title: isFree ? T.shareCardTitle4 : T.shareCardTitleHooked4,
-          context: (isFree ? T.shareCardContext4Free : T.shareCardContext4Hooked)
+          headline: isFree ? T.shareCardHeadline4Free : T.shareCardHeadline4Hooked,
+          punchline: (T.shareCardPunchline4 || 'vuonna {year}')
             .replace('{year}', targetYear.toString()),
         };
     }
@@ -146,201 +87,212 @@ const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(({
   const data = getCardData();
   const pad = (n: number) => n.toString().padStart(2, '0');
 
+  // Status text positioning (centered dot + text via SVG coordinates)
+  const statusText = isFree ? T.shareCardStatusFree : T.shareCardStatusHooked;
+  const approxTextWidth = statusText.length * 13.0;
+  const dotOffset = (approxTextWidth / 2) + 14;
+
   return (
     <div
       ref={ref}
       style={{
         width: 480,
-        height: 600,
+        height: 550,
         background: `radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03) 0%, ${bgMain} 100%)`,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'center',
         fontFamily: "'Outfit', 'Inter', sans-serif",
         color: '#fff',
-        position: 'relative',
         overflow: 'hidden',
-        padding: '32px 28px 24px',
+        padding: '24px 28px',
         border: '1px solid rgba(255,255,255,0.05)',
       }}
     >
-      {/* ═══ HEADER branding ═══ */}
-      <div style={{
-        fontSize: 10,
-        fontWeight: 700,
-        color: 'rgba(255,255,255,0.8)',
-        letterSpacing: '0.6em',
-        textTransform: 'uppercase',
-        marginBottom: 20,
-        textShadow: '0 0 20px rgba(255,255,255,0.3)',
-      }}>
-        {t.tickerHeader}
+      {/* ═══ STATUS — flat dot + text (card opens with the USER's achievement) ═══ */}
+      <div style={{ marginBottom: 20 }}>
+        <svg width="400" height="28" viewBox="0 0 400 28">
+          {/* Dot */}
+          <circle 
+            cx={200 - dotOffset} 
+            cy="14" 
+            r="4" 
+            fill={accent} 
+          />
+          <circle 
+            cx={200 - dotOffset} 
+            cy="14" 
+            r="8" 
+            fill={accent} 
+            opacity="0.3" 
+          />
+          {/* Status text — matched to TimerDisplay.tsx typography */}
+          <text
+            x="200"
+            y="14.5"
+            dominantBaseline="central"
+            textAnchor="middle"
+            fill="#d4d4d8"
+            style={{
+              fontSize: '13px',
+              fontWeight: 500,
+              fontFamily: "'Outfit', sans-serif",
+              textTransform: 'uppercase',
+              letterSpacing: '0.4em'
+            }}
+          >
+            {statusText}
+          </text>
+        </svg>
       </div>
 
-      <div style={{
-        marginBottom: 24,
-        background: 'rgba(255,255,255,0.03)',
-        padding: '0 20px',
-        height: 28,
-        borderRadius: 20,
-        border: '1px solid rgba(255,255,255,0.05)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        maxWidth: 424,
-      }}>
-        {(() => {
-          const statusText = isFree ? t.freeFor : t.hookedStatus;
-          // Approx width calculation: 11px font + 0.15em letter-spacing
-          // Average char width (Outfit font) is ~7px.
-          const approxTextWidth = statusText.length * 8.2; 
-          const dotOffset = (approxTextWidth / 2) + 14; // Center to dot center
+      {/* ═══ CLEAN TIMER — flat typography matching the main app ═══ */}
+      <svg width="424" height="90" viewBox="0 0 424 90" style={{ flex: 'none', marginBottom: 24 }}>
+        {/* Days */}
+        <text x="53" y="38" textAnchor="middle" fill="#fff" style={{
+          fontSize: '40px', fontWeight: 300, fontFamily: "'Outfit', sans-serif",
+          fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.05em'
+        }}>{pad(days)}</text>
+        <text x="53" y="75" textAnchor="middle" fill="#a1a1aa" style={{
+          fontSize: '10px', fontWeight: 500, fontFamily: "'Outfit', sans-serif",
+          letterSpacing: '0.4em', textTransform: 'uppercase'
+        }}>{t.days}</text>
 
-          return (
-            <svg width="400" height="28" viewBox="0 0 400 28">
-              {/* Dot - centered X (200) minus half text width and padding */}
-              <circle 
-                cx={200 - dotOffset} 
-                cy="14" 
-                r="4" 
-                fill={accent} 
-              />
-              <circle 
-                cx={200 - dotOffset} 
-                cy="14" 
-                r="8" 
-                fill={accent} 
-                opacity="0.3" 
-              />
-              <text
-                x="200"
-                y="14.5"
-                dominantBaseline="central"
-                textAnchor="middle"
-                fill="#fff"
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  fontFamily: "'Outfit', sans-serif",
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.15em'
-                }}
-              >
-                {statusText}
-              </text>
-            </svg>
-          );
-        })()}
-      </div>
+        {/* Separator : */}
+        <text x="106" y="32" textAnchor="middle" fill="#fff" opacity="0.3" style={{
+          fontSize: '28px', fontWeight: 300, fontFamily: "'Outfit', sans-serif"
+        }}>:</text>
 
-      {/* ═══ FLIP TIMER ═══ */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 8,
-        width: '100%',
-        marginBottom: 36,
-      }}>
-        <FlipDigit val={pad(days)} label={t.days} accent="#fff" />
-        <div style={{ fontSize: 24, opacity: 0.3, fontWeight: 700, marginTop: -24 }}>:</div>
-        <FlipDigit val={pad(hours)} label={t.hours} accent="#fff" />
-        <div style={{ fontSize: 24, opacity: 0.3, fontWeight: 700, marginTop: -24 }}>:</div>
-        <FlipDigit val={pad(minutes)} label={t.mins} accent="#fff" />
-        <div style={{ fontSize: 24, opacity: 0.3, fontWeight: 700, marginTop: -24 }}>:</div>
-        <FlipDigit val={pad(seconds)} label={t.secs} accent={accent} />
-      </div>
+        {/* Hours */}
+        <text x="159" y="38" textAnchor="middle" fill="#fff" style={{
+          fontSize: '40px', fontWeight: 300, fontFamily: "'Outfit', sans-serif",
+          fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.05em'
+        }}>{pad(hours)}</text>
+        <text x="159" y="75" textAnchor="middle" fill="#a1a1aa" style={{
+          fontSize: '10px', fontWeight: 500, fontFamily: "'Outfit', sans-serif",
+          letterSpacing: '0.4em', textTransform: 'uppercase'
+        }}>{t.hours}</text>
 
-      {/* ═══ DIVIDER ═══ */}
-      <div style={{
-        width: '100%',
-        height: 1,
-        background: `linear-gradient(90deg, transparent 0%, ${accentDim} 50%, transparent 100%)`,
-        marginBottom: 36,
-      }} />
+        {/* Separator : */}
+        <text x="212" y="32" textAnchor="middle" fill="#fff" opacity="0.3" style={{
+          fontSize: '28px', fontWeight: 300, fontFamily: "'Outfit', sans-serif"
+        }}>:</text>
 
-      {/* ═══ THE SVG RESULT PLATE (Atomic rendering for perfect export quality) ═══ */}
-      <svg width="424" height="240" viewBox="0 0 424 240" style={{ flex: 'none', marginBottom: 20 }}>
-        {/* The Plate Background */}
-        <rect 
-          x="1" 
-          y="1" 
-          width="422" 
-          height="238" 
-          rx="20" 
-          fill="rgba(255,255,255,0.015)" 
-          stroke="rgba(255,255,255,0.08)" 
-          strokeWidth="1"
-        />
-        
-        {/* Header Separator Line */}
-        <line x1="1" y1="44" x2="423" y2="44" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-        
-        {/* Title Text (SÄÄSTETTY / KULUTETTU) */}
+        {/* Minutes */}
+        <text x="265" y="38" textAnchor="middle" fill="#fff" style={{
+          fontSize: '40px', fontWeight: 300, fontFamily: "'Outfit', sans-serif",
+          fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.05em'
+        }}>{pad(minutes)}</text>
+        <text x="265" y="75" textAnchor="middle" fill="#a1a1aa" style={{
+          fontSize: '10px', fontWeight: 500, fontFamily: "'Outfit', sans-serif",
+          letterSpacing: '0.4em', textTransform: 'uppercase'
+        }}>{t.mins}</text>
+
+        {/* Separator : */}
+        <text x="318" y="32" textAnchor="middle" fill="#fff" opacity="0.3" style={{
+          fontSize: '28px', fontWeight: 300, fontFamily: "'Outfit', sans-serif"
+        }}>:</text>
+
+        {/* Seconds — accent colored */}
+        <text x="371" y="38" textAnchor="middle" fill={accent} style={{
+          fontSize: '40px', fontWeight: 300, fontFamily: "'Outfit', sans-serif",
+          fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.05em'
+        }}>{pad(seconds)}</text>
+        <text x="371" y="75" textAnchor="middle" fill={accent} style={{
+          fontSize: '10px', fontWeight: 500, fontFamily: "'Outfit', sans-serif",
+          letterSpacing: '0.4em', textTransform: 'uppercase'
+        }}>{t.secs}</text>
+      </svg>
+
+      {/* ═══ STORY DATA — Headline → Hero Number → Punchline ═══ */}
+      <svg width="424" height="190" viewBox="0 0 424 190" style={{ flex: 'none' }}>
+        {/* Headline — sentence opener (e.g., "OLEN SÄÄSTÄNYT") */}
         <text
           x="50%"
-          y="22"
+          y="25"
           dominantBaseline="middle"
           textAnchor="middle"
-          fill="rgba(255,255,255,0.7)"
+          fill="rgba(255,255,255,0.6)"
           style={{
-            fontSize: '9px',
-            fontWeight: 800,
-            letterSpacing: '0.4em'
+            fontSize: '14px',
+            fontWeight: 600,
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
           }}
         >
-          {data.title.toUpperCase()}
+          {data.headline}
         </text>
 
-        {/* Main Value Number */}
+        {/* Hero Number — the star of the card */}
         <text
           x="50%"
-          y="115"
+          y="100"
           dominantBaseline="middle"
           textAnchor="middle"
           fill={accent}
           style={{
             fontSize: '56px',
-            fontWeight: 800,
-            letterSpacing: '-0.02em',
-            filter: `drop-shadow(0 0 15px ${accent}66)`
+            fontWeight: 300,
+            letterSpacing: '-0.04em',
           }}
         >
           {data.value}
         </text>
 
-
-
-        {/* Context Text — Handle as dual lines for better fit in SVG */}
+        {/* Punchline — sentence closer (e.g., "6 PÄIVÄSSÄ") */}
         <text
           x="50%"
-          y="185"
+          y="170"
           dominantBaseline="middle"
           textAnchor="middle"
           fill="rgba(255,255,255,0.5)"
           style={{
             fontSize: '14px',
-            fontWeight: 400
+            fontWeight: 500,
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
           }}
         >
-          {(() => {
-            const ctx = data.context;
-            if (ctx.length <= 38) return <tspan x="50%" dy="0">{ctx}</tspan>;
-            // Find the split point closest to the middle for balanced lines
-            const mid = Math.floor(ctx.length / 2);
-            let splitAt = ctx.lastIndexOf(' ', mid);
-            if (splitAt <= 0) splitAt = ctx.indexOf(' ', mid);
-            if (splitAt <= 0) return <tspan x="50%" dy="0">{ctx}</tspan>;
-            return (
-              <>
-                <tspan x="50%" dy="0">{ctx.substring(0, splitAt)}</tspan>
-                <tspan x="50%" dy="22">{ctx.substring(splitAt + 1)}</tspan>
-              </>
-            );
-          })()}
+          {data.punchline}
         </text>
       </svg>
 
+      {/* ═══ FOOTER: Parameters (conditional) + Brand watermark (always) ═══ */}
+      <div style={{
+        marginTop: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        {showMath && dailyCost !== undefined && annualPriceIncrease !== undefined && expectedReturn !== undefined && (
+          <div style={{
+            fontSize: 9,
+            fontWeight: 400,
+            letterSpacing: '0.02em',
+            color: 'rgba(255,255,255,0.3)',
+            textAlign: 'center',
+            lineHeight: 1.6,
+            maxWidth: 315,
+            marginBottom: 20,
+          }}>
+            {(T.shareCardMathFootnote || 'Laskelma perustuu {dailyCost} päiväkuluun, {annualIncrease} % vuotuiseen hinnannousuun ja {expectedReturn} % tuotto-odotukseen.')
+              .replace('{dailyCost}', formatCurrency(dailyCost, 2))
+              .replace('{annualIncrease}', annualPriceIncrease.toString())
+              .replace('{expectedReturn}', expectedReturn.toString())
+            }
+          </div>
+        )}
+        <div style={{
+          fontSize: 9,
+          fontWeight: 600,
+          letterSpacing: '0.5em',
+          color: 'rgba(255,255,255,0.2)',
+          textTransform: 'uppercase',
+        }}>
+          {t.tickerHeader}
+        </div>
+      </div>
 
     </div>
   );
