@@ -135,21 +135,34 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const pendingAmount = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, pendingDays);
   const isPendingOverdue = pendingDays >= 7;
 
-  // Graph data — build yearly data points from now to forecast target year
   const graphData: GraphDataPoint[] = useMemo(() => {
     const points: GraphDataPoint[] = [];
-    const totalSteps = Math.max(forecastYears * 2, 30);
+    // Fix resolution to a constant 60 steps to ensure Recharts animations morph perfectly without getting stuck
+    const totalSteps = 60;
     const totalYears = forecastYears;
 
     for (let i = 0; i <= totalSteps; i++) {
       const yearFraction = (i / totalSteps) * totalYears;
-      const yearLabel = currentYear + Math.round(yearFraction);
-      const directCost = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearFraction * 365.25);
-      const investedValue = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearFraction, settings.expectedReturn);
-      points.push({ year: yearLabel, directCost, investedValue });
+      const exactYear = currentYear + yearFraction;
+      
+      let directCost: number;
+      let investedValue: number;
+
+      if (viewType === 'secured') {
+        // "Saavutettu jo" view: Start from currently saved money (accumulated) 
+        // and project its future compound growth.
+        directCost = accumulated;
+        investedValue = calculateSecuredFutureValue(accumulated, yearFraction, settings.expectedReturn);
+      } else {
+        // "Ennuste" view: Start from zero, simulating continuous daily deposits.
+        directCost = calculateAccumulated(settings.dailyCost, settings.annualPriceIncrease, yearFraction * 365.25);
+        investedValue = calculateTotalForecast(settings.dailyCost, settings.annualPriceIncrease, yearFraction, settings.expectedReturn);
+      }
+      
+      points.push({ year: exactYear, directCost, investedValue });
     }
     return points;
-  }, [forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, currentYear]);
+  }, [viewType, accumulated, forecastYears, settings.dailyCost, settings.annualPriceIncrease, settings.expectedReturn, currentYear]);
 
   const handleMarkAsInvested = () => {
     onUpdateState({ ...appState, lastTransferTime: Date.now(), lastDismissedAmount: 0 });

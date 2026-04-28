@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, Tooltip } from 'recharts';
 import { Info, ArrowRight, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Capacitor } from '@capacitor/core';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { useI18n } from '../context/I18nContext';
 import type { InfoType } from './InfoModal';
 
@@ -31,6 +33,18 @@ interface Props {
   onDismissReminder: () => void;
 }
 
+const CustomTooltip = ({ active, payload, setHoveredData, handleInteraction }: any) => {
+  useEffect(() => {
+    if (active) {
+      handleInteraction();
+      if (payload && payload.length > 0) {
+        setHoveredData(payload[0].payload);
+      }
+    }
+  }, [active, payload, setHoveredData, handleInteraction]);
+  return null;
+};
+
 export default function FinancialChart({
   graphData, viewType, onViewTypeChange, isFree, gradientColor, colorClass, accumulated, securedFV, totalForecast,
   totalDirectSavings, forecastYears, currentYear, onShowInfo,
@@ -41,14 +55,29 @@ export default function FinancialChart({
   const [isInteracting, setIsInteracting] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleInteraction = () => {
-    setIsInteracting(true);
+  const handleInteraction = useCallback(() => {
+    setIsInteracting(prev => {
+      if (!prev && Capacitor.isNativePlatform()) {
+        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+      }
+      return true;
+    });
+
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setIsInteracting(false);
       setHoveredData(null);
     }, 3000);
-  };
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    // Brief delay so the last touched point stays visible momentarily
+    timeoutRef.current = setTimeout(() => {
+      setIsInteracting(false);
+      setHoveredData(null);
+    }, 600);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -57,6 +86,13 @@ export default function FinancialChart({
   }, []);
 
   const displayData = hoveredData || graphData[graphData.length - 1];
+
+  // Compact currency formatter for Y-axis ticks
+  const formatCompact = (value: number): string => {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(value >= 10_000 ? 0 : 1)}k`;
+    return Math.round(value).toString();
+  };
 
   if (!displayData) return null;
 
@@ -167,15 +203,16 @@ export default function FinancialChart({
         {/* Hovered DateIndicator */}
         <div className="text-center h-3 lg:h-4 mt-0 lg:mt-1">
           <span className={`text-[10px] uppercase tracking-[0.6em] font-medium transition-all ${isFree ? 'text-emerald-400/50' : 'text-rose-400/50'}`}>
-            {hoveredData ? `${t.year} ${displayData.year}` : ''}
+            {hoveredData ? `${t.year} ${Math.round(displayData.year)}` : ''}
           </span>
         </div>
       </div>
 
       <div
-        className="flex-1 min-h-[140px] chart-container outline-none focus:outline-none select-none relative mb-[clamp(10px,2dvh,40px)] -mt-[clamp(10px,3dvh,40px)] z-0"
+        className={`flex-1 min-h-[140px] chart-container ${isInteracting ? 'interacting' : ''} outline-none focus:outline-none select-none relative mb-[clamp(10px,2dvh,40px)] mt-2 lg:mt-6 z-0`}
         onTouchStart={handleInteraction}
         onTouchMove={handleInteraction}
+        onTouchEnd={handleTouchEnd}
         onMouseEnter={handleInteraction}
         onMouseMove={handleInteraction}
         onClick={handleInteraction}
@@ -224,77 +261,67 @@ export default function FinancialChart({
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={graphData}
-            margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
-            onMouseMove={(e: any) => {
-              handleInteraction();
-              if (e.activePayload && e.activePayload.length > 0) {
-                setHoveredData(e.activePayload[0].payload);
-              }
-            }}
-            onMouseLeave={() => { setIsInteracting(false); setHoveredData(null); }}
+            margin={{ top: 5, right: 8, left: 0, bottom: 0 }}
+            onMouseLeave={handleTouchEnd}
+            onTouchEnd={handleTouchEnd}
           >
             <defs>
-
               <linearGradient id="colorInvested" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={gradientColor} stopOpacity={0.65} />
                 <stop offset="100%" stopColor={gradientColor} stopOpacity={0.05} />
               </linearGradient>
-              {viewType === 'potential' && (
-                <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#71717a" stopOpacity={0.4} />
-                  <stop offset="100%" stopColor="#71717a" stopOpacity={0.05} />
-                </linearGradient>
-              )}
+              <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#71717a" stopOpacity={0.25} />
+                <stop offset="100%" stopColor="#71717a" stopOpacity={0.02} />
+              </linearGradient>
             </defs>
-            <YAxis domain={['auto', 'auto']} hide />
-            <XAxis dataKey="year" hide />
+            <YAxis
+              domain={[0, 'dataMax']}
+              tick={{ fill: '#3f3f46', fontSize: 9, fontFamily: 'Outfit' }}
+              axisLine={false}
+              tickLine={false}
+              width={46}
+              tickCount={4}
+              tickFormatter={formatCompact}
+            />
+            <XAxis
+              dataKey="year"
+              type="number"
+              domain={['dataMin', 'dataMax']}
+              allowDecimals={false}
+              tickFormatter={(val) => Math.round(val).toString()}
+              tick={{ fill: '#3f3f46', fontSize: 9, fontFamily: 'Outfit' }}
+              axisLine={false}
+              tickLine={false}
+              tickCount={5}
+            />
             <Tooltip
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  const data = payload[0].payload;
-                  return (
-                    <div className="bg-black/90 backdrop-blur-3xl border border-white/10 px-6 py-4 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.8)] pointer-events-none">
-                      <div className="text-[10px] lg:text-xs uppercase tracking-[0.4em] text-zinc-500 font-medium mb-2">{t.year} {data.year}</div>
-                      <div className={`font-sans tabular-nums text-4xl lg:text-5xl 2xl:text-6xl font-light ${colorClass} tracking-tighter whitespace-nowrap`}
-                           dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(data.investedValue, showDecimals ? 2 : 0) }} />
-                      {viewType === 'potential' && (
-                        <div className="font-sans tabular-nums text-sm lg:text-base font-medium text-zinc-400 mt-2"
-                             dangerouslySetInnerHTML={{ __html: formatCurrencyHtml(data.directCost, showDecimals ? 2 : 0) }} />
-                      )}
-                    </div>
-                  );
-                }
-                return null;
-              }}
-              cursor={{ stroke: 'rgba(255,255,255,0.05)', strokeWidth: 1 }}
+              content={<CustomTooltip setHoveredData={setHoveredData} handleInteraction={handleInteraction} />}
+              cursor={{ stroke: 'rgba(255,255,255,0.15)', strokeWidth: 1, strokeDasharray: '4 3' }}
               isAnimationActive={false}
             />
-            {/* Order: 1. Baseline (Harmaa) underneath */}
-            {viewType === 'potential' && (
-              <Area 
-                type="monotone" 
-                dataKey="directCost" 
-                stroke="#52525b" 
-                strokeWidth={0.5} 
-                fillOpacity={1} 
-                fill="url(#colorDirect)" 
-                isAnimationActive={true}
-                animationDuration={600}
-                activeDot={false}
-              />
-            )}
+            {/* 1. Baseline (Harmaa) — always visible */}
+            <Area 
+              type="monotoneX" 
+              dataKey="directCost" 
+              stroke="#52525b" 
+              strokeWidth={1} 
+              fillOpacity={1} 
+              fill="url(#colorDirect)" 
+              isAnimationActive={false}
+              activeDot={{ r: 5, fill: '#71717a', stroke: '#050505', strokeWidth: 2 }}
+            />
             {/* 2. Growth/Potential (Neon) on top */}
             <Area 
-              type="monotone" 
+              type="monotoneX" 
               dataKey="investedValue" 
               stroke={gradientColor} 
               strokeWidth={2} 
               fillOpacity={1} 
               fill="url(#colorInvested)" 
               style={{ filter: `drop-shadow(0px -4px 8px ${gradientColor}80)` }}
-              isAnimationActive={true}
-              animationDuration={600}
-              activeDot={false}
+              isAnimationActive={false}
+              activeDot={{ r: 6, fill: gradientColor, stroke: '#050505', strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

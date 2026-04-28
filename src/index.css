@@ -55,6 +55,11 @@ html, body {
 .chart-container:not(.interacting) .recharts-tooltip-cursor,
 .chart-container:not(.interacting) .recharts-active-dot { opacity: 0 !important; transition: opacity 0.3s ease; }
 
+/* ActiveDot smooth appearance */
+.chart-container .recharts-active-dot circle {
+  transition: r 0.15s ease, opacity 0.2s ease;
+}
+
 /* Custom range slider — standard (large thumb) */
 .custom-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
