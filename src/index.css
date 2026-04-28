@@ -47,18 +47,8 @@ html, body {
   overflow: hidden;
 }
 
-/* Chart interaction styles */
-.chart-container.interacting .recharts-tooltip-wrapper { opacity: 1 !important; visibility: visible !important; transition: opacity 0.3s ease; }
-.chart-container:not(.interacting) .recharts-tooltip-wrapper { opacity: 0 !important; visibility: hidden !important; transition: opacity 0.3s ease, visibility 0.3s ease; }
-.chart-container.interacting .recharts-tooltip-cursor,
-.chart-container.interacting .recharts-active-dot { opacity: 1 !important; transition: opacity 0.3s ease; }
-.chart-container:not(.interacting) .recharts-tooltip-cursor,
-.chart-container:not(.interacting) .recharts-active-dot { opacity: 0 !important; transition: opacity 0.3s ease; }
 
-/* ActiveDot smooth appearance */
-.chart-container .recharts-active-dot circle {
-  transition: r 0.15s ease, opacity 0.2s ease;
-}
+
 
 /* Custom range slider — standard (large thumb) */
 .custom-slider::-webkit-slider-thumb {
