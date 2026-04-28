@@ -196,8 +196,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-y-auto overflow-x-hidden relative">
       {/* FIXED TOP BAR: PERFECTLY ALIGNED GRID */}
-      <div className="w-full px-6 pt-1 pb-1 relative z-50 flex flex-col items-center">
-        <div className="w-full relative flex items-center justify-center h-10">
+      <div className="w-full px-6 pt-0 pb-0 relative z-50 flex flex-col items-center">
+        <div className="w-full relative flex items-center justify-center h-8">
           {/* Title centered */}
           <div className="text-[11px] md:text-[12px] font-semibold text-white/80 uppercase tracking-[0.6em] pointer-events-none">
             {t.tickerHeader}
@@ -216,7 +216,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Invisible progress bar placeholder to match Onboarding height exactly */}
-        <div className="w-full max-w-lg px-8 flex gap-1.5 opacity-0 mt-3 pb-0.5 pointer-events-none">
+        <div className="w-full max-w-lg px-8 flex gap-1.5 opacity-0 mt-0 pb-0 pointer-events-none">
           <div className="h-0.5 flex-1 bg-white/5 rounded-full" />
         </div>
       </div>
@@ -224,7 +224,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
       <div className="flex-1 w-full mx-auto relative z-10 flex flex-col h-full overflow-hidden">
         
         {/* Elastic Spacer 1: Top margin */}
-        <div className="flex-[0.5] min-h-[clamp(8px,1dvh,24px)] shrink-0" />
+        <div className="flex-[0.5] min-h-0 shrink-0" />
 
         {/* Content Section 1: Timer */}
         <div className="flex-none flex flex-col items-center w-full px-4 relative shrink-0">
@@ -241,7 +241,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         </div>
 
         {/* Elastic Spacer 2: Space between Timer and Chart */}
-        <div className="flex-[0.4] min-h-[8px] shrink-0" />
+        <div className="flex-[1.5] min-h-[24px] shrink-0" />
 
         {/* Content Section 2: Chart with toggle + metrics. flex-auto respects content height */}
         <div className="flex-auto flex flex-col w-full overflow-visible min-h-min relative z-0 shrink-0">
@@ -267,11 +267,11 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           />
           
           {/* Sandwich Forecast Control: Baseline Label -> Slider -> Result Label */}
-          <div className="flex-none flex flex-col items-center w-full px-5 pt-0 pb-[clamp(12px,2dvh,24px)]">
+          <div className="flex-none flex flex-col items-center w-full px-5 pt-0 pb-2">
             
             {/* 1. Baseline Label (Gray) — always visible for design symmetry */}
             <div 
-              className="flex items-center gap-2 mb-1 group cursor-pointer transition-opacity duration-200"
+              className="flex items-center gap-2 mb-0 group cursor-pointer transition-opacity duration-200"
               onClick={() => setInfoModal(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : (viewType === 'potential' ? 'directCost' : 'lostNow'))}
             >
               <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-500" />
@@ -287,7 +287,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             </div>
 
             {/* 2. Slider (The Interaction Tool) */}
-            <div className="w-full py-1.5 mb-2 mt-1">
+            <div className="w-full py-0 mb-1 mt-0">
               <ForecastSlider
                 forecastYears={forecastYears}
                 maxYears={maxYears}

@@ -161,7 +161,7 @@ export default function FinancialChart({
       </div>
 
       <div
-        className="flex-1 min-h-[300px] lg:min-h-[400px] chart-container select-none relative mb-0 mt-0 z-0"
+        className="flex-1 min-h-[240px] lg:min-h-[320px] chart-container select-none relative mb-0 mt-0 z-0"
         style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
       >
         {/* Real-time Reminder Overlay — Positioned in the empty chart area (bottom-left) */}
