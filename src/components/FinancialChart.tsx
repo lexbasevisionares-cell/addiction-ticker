@@ -1,4 +1,4 @@
-import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, CartesianGrid } from 'recharts';
 import { ArrowRight, X as CloseIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../context/I18nContext';
@@ -17,6 +17,7 @@ interface Props {
   isFree: boolean;
   gradientColor: string;
   colorClass: string;
+  iconColorClass: string;
   accumulated: number;
   securedFV: number;
   totalForecast: number;
@@ -31,25 +32,37 @@ interface Props {
 }
 
 export default function FinancialChart({
-  graphData, viewType, onViewTypeChange, isFree, gradientColor, colorClass, accumulated, securedFV, totalForecast,
+  graphData, viewType, onViewTypeChange, isFree, gradientColor, colorClass, iconColorClass, accumulated, securedFV, totalForecast,
   totalDirectSavings, forecastYears, currentYear, onShowInfo,
   pendingAmount, isPendingOverdue, onTriggerInvest, onDismissReminder
 }: Props) {
   const { t, formatCurrencyString: formatCurrency, formatCurrencyHtml } = useI18n();
 
+  const maxVal = Math.max(...graphData.map(p => p.investedValue));
+  // Calculate a clean step size and add one extra step for "one box higher" look
+  const stepCount = 8; // Number of boxes
+  const rawStep = maxVal / (stepCount - 1);
+  const step = rawStep === 0 ? 1 : rawStep;
+  const yMax = step * stepCount; // This adds one full step of air at the top
+  const yTicks = Array.from({ length: stepCount + 1 }, (_, i) => step * i);
+  
+  const xMax = forecastYears;
+  const xTicks = Array.from({ length: 10 }, (_, i) => (xMax / 9) * i);
+
   // Compact currency formatter for Y-axis ticks
   const formatCompact = (value: number): string => {
     if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
     if (value >= 1_000) return `${(value / 1_000).toFixed(value >= 10_000 ? 0 : 1)}k`;
+    // Smart decimals for small scales
+    if (maxVal < 10 && value > 0) return value.toFixed(2);
     return Math.round(value).toString();
   };
-
-  if (!graphData || graphData.length === 0) return null;
 
   const rightSideValue = viewType === 'potential' ? totalForecast : securedFV;
   const leftValue = viewType === 'potential' ? totalDirectSavings : accumulated;
 
-  const showDecimals = viewType === 'secured';
+  // Show decimals if we are in secured view OR if the values are small (e.g. under 100€)
+  const showDecimals = viewType === 'secured' || leftValue < 100 || rightSideValue < 100;
 
   const leftValueString = formatCurrencyHtml(leftValue, showDecimals ? 2 : 0);
   const rightValueString = formatCurrencyHtml(rightSideValue, showDecimals ? 2 : 0);
@@ -61,7 +74,7 @@ export default function FinancialChart({
       <div className="flex flex-col w-full mb-0 lg:mb-2 relative z-10">
         
         {/* Row 1: View Switcher Toggle - Shown in BOTH states */}
-        <div className="flex justify-center mt-6 mb-5 lg:mt-10 lg:mb-10">
+        <div className="flex justify-center mt-2 mb-3 lg:mt-6 lg:mb-6">
           <div className="inline-flex items-center p-1 bg-white/[0.02] backdrop-blur-2xl rounded-full border border-white/[0.05] relative shadow-2xl">
             <button 
               onClick={() => onViewTypeChange('secured')}
@@ -98,7 +111,7 @@ export default function FinancialChart({
         </div>
 
         {/* Row 2: Metric Details - Centered Headers + Arrow Flow */}
-        <div className="flex items-center justify-between px-2 lg:px-4 mb-1 lg:mb-2">
+        <div className="flex items-center justify-between px-2 lg:px-4 mb-0 lg:mb-1">
           {/* Left Side: Saved/Cost */}
           <div className="flex flex-col items-center flex-1">
             <div 
@@ -112,7 +125,7 @@ export default function FinancialChart({
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                  className={`font-sans tabular-nums ${fontSizeClass} font-light text-white tracking-tighter leading-none block whitespace-nowrap`}
+                  className={`font-sans tabular-nums ${fontSizeClass} font-light text-metallic tracking-tighter leading-none block whitespace-nowrap`}
                   dangerouslySetInnerHTML={{ __html: leftValueString }}
                 />
               </AnimatePresence>
@@ -120,7 +133,7 @@ export default function FinancialChart({
           </div>
 
           {/* Center: Growth/Loss Arrow — Now bright and neon */}
-          <div className={`shrink-0 px-2 lg:px-6 mt-0 ${colorClass} drop-shadow-[0_0_12px_currentColor]`}>
+          <div className={`shrink-0 px-2 lg:px-6 mt-0 ${iconColorClass} drop-shadow-[0_0_12px_currentColor]`}>
             <ArrowRight className="w-[clamp(24px,6vw,40px)] h-[clamp(24px,6vw,40px)] opacity-80" strokeWidth={2.5} />
           </div>
 
@@ -148,7 +161,8 @@ export default function FinancialChart({
       </div>
 
       <div
-        className="flex-1 min-h-[140px] chart-container select-none relative mb-[clamp(10px,2dvh,40px)] mt-2 lg:mt-6 z-0"
+        className="flex-1 min-h-[300px] lg:min-h-[400px] chart-container select-none relative mb-0 mt-0 z-0"
+        style={{ WebkitTapHighlightColor: 'transparent', outline: 'none' }}
       >
         {/* Real-time Reminder Overlay — Positioned in the empty chart area (bottom-left) */}
         {isFree && viewType === 'secured' && pendingAmount && (
@@ -163,11 +177,11 @@ export default function FinancialChart({
                 onTriggerInvest();
               }}
               className={`group flex items-center bg-white/[0.03] backdrop-blur-3xl px-5 py-3.5 lg:px-6 lg:py-4 rounded-full border border-white/[0.05] hover:bg-white/[0.08] transition-all duration-700 hover:scale-[1.02] active:scale-[0.98] ${
-                isPendingOverdue ? (isFree ? 'text-emerald-400' : 'text-rose-500') : 'text-zinc-500'
+                isPendingOverdue ? (isFree ? 'text-metallic-emerald' : 'text-metallic-rose') : 'text-zinc-400'
               }`}
             >
               <div className="flex items-center gap-2 min-w-[max-content]">
-                <div className={`w-1.5 h-1.5 rounded-full ${isPendingOverdue ? (isFree ? 'bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]') : 'bg-zinc-600'}`} />
+                <div className={`w-1.5 h-1.5 rounded-full ${isPendingOverdue ? (isFree ? 'bg-metallic-emerald' : 'bg-metallic-rose') : 'bg-zinc-600'}`} />
                 <span className={`text-[10px] lg:text-[12px] uppercase tracking-[0.2em] font-medium transition-opacity group-hover:opacity-100 ${isPendingOverdue ? '' : 'opacity-80'}`}>
                   {t.pendingTransfer}: {pendingAmount}
                 </span>
@@ -190,62 +204,88 @@ export default function FinancialChart({
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={graphData}
-            margin={{ top: 5, right: 8, left: 0, bottom: 0 }}
+            margin={{ top: 35, right: 30, left: 0, bottom: 10 }}
           >
             <defs>
+              <linearGradient id="strokeMetallicEmerald" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#6ee7b7" />
+                <stop offset="40%" stopColor="#10b981" />
+                <stop offset="80%" stopColor="#047857" />
+                <stop offset="100%" stopColor="#064e3b" />
+              </linearGradient>
+              <linearGradient id="strokeMetallicRose" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#fda4af" />
+                <stop offset="40%" stopColor="#f43f5e" />
+                <stop offset="80%" stopColor="#be123c" />
+                <stop offset="100%" stopColor="#881337" />
+              </linearGradient>
               <linearGradient id="colorInvested" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={gradientColor} stopOpacity={0.65} />
+                <stop offset="0%" stopColor={gradientColor} stopOpacity={0.8} />
+                <stop offset="20%" stopColor={gradientColor} stopOpacity={0.3} />
                 <stop offset="100%" stopColor={gradientColor} stopOpacity={0.05} />
               </linearGradient>
               <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#71717a" stopOpacity={0.25} />
-                <stop offset="100%" stopColor="#71717a" stopOpacity={0.02} />
+                <stop offset="0%" stopColor="#52525b" stopOpacity={0.45} />
+                <stop offset="100%" stopColor="#18181b" stopOpacity={0.1} />
               </linearGradient>
             </defs>
             <YAxis
-              domain={[0, 'dataMax']}
-              tick={{ fill: '#3f3f46', fontSize: 9, fontFamily: 'Outfit' }}
-              axisLine={false}
+              domain={[0, yMax]}
+              ticks={yTicks}
+              interval={0}
+              tick={{ fill: '#52525b', fontSize: 9, fontFamily: 'Outfit' }}
+              axisLine={{ stroke: '#52525b', strokeWidth: 0.25, strokeOpacity: 0.2 }}
               tickLine={false}
-              width={46}
-              tickCount={4}
+              width={48}
               tickFormatter={formatCompact}
             />
             <XAxis
               dataKey="year"
               type="number"
-              domain={['dataMin', 'dataMax']}
+              domain={[currentYear, currentYear + forecastYears]}
+              ticks={xTicks.map(t => currentYear + t)}
+              interval={0}
               allowDecimals={false}
               tickFormatter={(val) => Math.round(val).toString()}
-              tick={{ fill: '#3f3f46', fontSize: 9, fontFamily: 'Outfit' }}
-              axisLine={false}
+              tick={{ fill: '#52525b', fontSize: 9, fontFamily: 'Outfit' }}
+              axisLine={{ stroke: '#52525b', strokeWidth: 0.25, strokeOpacity: 0.2 }}
               tickLine={false}
-              tickCount={5}
             />
-            {/* 1. Baseline (Harmaa) — always visible */}
-            <Area 
-              type="monotoneX" 
-              dataKey="directCost" 
-              stroke="#52525b" 
-              strokeWidth={1} 
-              fillOpacity={1} 
-              fill="url(#colorDirect)" 
-              isAnimationActive={false}
-              dot={false}
-              activeDot={false}
-            />
-            {/* 2. Growth/Potential (Neon) on top */}
+
+            {/* 1. GROWTH AREA (Rendered first, goes to bottom) */}
             <Area 
               type="monotoneX" 
               dataKey="investedValue" 
-              stroke={gradientColor} 
-              strokeWidth={2} 
+              stroke={isFree ? "url(#strokeMetallicEmerald)" : "url(#strokeMetallicRose)"} 
+              strokeWidth={0.25} 
               fillOpacity={1} 
               fill="url(#colorInvested)" 
-              style={{ filter: `drop-shadow(0px -4px 8px ${gradientColor}80)` }}
+              style={{ filter: 'drop-shadow(0px 0px 3px rgba(255,255,255,0.2))' }}
               isAnimationActive={false}
               dot={false}
               activeDot={false}
+            />
+
+            {/* 2. BASELINE AREA (Rendered on top, covers anything below its line) */}
+            <Area 
+              type="monotoneX" 
+              dataKey="directCost" 
+              stroke="#71717a" 
+              strokeWidth={0.25} 
+              fillOpacity={1} 
+              fill="url(#colorDirect)" 
+              style={{ filter: 'drop-shadow(0px 0px 2px rgba(255,255,255,0.1))' }}
+              isAnimationActive={false}
+              dot={false}
+              activeDot={false}
+            />
+
+            {/* 3. GRID ON TOP (For technical instrument look) */}
+            <CartesianGrid 
+              stroke="#52525b" 
+              vertical={true} 
+              horizontal={true} 
+              strokeOpacity={0.25}
             />
           </AreaChart>
         </ResponsiveContainer>

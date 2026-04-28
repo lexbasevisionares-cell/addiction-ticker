@@ -14,6 +14,38 @@
   .hide-scroll::-webkit-scrollbar {
     display: none;
   }
+  .text-metallic {
+    background: linear-gradient(175deg, #ffffff 0%, #e4e4e7 40%, #a1a1aa 80%, #71717a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.4));
+  }
+  .text-metallic-emerald {
+    background: linear-gradient(175deg, #a7f3d0 0%, #34d399 40%, #059669 80%, #064e3b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.4));
+  }
+  .text-metallic-rose {
+    background: linear-gradient(175deg, #fecdd3 0%, #fb7185 40%, #e11d48 80%, #881337 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.4));
+  }
+  .bg-metallic-emerald {
+    background: linear-gradient(135deg, #a7f3d0 0%, #34d399 40%, #059669 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .bg-metallic-rose {
+    background: linear-gradient(135deg, #fecdd3 0%, #fb7185 40%, #e11d48 100%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.5);
+  }
 }
 
 @keyframes shimmer {
@@ -47,7 +79,12 @@ html, body {
   overflow: hidden;
 }
 
-
+/* Kill mobile tap highlight on chart */
+.chart-container,
+.chart-container * {
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none !important;
+}
 
 
 /* Custom range slider — standard (large thumb) */
@@ -71,37 +108,58 @@ html, body {
 
 /* Custom range slider — thin stealth version */
 .custom-slider-thin {
-  height: 4px;
+  height: 6px;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.9), 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.8);
 }
 .custom-slider-thin::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
-  background: var(--thumb-color, #a1a1aa);
-  border: none;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #e4e4e7 0%, #a1a1aa 40%, #52525b 100%);
+  border: 1px solid #18181b;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.7), /* Top highlight */
+    inset 0 -1px 3px rgba(0, 0, 0, 0.6), /* Bottom inner shadow */
+    0 3px 6px rgba(0, 0, 0, 0.7), /* Sharp drop shadow */
+    0 8px 16px rgba(0, 0, 0, 0.4); /* Ambient shadow */
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s ease;
 }
-.custom-slider-thin::-webkit-slider-thumb:hover,
+.custom-slider-thin::-webkit-slider-thumb:hover {
+  background: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 40%, #52525b 100%);
+}
 .custom-slider-thin::-webkit-slider-thumb:active {
-  transform: scale(1.15);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+  transform: scale(0.92); /* Physical pressing feel */
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.7),
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 .custom-slider-thin::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
-  background: var(--thumb-color, #a1a1aa);
-  border: none;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #e4e4e7 0%, #a1a1aa 40%, #52525b 100%);
+  border: 1px solid #18181b;
   border-radius: 50%;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.7),
+    inset 0 -1px 3px rgba(0, 0, 0, 0.6),
+    0 3px 6px rgba(0, 0, 0, 0.7),
+    0 8px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s ease;
 }
-.custom-slider-thin::-moz-range-thumb:hover,
 .custom-slider-thin::-moz-range-thumb:active {
-  transform: scale(1.15);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+  transform: scale(0.92);
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.7),
+    0 1px 2px rgba(0, 0, 0, 0.9),
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Portrait Lock / "Turn your device" Overlay */

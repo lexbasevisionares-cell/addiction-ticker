@@ -29,8 +29,8 @@ export default function ForecastSlider({ forecastYears, onForecastChange, gradie
           }
         }}
         style={{
-          background: `linear-gradient(to right, ${gradientColor}80 ${pct}%, #252525 ${pct}%)`,
-          '--thumb-color': gradientColor
+          background: `linear-gradient(to right, #71717a ${pct}%, #18181b ${pct}%)`,
+          '--thumb-color': '#71717a'
         } as React.CSSProperties}
         className="custom-slider-thin w-full rounded-full appearance-none cursor-pointer"
       />
