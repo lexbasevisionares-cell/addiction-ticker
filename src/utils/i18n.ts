@@ -101,6 +101,8 @@ export const TRANSLATIONS = {
     // Slider texts
     sliderBaseFree: 'Tätä menoa puhdas käteissäästö vuonna {year}',
     sliderBaseHooked: 'Tätä menoa suorat kulut yhteensä vuonna {year}',
+    sliderBaseSecuredFree: 'Säästetty summa tähän mennessä',
+    sliderBaseSecuredHooked: 'Kulutettu summa tähän mennessä',
     sliderResultSecuredFree: 'Jo säästetyn pääoman arvo vuonna {year}',
     sliderResultSecuredHooked: 'Jo käytetyn rahan menetetty arvo vuonna {year}',
     sliderResultPotentialFree: 'Tätä menoa sijoitussalkun arvo vuonna {year}',
@@ -378,6 +380,8 @@ export const TRANSLATIONS = {
     // Slider texts
     sliderBaseFree: 'At this rate, pure cash savings in {year}',
     sliderBaseHooked: 'At this rate, total direct costs in {year}',
+    sliderBaseSecuredFree: 'Amount saved so far',
+    sliderBaseSecuredHooked: 'Amount spent so far',
     sliderResultSecuredFree: 'Value of already saved capital in {year}',
     sliderResultSecuredHooked: 'Lost value of already spent money in {year}',
     sliderResultPotentialFree: 'At this rate, investment portfolio value in {year}',
@@ -654,7 +658,9 @@ export const TRANSLATIONS = {
     
     // Slider texts
     sliderBaseFree: 'A este ritmo, ahorro en efectivo puro en {year}',
-    sliderBaseHooked: 'A este ritmo, coste directo acumulado en {year}',
+    sliderBaseHooked: 'A este ritmo, coste directo acumulado in {year}',
+    sliderBaseSecuredFree: 'Dinero ahorrado hasta ahora',
+    sliderBaseSecuredHooked: 'Dinero gastado hasta ahora',
     sliderResultSecuredFree: 'Valor del capital ya ahorrado en {year}',
     sliderResultSecuredHooked: 'Valor del dinero ya gastado perdido en {year}',
     sliderResultPotentialFree: 'A este ritmo, valor de la cartera de inversión en {year}',
@@ -930,6 +936,8 @@ export const TRANSLATIONS = {
     // Slider texts
     sliderBaseFree: 'In diesem Tempo reine Barersparnis im Jahr {year}',
     sliderBaseHooked: 'In diesem Tempo direkte Gesamtkosten im Jahr {year}',
+    sliderBaseSecuredFree: 'Bisher gesparter Betrag',
+    sliderBaseSecuredHooked: 'Bisher ausgegebener Betrag',
     sliderResultSecuredFree: 'Wert des bereits gesparten Kapitals im Jahr {year}',
     sliderResultSecuredHooked: 'Verlorener Wert des bereits ausgegebenen Geldes im Jahr {year}',
     sliderResultPotentialFree: 'In diesem Tempo Depotwert im Jahr {year}',
@@ -1203,8 +1211,10 @@ export const TRANSLATIONS = {
     potentialYearsSuffix: 'par an',
     
     // Slider texts
-    sliderBaseFree: 'À ce rythme, économies nettes en {year}',
-    sliderBaseHooked: 'À ce rythme, coûts directs cumulés en {year}',
+    sliderBaseFree: 'À ce rythme, économies d\'argent pur en {year}',
+    sliderBaseHooked: 'À ce rythme, coûts directs totaux en {year}',
+    sliderBaseSecuredFree: 'Montant économisé jusqu\'à présent',
+    sliderBaseSecuredHooked: 'Montant dépensé jusqu\'à présent',
     sliderResultSecuredFree: 'Valeur du capital déjà économisé en {year}',
     sliderResultSecuredHooked: "Valeur perdue de l'argent déjà dépensé en {year}",
     sliderResultPotentialFree: 'À ce rythme, valeur du portefeuille en {year}',
@@ -1478,8 +1488,10 @@ export const TRANSLATIONS = {
     potentialYearsSuffix: "all'anno",
     
     // Slider texts
-    sliderBaseFree: 'A questo ritmo, risparmi netti in contanti nel {year}',
+    sliderBaseFree: 'A questo ritmo, risparmi in contanti puri nel {year}',
     sliderBaseHooked: 'A questo ritmo, costi diretti totali nel {year}',
+    sliderBaseSecuredFree: 'Somma risparmiata finora',
+    sliderBaseSecuredHooked: 'Somma spesa finora',
     sliderResultSecuredFree: 'Valore del capitale già risparmiato nel {year}',
     sliderResultSecuredHooked: 'Valore perso del denaro già speso nel {year}',
     sliderResultPotentialFree: 'A questo ritmo, valore del portafoglio nel {year}',
@@ -1753,8 +1765,10 @@ export const TRANSLATIONS = {
     potentialYearsSuffix: 'por ano',
     
     // Slider texts
-    sliderBaseFree: 'Nesse ritmo, economia líquida em {year}',
-    sliderBaseHooked: 'Nesse ritmo, custos diretos totais em {year}',
+    sliderBaseFree: 'Neste ritmo, poupança pura em dinheiro em {year}',
+    sliderBaseHooked: 'Neste ritmo, custos diretos totais em {year}',
+    sliderBaseSecuredFree: 'Montante poupado até agora',
+    sliderBaseSecuredHooked: 'Montante gasto até agora',
     sliderResultSecuredFree: 'Valor do capital já economizado em {year}',
     sliderResultSecuredHooked: 'Valor perdido do dinheiro já gasto em {year}',
     sliderResultPotentialFree: 'Nesse ritmo, valor da carteira em {year}',

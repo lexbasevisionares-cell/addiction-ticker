@@ -74,7 +74,7 @@ export default function FinancialChart({
       <div className="flex flex-col w-full mb-0 lg:mb-2 relative z-10">
         
         {/* Row 1: View Switcher Toggle - Shown in BOTH states */}
-        <div className="flex justify-center mt-2 mb-3 lg:mt-6 lg:mb-6">
+        <div className="flex justify-center mt-0 mb-2 lg:mt-6 lg:mb-6">
           <div className="inline-flex items-center p-1 bg-white/[0.02] backdrop-blur-2xl rounded-full border border-white/[0.05] relative shadow-2xl">
             <button 
               onClick={() => onViewTypeChange('secured')}

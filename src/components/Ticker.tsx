@@ -196,21 +196,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-y-auto overflow-x-hidden relative">
       {/* FIXED TOP BAR: PERFECTLY ALIGNED GRID */}
-      <div className="w-full px-6 pt-[clamp(8px,1dvh,16px)] pb-2 relative z-50 flex flex-col items-center">
-        <div className="w-full relative flex items-center justify-center h-12">
-          {/* Share button left-aligned */}
-          <div className="absolute left-0 flex items-center h-full">
-            <button
-              onClick={handleShare}
-              className="text-zinc-400 hover:text-white transition-all p-2.5 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
-              aria-label={t.shareBtn}
-            >
-              <Share2 className="w-5 h-5" />
-            </button>
-          </div>
-
+      <div className="w-full px-6 pt-1 pb-1 relative z-50 flex flex-col items-center">
+        <div className="w-full relative flex items-center justify-center h-10">
           {/* Title centered */}
-          <div className="text-[12px] md:text-[13px] font-semibold text-white/90 uppercase tracking-[0.6em] pointer-events-none">
+          <div className="text-[11px] md:text-[12px] font-semibold text-white/80 uppercase tracking-[0.6em] pointer-events-none">
             {t.tickerHeader}
           </div>
           
@@ -218,10 +207,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           <div className="absolute right-0 flex items-center h-full">
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="text-zinc-400 hover:text-white transition-all p-2.5 bg-white/[0.04] hover:bg-white/[0.08] backdrop-blur-xl rounded-full border border-white/10 shadow-2xl"
+              className="text-zinc-500 hover:text-white transition-all p-2 bg-white/[0.02] hover:bg-white/[0.06] rounded-full border border-white/5"
               aria-label="Valikko"
             >
-              <Menu className="w-5 h-5 mx-0.5" />
+              <Menu className="w-4 h-4 mx-0.5" />
             </button>
           </div>
         </div>
@@ -280,16 +269,20 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           {/* Sandwich Forecast Control: Baseline Label -> Slider -> Result Label */}
           <div className="flex-none flex flex-col items-center w-full px-5 pt-0 pb-[clamp(12px,2dvh,24px)]">
             
-            {/* 1. Baseline Label (Gray) — visibility toggled to preserve exact layout height */}
+            {/* 1. Baseline Label (Gray) — always visible for design symmetry */}
             <div 
-              className={`flex items-center gap-2 mb-1 group cursor-pointer transition-opacity duration-200 ${viewType === 'potential' ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-              onClick={() => viewType === 'potential' && setInfoModal(isFree ? 'totalSaved' : 'directCost')}
+              className="flex items-center gap-2 mb-1 group cursor-pointer transition-opacity duration-200"
+              onClick={() => setInfoModal(isFree ? (viewType === 'potential' ? 'totalSaved' : 'savedNow') : (viewType === 'potential' ? 'directCost' : 'lostNow'))}
             >
               <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 bg-zinc-500" />
               <span className="text-[10px] uppercase tracking-[0.1em] font-medium text-zinc-400 transition-colors group-hover:text-white">
-                {isFree 
-                  ? t.sliderBaseFree.replace('{year}', (currentYear + forecastYears).toString())
-                  : t.sliderBaseHooked.replace('{year}', (currentYear + forecastYears).toString())}
+                {viewType === 'potential' 
+                  ? (isFree 
+                      ? t.sliderBaseFree.replace('{year}', (currentYear + forecastYears).toString())
+                      : t.sliderBaseHooked.replace('{year}', (currentYear + forecastYears).toString()))
+                  : (isFree 
+                      ? t.sliderBaseSecuredFree
+                      : t.sliderBaseSecuredHooked)}
               </span>
             </div>
 
@@ -325,8 +318,15 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         {/* Elastic Spacer 3: Space between Slider and Share button */}
         <div className="flex-[1] min-h-[clamp(8px,2dvh,24px)] shrink-0" />
 
-        {/* Bottom Padding for a clean finish */}
-        <div className="h-12 shrink-0" />
+        {/* Content Section 3: Action Button (Share) */}
+        <div className="flex-none w-full pb-[clamp(12px,2dvh,24px)] flex justify-center items-center shrink-0">
+          <button 
+            onClick={handleShare}
+            className="w-full max-w-[280px] py-4 rounded-full font-bold text-black bg-white hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-[0.4em] text-[9px] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+          >
+            {isFree ? t.shareAccomplishment : t.shareSituation}
+          </button>
+        </div>
       </div>
 
       {modalType && (
