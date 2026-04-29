@@ -261,7 +261,7 @@ export async function scheduleMotivationPlan(settings: UserSettings, appState: A
         if (targetDate.getTime() <= now + 60000) continue;
 
         const msgIndex = hour - 8;
-        const msgs = isFree ? FREE_HOURLY_MESSAGES[lang] : HOOKED_HOURLY_MESSAGES[lang];
+        const msgs = isFree ? (FREE_HOURLY_MESSAGES[lang] || FREE_HOURLY_MESSAGES.en) : (HOOKED_HOURLY_MESSAGES[lang] || HOOKED_HOURLY_MESSAGES.en);
         const msg = msgs[msgIndex];
         if (!msg) continue;
 

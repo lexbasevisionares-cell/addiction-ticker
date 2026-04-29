@@ -56,7 +56,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
     annualPriceIncrease: { id: 'annualPriceIncrease', label: t.annualIncreaseLabel, desc: t.annualIncreaseDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     expectedReturn: { id: 'expectedReturn', label: t.expectedReturnLabel, desc: t.expectedReturnDesc, min: 0, max: 20, decimals: 1, unit: '%' },
     investReminderThreshold: { id: 'investReminderThreshold', label: t.investReminderTitle, desc: t.investReminderDesc, min: 0, max: 500, decimals: 2, unit: currencySymbol },
-    maxForecastYears: { id: 'maxForecastYears', label: (t as any).maxForecastYearsLabel, desc: (t as any).maxForecastYearsDesc, min: 10, max: 100, decimals: 0, unit: language === 'fi' ? 'v' : 'y' },
+    maxForecastYears: { id: 'maxForecastYears', label: (t as any).maxForecastYearsLabel, desc: (t as any).maxForecastYearsDesc, min: 10, max: 100, decimals: 0, unit: (t as any).shareCardYearsLabel || 'y' },
     notificationLevel: { id: 'notificationLevel', label: t.motivatorLevel || 'Tsempin taso', desc: t.motivatorDesc || '', min: 0, max: 3, decimals: 1, unit: '' },
   };
 
@@ -263,7 +263,7 @@ export default function Settings({ initialSettings, appState, onSave, onUpdateSt
           <div className="flex flex-col">
              <span className="text-zinc-600 font-medium uppercase tracking-[0.4em] text-[10px] mb-2">{t.otherSettings}</span>
             <SettingRow id="investReminderThreshold" label={t.investReminderTitle} displayValue={formatCurrencyString(investReminderThreshold, 2)} />
-            <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} ${language === 'fi' ? 'v' : 'y'}`} />
+            <SettingRow id="maxForecastYears" label={(t as any).maxForecastYearsLabel} displayValue={`${maxForecastYears} ${(t as any).shareCardYearsLabel || 'y'}`} />
             <ToggleRow 
               label={(t as any).settingsSoundLabel || 'Äänimaisema'} 
               checked={soundscapeEnabled} 

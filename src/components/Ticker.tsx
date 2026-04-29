@@ -208,7 +208,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
             <button
               onClick={() => setIsMenuOpen(true)}
               className="text-zinc-500 hover:text-white transition-all p-2 bg-white/[0.02] hover:bg-white/[0.06] rounded-full border border-white/5"
-              aria-label="Valikko"
+              aria-label={t.menuTitle}
             >
               <Menu className="w-4 h-4 mx-0.5" />
             </button>

@@ -325,7 +325,7 @@ export default function ShareCardModal({
             <Square size={14} className="text-white/30" />
           )}
           <span className={`text-[10px] uppercase tracking-[0.2em] font-medium transition-colors ${showMath ? 'text-white' : 'text-white/40'}`}>
-            Näytä parametrit
+            {T.shareCardShowMath || 'Näytä parametrit'}
           </span>
         </button>
 
