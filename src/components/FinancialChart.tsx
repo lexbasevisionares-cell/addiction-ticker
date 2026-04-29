@@ -111,7 +111,7 @@ export default function FinancialChart({
         </div>
 
         {/* Row 2: Metric Details - Centered Headers + Arrow Flow */}
-        <div className="flex items-center justify-between px-2 lg:px-4 mb-0 lg:mb-1">
+        <div className="flex items-center justify-between px-2 lg:px-4 mt-5 lg:mt-8 mb-0 lg:mb-1">
           {/* Left Side: Saved/Cost */}
           <div className="flex flex-col items-center flex-1">
             <div 
@@ -214,15 +214,15 @@ export default function FinancialChart({
                 <stop offset="100%" stopColor="#064e3b" />
               </linearGradient>
               <linearGradient id="strokeMetallicRose" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#fda4af" />
-                <stop offset="40%" stopColor="#f43f5e" />
-                <stop offset="80%" stopColor="#be123c" />
-                <stop offset="100%" stopColor="#881337" />
+                <stop offset="0%" stopColor="#fca5a5" />
+                <stop offset="40%" stopColor="#ef4444" />
+                <stop offset="80%" stopColor="#dc2626" />
+                <stop offset="100%" stopColor="#b91c1c" />
               </linearGradient>
               <linearGradient id="colorInvested" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={gradientColor} stopOpacity={0.8} />
-                <stop offset="20%" stopColor={gradientColor} stopOpacity={0.3} />
-                <stop offset="100%" stopColor={gradientColor} stopOpacity={0.05} />
+                <stop offset="0%" stopColor={gradientColor} stopOpacity={0.6} />
+                <stop offset="30%" stopColor={gradientColor} stopOpacity={0.15} />
+                <stop offset="100%" stopColor={gradientColor} stopOpacity={0.0} />
               </linearGradient>
               <linearGradient id="colorDirect" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#52525b" stopOpacity={0.45} />
@@ -257,10 +257,10 @@ export default function FinancialChart({
               type="monotoneX" 
               dataKey="investedValue" 
               stroke={isFree ? "url(#strokeMetallicEmerald)" : "url(#strokeMetallicRose)"} 
-              strokeWidth={0.25} 
+              strokeWidth={1.5} 
               fillOpacity={1} 
               fill="url(#colorInvested)" 
-              style={{ filter: 'drop-shadow(0px 0px 3px rgba(255,255,255,0.2))' }}
+              style={{ filter: isFree ? 'drop-shadow(0px 0px 8px rgba(16,185,129,0.5))' : 'drop-shadow(0px 0px 8px rgba(239,68,68,0.5))' }}
               isAnimationActive={false}
               dot={false}
               activeDot={false}

@@ -66,8 +66,8 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   const isFree = appState.status === 'vapaa';
   // Metallic Luxury variants
   const colorClass = isFree ? 'text-metallic-emerald' : 'text-metallic-rose';
-  const iconColorClass = isFree ? 'text-emerald-500' : 'text-rose-600';
-  const gradientColor = isFree ? '#047857' : '#be123c';
+  const iconColorClass = isFree ? 'text-emerald-500' : 'text-red-500';
+  const gradientColor = isFree ? '#047857' : '#ef4444';
   const maxYears = settings.maxForecastYears ?? 75;
 
   useEffect(() => {
@@ -196,7 +196,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
   return (
     <div className="h-full bg-[#050505] font-sans flex flex-col text-white overflow-y-auto overflow-x-hidden relative">
       {/* FIXED TOP BAR: PERFECTLY ALIGNED GRID */}
-      <div className="w-full px-6 pt-0 pb-0 relative z-50 flex flex-col items-center">
+      <div className="w-full px-6 pt-0 pb-0 mb-4 lg:mb-8 relative z-50 flex flex-col items-center">
         <div className="w-full relative flex items-center justify-center h-8">
           {/* Title centered */}
           <div className="text-[11px] md:text-[12px] font-semibold text-white/80 uppercase tracking-[0.6em] pointer-events-none">
@@ -207,10 +207,10 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
           <div className="absolute right-0 flex items-center h-full">
             <button
               onClick={() => setIsMenuOpen(true)}
-              className="text-zinc-500 hover:text-white transition-all p-2 bg-white/[0.02] hover:bg-white/[0.06] rounded-full border border-white/5"
+              className="text-zinc-500 hover:text-white transition-all p-2.5 bg-white/[0.02] hover:bg-white/[0.06] rounded-full border border-white/5"
               aria-label={t.menuTitle}
             >
-              <Menu className="w-4 h-4 mx-0.5" />
+              <Menu className="w-5 h-5 mx-0.5" />
             </button>
           </div>
         </div>
@@ -322,7 +322,7 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
         <div className="flex-none w-full pb-[clamp(12px,2dvh,24px)] flex justify-center items-center shrink-0">
           <button 
             onClick={handleShare}
-            className="w-full max-w-[280px] py-4 rounded-full font-bold text-black bg-white hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-[0.4em] text-[9px] shadow-[0_20px_40px_rgba(0,0,0,0.3)]"
+            className="w-full max-w-[280px] py-4 rounded-full font-bold text-white/50 bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.06] hover:text-white/70 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-[0.4em] text-[9px] backdrop-blur-sm"
           >
             {isFree ? t.shareAccomplishment : t.shareSituation}
           </button>
