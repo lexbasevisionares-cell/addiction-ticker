@@ -13,6 +13,7 @@ import ConfirmActionModal from './ConfirmActionModal';
 import InvestConfirmBanner from './InvestConfirmBanner';
 import ShareCardModal from './ShareCardModal';
 import { playCentDrop, startTickLoop, stopTickLoop, initAudio } from '../utils/audio';
+import { checkAndPromptReview } from '../utils/reviewPrompt';
 import { useRef } from 'react';
 
 export interface AppState {
@@ -62,6 +63,15 @@ export default function Ticker({ settings, appState, onUpdateState, onEditSettin
     const id = setInterval(tick, 50);
     return () => clearInterval(id);
   }, []);
+
+  // Check if we should prompt for App Store review
+  useEffect(() => {
+    // Small delay so user sees their data first
+    const timer = setTimeout(() => {
+      checkAndPromptReview(appState.status === 'vapaa', appState.startTime);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isFree = appState.status === 'vapaa';
   // Metallic Luxury variants
